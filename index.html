@@ -85,12 +85,14 @@ body {
     }
     
     /* 헤더 및 레이아웃 */
-    .header-title { 
+.header-title { 
       display: flex;
       align-items: center; 
-      gap: 10px; 
+      justify-content: center; /* 가운데 정렬 유지 */
+      gap: 8px; 
       margin: 0 0 20px 0; 
-      font-size: 28px;
+      font-size: 22px;          /* [조정] 한 줄로 들어오도록 폰트 크기 살짝 축소 */
+      white-space: nowrap;      /* [추가] 텍스트가 절대 두 줄로 줄바꿈되지 않도록 설정 */
     }
     .target-icon { 
       background: white; 
