@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Save the Ice Cream!</title>
+  <style>
+    /* 1. 기본 배경 및 중앙 정렬 */
+body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f6e3cf; 
+      margin: 0; 
+      padding: 0; 
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;      /* 가로 정중앙 */
+      justify-content: center;   /* 세로 정중앙 */
+      min-height: 100vh;
+      box-sizing: border-box;
+      overflow: hidden; 
+    }
+
+    /* 2. 게임 영역 고정 및 통째로 스케일링하기 위한 Wrapper 설정 */
+.game-wrapper {
+      width: 715px;
+      height: 750px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform-origin: center center;
+      flex-shrink: 0;
+
+      /* [수정] 아래 3줄을 바꾸세요 */
+      border: 6px solid transparent; 
+      border-image: linear-gradient(to bottom right, #fb7185, #fef08a, #34d399, #0ea5e9, #6366f1);
+      border-image-slice: 1;
+      
+      border-radius: 40px;         
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); 
+      overflow: hidden;           
+      background-color: #fcf8f2;  
+    }
+
+    /* 3. 각 화면의 가로세로 규격 고정 */
+    #intro-screen, .selection-screen, #game-screen {
+      width: 715px !important;
+      height: 750px !important;
+      max-width: 715px !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      box-sizing: border-box !important;
+      white-space: normal !important; /* [변경] nowrap에서 normal로 변경하여 텍스트 자동 줄바꿈 허용 */
+    }
+
+    /* 각 화면별 세부 정렬 설정 */
+    #intro-screen {
+      background-image: url('0.png'); 
+      background-size: 100% 100%; 
+      background-position: center; 
+      background-repeat: no-repeat;
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center; 
+      z-index: 9999; /* 인트로가 항상 최상단에 뜨도록 보장 */
+      padding: 30px;
+    }
+
+    .selection-screen {
+      background: #fcf8f2;
+      display: none; 
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 10;
+    }
+
+    #game-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      z-index: 5;
+    }
+    
+    /* 헤더 및 레이아웃 */
+.header-title { 
+      display: flex;
+      align-items: center; 
+      justify-content: center; /* 가운데 정렬 유지 */
+      gap: 8px; 
+      margin: 0 0 20px 0; 
+      font-size: 22px;          /* [조정] 한 줄로 들어오도록 폰트 크기 살짝 축소 */
+      white-space: nowrap;      /* [추가] 텍스트가 절대 두 줄로 줄바꿈되지 않도록 설정 */
+    }
+    .target-icon { 
+      background: white; 
+      border-radius: 50%; 
+      padding: 5px; 
+      width: 35px;
+      height: 35px; 
+      display: flex; 
+      align-items: center;
+      justify-content: center; 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .stats-container { 
+      display: flex; 
+      gap: 15px; 
+      margin-bottom: 20px;
+      font-weight: bold;
+      font-size: 15px; 
+    }
+    .score-badge { 
+      background-color: #fef08a; 
+      padding: 6px 18px;
+      border-radius: 20px; 
+      color: #b45309;
+    }
+    .round-badge { 
+      background-color: #e0f2fe;
+      padding: 6px 18px; 
+      border-radius: 20px; 
+      color: #0369a1;
+    }
+    
+    /* 그래픽 요소 */
+    .ice-cream-svg { 
+      width: 120px;
+      height: 150px; 
+      margin-bottom: 15px; 
+      transition: transform 0.2s ease-in-out;
+    }
+    .lives-container { 
+      font-size: 30px;
+      margin-bottom: 20px; 
+      height: 40px; 
+      display: flex; 
+      justify-content: center;
+    }
+    
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      100% { transform: translate(0px, 0px) rotate(0deg); }
+    }
+    .shake-ice { animation: shake 0.5s infinite; }
+
+    .word-display { 
+      display: flex; 
+      gap: 10px; 
+      margin-bottom: 40px; 
+      min-height: 40px;
+    }
+    .letter-box { 
+      width: 40px; 
+      height: 40px; 
+      border-bottom: 3px solid #333;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      font-size: 26px; 
+      font-weight: bold; 
+      color: #6366f1;
+    }
+    
+    /* 가상 키보드 */
+    .keyboard { 
+      display: flex;
+      flex-wrap: wrap; 
+      justify-content: center; 
+      gap: 8px;
+      max-width: 500px; 
+    }
+    .key-btn { 
+      width: 45px;
+      height: 50px; 
+      background: white; 
+      border: none; 
+      border-radius: 8px; 
+      font-size: 18px;
+      font-weight: bold; 
+      cursor: pointer; 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: 0.2s; 
+    }
+    .key-btn.correct { background: #34d399; color: white; }
+    .key-btn.wrong { background: #fca5a5; color: white; }
+    .key-btn:disabled { cursor: not-allowed; opacity: 0.8; }
+    
+    /* 모달 레이아웃 */
+    .modal-overlay { 
+      position: fixed;
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.4);
+      display: none; 
+      justify-content: center; 
+      align-items: center; 
+      z-index: 10000; /* 모달창은 항상 최우선 노출 */
+    }
+    .modal-content { 
+      background: white; 
+      padding: 30px; 
+      border-radius: 20px;
+      text-align: center;
+      width: 320px; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+    }
+    .action-btn { 
+      width: 100%;
+      padding: 14px;
+      border: none; 
+      border-radius: 8px; 
+      font-size: 16px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      margin-bottom: 10px;
+    }
+    .btn-confirm { background: #6366f1; color: white; }
+    .btn-next { background: #e5e7eb; color: #9ca3af; cursor: not-allowed; }
+    .btn-next.active { background: #10b981; color: white; cursor: pointer; }
+
+    /* 카테고리/단어 선택 화면 스타일 */
+    .selection-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #0ea5e9;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      width: 100%;
+      max-width: 450px;
+      margin-bottom: 30px;
+    }
+    #word-screen .grid-container {
+      grid-template-columns: repeat(3, 1fr);
+      max-width: 500px;
+    }
+    #sub-all.selected {
+      background-color: #fef2f2 !important; 
+      border-color: #f43f5e !important; 
+      color: #be123c !important; 
+    }
+
+.box-btn {
+      background: white;
+      border: 3px solid #e2e8f0;
+      border-radius: 15px;
+      padding: 18px 10px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      
+      /* [추가] 모바일(iOS Safari 등)에서 강제로 파란색 글씨로 변하는 기본 설정을 방지 */
+      color: #333333; 
+    }
+    .box-btn:hover {
+      transform: translateY(-2px);
+    }
+    .box-btn.selected {
+      border-color: #fb7185;
+      background-color: #ffe4e6;
+      color: #be123c;
+    }
+    .status-bar {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #475569;
+    }
+    .start-game-btn {
+      padding: 15px 50px;
+      font-size: 18px;
+      background: #fb7185;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(251, 113, 133, 0.4);
+      transition: all 0.2s;
+    }
+    .start-game-btn:disabled {
+      background: #cbd5e1;
+      color: #94a3b8;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-wrapper" id="scale-wrapper">
+
+    <div id="intro-screen">    
+      <div style="font-size: 80px; margin-bottom: 20px;">🍦</div>
+<h1 style="color:#0ea5e9; margin-bottom: 30px; font-size: 38px; text-shadow: -3px -3px 0 #fff, 3px -3px 0 #fff, -3px 3px 0 #fff, 3px 3px 0 #fff, 0 4px 6px rgba(0,0,0,0.15);">Save the Ice Cream!</h1>      
+      <!-- 학습 목표만 노출하는 깔끔한 카드박스 -->
+      <div style="background:rgba(255, 255, 255, 0.9); padding:25px; border-radius:25px; border:3px solid #bae6fd; width:80%; max-width:450px; margin-bottom:30px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+        <h3 style="margin:0 0 10px 0; color:#0ea5e9; text-align: center;">학습 목표</h3>
+        <ul style="line-height:1.6; font-size:16px; color:#475569; text-align:center; padding: 0; list-style: none; margin: 0;">
+          <li>오늘 배운 영단어의 철자를 정확히 익혀봅시다.</li>
+        </ul>
+      </div>
+
+      <!-- How to Play 버튼과 Start 버튼을 가로로 정렬 -->
+      <div style="display: flex; gap: 15px; justify-content: center; width: 85%;">
+        <!-- How to Play 버튼 (클릭 시 가상 모달 노출) -->
+        <button onclick="document.getElementById('help-modal').style.display='flex'" style="flex: 1; padding: 18px 0; font-size: 20px; background: #34d399; color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(52, 211, 153, 0.4); transition: transform 0.2s;">
+          How to Play
+        </button>
+        <!-- Start 버튼 -->
+        <button onclick="goToCategorySelection()" style="flex: 1; padding: 18px 0; font-size: 20px; background: #fb7185; color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(251, 113, 133, 0.4); transition: transform 0.2s;">
+          Start
+        </button>
+      </div>
+    </div>
+
+    <div id="category-screen" class="selection-screen">
+      <div class="selection-title">원하는 주제를 선택하세요</div>
+      <div class="grid-container" id="category-grid"></div>
+      <div style="display:flex; gap:10px;">
+        <button class="start-game-btn" onclick="backToIntro()" style="background:#cbd5e1; color:#475569; box-shadow:none; padding:15px 30px;">이전</button>
+        <button class="start-game-btn" id="category-next-btn" onclick="goToWordSelection()" disabled>다음 단계</button>
+      </div>
+    </div>
+
+    <div id="word-screen" class="selection-screen">
+      <div class="selection-title" id="word-screen-title">소주제를 선택하세요</div>
+      <div class="grid-container" id="subcategory-grid"></div>
+      <div class="status-bar" id="selection-status">선택됨: 0단어</div>
+      <div style="display:flex; gap:10px;">
+        <button class="start-game-btn" onclick="backToCategory()" style="background:#cbd5e1; color:#475569; box-shadow:none; padding:15px 30px;">이전</button>
+        <button class="start-game-btn" id="start-play-btn" onclick="generateGameWords()" disabled>게임 시작</button>
+      </div>
+    </div>
+
+    <div id="game-screen">
+      <h1 class="header-title">
+        <div class="target-icon">🍦</div> Save the Ice Cream! 
+        <button onclick="document.getElementById('help-modal').style.display='flex'" style="margin-left:15px; cursor:pointer; border-radius:20px; border:none; background:#fb7185; color:white; padding:5px 15px; font-weight:bold; box-shadow: 0 3px #e11d48; transition: transform 0.1s;">
+          How to Play
+        </button>
+        <button onclick="showHint()" style="margin-left:10px; cursor:pointer; border-radius:20px; border:none; background:#34d399; color:white; padding:5px 15px; font-weight:bold; box-shadow: 0 3px #059669; transition: transform 0.1s;">
+          Hint
+        </button>
+      </h1>
+
+      <div id="hint-display" style="height: 30px; font-weight: bold; color: #d97706; margin-bottom: 10px; text-align: center;"></div>
+
+      <div class="stats-container">
+        <div class="score-badge">⭐ <span id="score-val">0</span> 점</div>
+        <div class="round-badge"><span id="round-val">1</span> / <span id="total-val">12</span></div>
+      </div>
+
+      <img class="ice-cream-svg" id="ice-cream-graphic" src="1.png" alt="Ice Cream Status" style="width: 120px; height: 150px; object-fit: contain; margin-bottom: 15px;">
+
+      <div class="lives-container" id="lives-display"></div>
+      <div class="word-display" id="word-display"></div>
+      <div class="keyboard" id="keyboard"></div>
+    </div>
+
+    <div class="modal-overlay" id="help-modal">
+      <div class="modal-content">
+        <h2>How to Play</h2>
+        <p style="text-align:left; font-size:14px; line-height:1.6;">
+          1. 원하는 주제를 선택합니다.<br>
+          2. 화면 아래 알파벳 버튼을 눌러서 단어에 들어갈 알파벳을 찾아보세요.<br>
+          3. 한 번 틀릴 때마다 🧊(얼음)이 💧(물)로 변하며 아이스크림이 조금씩 녹아요.<br>
+          4. 아이스크림이 다 녹기 전에 단어를 완성해서 아이스크림을 지켜주세요!<br>
+          5. 단어 완성 후 입력까지 끝내면 4점을 얻고 다음 문제로 넘어갑니다.<br>
+          💡 주의: 틀릴 수 있는 기회는 단어 길이에 따라 달라지니 신중하게 생각해요!
+        </p>
+        <button class="action-btn btn-confirm" onclick="document.getElementById('help-modal').style.display='none'">닫기</button>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+      <div class="modal-content">
+        <h2 id="modal-title">정답입니다!</h2>
+        <div id="modal-answer" style="font-size:18px; margin:15px 0;"></div>
+        <input type="text" id="word-input" style="width:90%; padding:10px; margin-bottom:10px;" placeholder="단어 입력">
+        <button class="action-btn btn-confirm" onclick="checkTypedWord()">확인</button>
+        <button class="action-btn btn-next" id="btn-next" onclick="nextRound()" disabled>다음 단어 ▶</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // 대분류 및 소분류 데이터셋 매핑
+    const categoryStructure = {
+      "Number & Color": ["Number", "Color"],
+      "People & Animal": ["Body", "Family", "Animal"],
+      "Hobby & Job": ["Hobby", "Subject", "Job"],
+      "Food": ["Fruit & Vegetable", "Food"],
+      "Country & Nature": ["Nature & Weather", "Country"],
+      "Places & Transportation": ["Place", "Transportation"],
+      "Things": ["School", "House", "Clothing"],
+      "Action": ["Action"],
+      "Conditions": ["Character", "Condition"]
+    };
+
+    const categoryKoreanNames = {
+      "Number & Color": "숫자와 색깔",
+      "People & Animal": "사람과 동물",
+      "Hobby & Job": "취미와 직업",
+      "Food": "음식",
+      "Country & Nature": "국가와 자연",
+      "Places & Transportation": "장소와 교통수단",
+      "Things": "물건",
+      "Action": "동작",
+      "Conditions": "특징과 감정"
+    };
+
+    // 전체 어휘 자료 풀
+    const vocabularyData = {
+      School: [
+        { word: "textbook", meaning: "교과서" },
+        { word: "pencil", meaning: "연필" },
+        { word: "eraser", meaning: "지우개" },
+        { word: "glue stick", meaning: "풀" },
+        { word: "notebook", meaning: "공책" },
+        { word: "ruler", meaning: "자" },
+        { word: "scissors", meaning: "가위" },
+        { word: "pencil case", meaning: "필통" },
+        { word: "backpack", meaning: "배낭" },
+        { word: "crayon", meaning: "크레용" },
+        { word: "computer", meaning: "컴퓨터" },
+        { word: "board", meaning: "칠판" }
+      ],
+      House: [
+        { word: "door", meaning: "문" },
+        { word: "window", meaning: "창문" },
+        { word: "bed", meaning: "침대" },
+        { word: "chair", meaning: "의자" },
+        { word: "desk", meaning: "책상" },
+        { word: "clock", meaning: "시계" },
+        { word: "robot", meaning: "로봇" },
+        { word: "doll", meaning: "인형" },
+        { word: "umbrella", meaning: "우산" },
+        { word: "fan", meaning: "선풍기" },
+        { word: "lamp", meaning: "램프/등" },
+        { word: "sofa", meaning: "소파" }
+      ],
+      Clothing: [
+        { word: "cap", meaning: "캡 모자" },
+        { word: "hat", meaning: "모자" },
+        { word: "jacket", meaning: "자켓" },
+        { word: "dress", meaning: "원피스" },
+        { word: "skirt", meaning: "치마" },
+        { word: "pants", meaning: "바지" },
+        { word: "shoes", meaning: "신발" },
+        { word: "gloves", meaning: "장갑" },
+        { word: "glasses", meaning: "안경" },
+        { word: "socks", meaning: "양말" },
+        { word: "shirt", meaning: "셔츠" },
+        { word: "scarf", meaning: "스카프" }
+      ],
+      Number: [],
+      Color: [],
+      Body: [],
+      Family: [],
+      Animal: [],
+      Hobby: [],
+      Subject: [],
+      Job: [],
+      "Fruit & Vegetable": [],
+      Food: [],
+      "Nature & Weather": [],
+      Country: [],
+      Place: [],
+      Transportation: [],
+      Action: [],
+      Character: [],
+      Condition: []
+    };
+
+    // 상태 관리 변수들
+    let selectedCategory = "";
+    let selectedSubcategories = [];
+    let wordsList = [];
+    let currentRound = 0;
+    let currentWordObj = null;
+    let guessedChars = [];
+    let mistakes = 0;
+    let score = 0;
+    let maxAllowed = 5;
+
+    const soundCorrect = new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3');
+    const soundWrong = new Audio('https://www.soundjay.com/buttons/sounds/button-4.mp3');
+
+    window.onload = () => {
+      renderCategoryScreen();
+      resizeGame(); // 첫 실행 시 스케일 자동 적용
+    };
+
+    // --- 대분류 렌더링 ---
+    function renderCategoryScreen() {
+      const grid = document.getElementById('category-grid');
+      grid.innerHTML = '';
+      
+      Object.keys(categoryStructure).forEach(cat => {
+        const korName = categoryKoreanNames[cat] || cat;
+        const btn = document.createElement('button');
+        btn.className = 'box-btn';
+        btn.id = `cate-${cat.replace(/\s/g, '-')}`;
+        btn.innerHTML = `${korName}<br><span style="font-size:12px; font-weight:normal;">(${cat})</span>`;
+        btn.onclick = () => selectCategory(cat);
+        grid.appendChild(btn);
+      });
+    }
+
+    function selectCategory(category) {
+      selectedCategory = category;
+      Object.keys(categoryStructure).forEach(cat => {
+        const btn = document.getElementById(`cate-${cat.replace(/\s/g, '-')}`);
+        if (cat === category) {
+          btn.classList.add('selected');
+        } else {
+          btn.classList.remove('selected');
+        }
+      });
+      document.getElementById('category-next-btn').disabled = false;
+    }
+
+    // --- 화면 이동 제어 ---
+    function goToCategorySelection() {
+      document.getElementById('intro-screen').style.display = 'none';
+      document.getElementById('category-screen').style.display = 'flex';
+      document.getElementById('word-screen').style.display = 'none';
+      document.getElementById('game-screen').style.display = 'none';
+    }
+
+    function backToIntro() {
+      document.getElementById('category-screen').style.display = 'none';
+      document.getElementById('intro-screen').style.display = 'flex';
+    }
+
+    function goToWordSelection() {
+      document.getElementById('category-screen').style.display = 'none';
+      document.getElementById('word-screen').style.display = 'flex';
+      document.getElementById('game-screen').style.display = 'none';
+      renderSubcategoryScreen();
+    }
+
+    function backToCategory() {
+      document.getElementById('word-screen').style.display = 'none';
+      document.getElementById('category-screen').style.display = 'flex';
+    }
+
+    // --- 소분류 렌더링 ---
+    function renderSubcategoryScreen() {
+      const subGrid = document.getElementById('subcategory-grid');
+      subGrid.innerHTML = '';
+      selectedSubcategories = []; 
+
+      const subList = categoryStructure[selectedCategory] || [];
+      
+      const allBtn = document.createElement('button');
+      allBtn.className = 'box-btn';
+      allBtn.id = 'sub-all';
+      allBtn.style.gridColumn = 'span 3';
+      allBtn.style.backgroundColor = '#f0fdf4';
+      allBtn.style.borderColor = '#bbf7d0';
+      allBtn.innerText = '대분류 전체';
+      allBtn.onclick = () => toggleAllSubcategories(subList);
+      subGrid.appendChild(allBtn);
+
+      subList.forEach(sub => {
+        const btn = document.createElement('button');
+        btn.className = 'box-btn sub-item';
+        btn.id = `sub-${sub.replace(/\s/g, '-')}`;
+        
+        const wordCount = vocabularyData[sub] ? vocabularyData[sub].length : 0;
+        btn.innerHTML = `${sub}<br><span style="font-size:12px; font-weight:normal;">(${wordCount}단어)</span>`;
+        btn.onclick = () => toggleSubcategory(sub, subList);
+        subGrid.appendChild(btn);
+      });
+      updateSelectionStatus();
+    }
+
+    function toggleSubcategory(sub, subList) {
+      const elementId = `sub-${sub.replace(/\s/g, '-')}`;
+      const btn = document.getElementById(elementId);
+      const index = selectedSubcategories.indexOf(sub);
+      
+      if (index > -1) {
+        selectedSubcategories.splice(index, 1);
+        btn.classList.remove('selected');
+      } else {
+        selectedSubcategories.push(sub);
+        btn.classList.add('selected');
+      }
+      
+      checkAllSelectStatus(subList);
+      updateSelectionStatus();
+    }
+
+    function toggleAllSubcategories(subList) {
+      const allBtn = document.getElementById('sub-all');
+      if (selectedSubcategories.length === subList.length) {
+        selectedSubcategories = [];
+        subList.forEach(sub => {
+          const btn = document.getElementById(`sub-${sub.replace(/\s/g, '-')}`);
+          if (btn) btn.classList.remove('selected');
+        });
+        allBtn.classList.remove('selected'); 
+      } else {
+        selectedSubcategories = [...subList];
+        subList.forEach(sub => {
+          const btn = document.getElementById(`sub-${sub.replace(/\s/g, '-')}`);
+          if (btn) btn.classList.add('selected');
+        });
+        allBtn.classList.add('selected'); 
+      }
+      updateSelectionStatus();
+    }
+
+    function checkAllSelectStatus(subList) {
+      const allBtn = document.getElementById('sub-all');
+      if (subList.length > 0 && selectedSubcategories.length === subList.length) {
+        allBtn.classList.add('selected');
+      } else {
+        allBtn.classList.remove('selected');
+      }
+    }
+
+    function updateSelectionStatus() {
+      let totalWordsCount = 0;
+      selectedSubcategories.forEach(sub => {
+        if (vocabularyData[sub]) {
+          totalWordsCount += vocabularyData[sub].length;
+        }
+      });
+      document.getElementById('selection-status').innerText = `선택됨: ${totalWordsCount}단어`;
+      
+      const startBtn = document.getElementById('start-play-btn');
+      if (totalWordsCount > 0) {
+        startBtn.disabled = false;
+      } else {
+        startBtn.disabled = true;
+      }
+    }
+
+    // --- 단어 세트 빌드 및 게임 화면으로 진입 ---
+    function generateGameWords() {
+      let tempWords = [];
+      selectedSubcategories.forEach(sub => {
+        if (vocabularyData[sub]) {
+          vocabularyData[sub].forEach(w => {
+            if (typeof w === 'object' && w !== null) {
+              tempWords.push({ 
+              word: w.word.charAt(0).toUpperCase() + w.word.slice(1).toLowerCase(), 
+  meaning: w.meaning || ""
+              });
+            } else if (typeof w === 'string') {
+              tempWords.push({ 
+                word: w.toUpperCase(), 
+                meaning: "" 
+              });
+            }
+          });
+        }
+      });
+
+      // 단어 랜덤 섞기
+      for (let i = tempWords.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tempWords[i], tempWords[j]] = [tempWords[j], tempWords[i]];
+      }
+
+      wordsList = tempWords;
+      document.getElementById('word-screen').style.display = 'none';
+      document.getElementById('game-screen').style.display = 'flex';
+      document.getElementById('total-val').innerText = wordsList.length;
+      
+      startGame(0);
+    }
+
+    // --- 실제 게임 구동부 ---
+    function startGame(roundIndex) {
+      if (roundIndex >= wordsList.length) { 
+        alert("모든 단어를 마쳤습니다!");
+        return; 
+      }
+      
+      currentRound = roundIndex; 
+      currentWordObj = wordsList[currentRound];
+      guessedChars = []; 
+      mistakes = 0;
+      
+      const len = currentWordObj.word.replace(/\s/g, '').length;
+      maxAllowed = Math.min(len + 2, 7);
+
+      document.getElementById('ice-cream-graphic').src = '1.png';
+      document.getElementById('ice-cream-graphic').classList.remove('shake-ice');
+      
+      document.getElementById('round-val').innerText = currentRound + 1;
+      renderLives(); 
+      renderWordBox(); 
+      renderKeyboard();
+      document.getElementById('result-modal').style.display = 'none';
+    }
+
+    function renderLives() {
+      const display = document.getElementById('lives-display');
+      display.innerHTML = '';
+      const remaining = maxAllowed - mistakes;
+      for (let i = 0; i < remaining; i++) {
+        display.innerHTML += '🧊 ';
+      }
+      for (let i = 0; i < mistakes; i++) {
+        display.innerHTML += '💧 ';
+      }
+    }
+
+    function handleGuess(char, btn) {
+      if (guessedChars.includes(char)) return;
+      guessedChars.push(char); 
+      btn.disabled = true;
+      if (currentWordObj.word.includes(char)) {
+        try { soundCorrect.play(); } catch(e){}
+        btn.classList.add('correct'); 
+        renderWordBox(); 
+        checkWinCondition();
+      } else {
+        try { soundWrong.play(); } catch(e){}
+        btn.classList.add('wrong'); 
+        mistakes++;
+        
+        const imageIndex = Math.min(mistakes + 1, 7);
+        document.getElementById('ice-cream-graphic').src = `${imageIndex}.png`;
+        
+        const remaining = maxAllowed - mistakes;
+        document.getElementById('ice-cream-graphic').className = (remaining === 1) ? 'ice-cream-svg shake-ice' : 'ice-cream-svg';
+        
+        renderLives(); 
+        checkLoseCondition();
+      }
+    }
+
+    function renderWordBox() {
+      const wordDiv = document.getElementById('word-display');
+      wordDiv.innerHTML = '';
+      currentWordObj.word.split('').forEach(char => {
+        const box = document.createElement('div'); 
+        box.className = 'letter-box';
+        if (char === ' ') {
+          box.style.border = 'none';
+        } else if (guessedChars.includes(char)) {
+          box.innerText = char;
+        }
+        wordDiv.appendChild(box);
+      });
+    }
+
+    function renderKeyboard() {
+      const k = document.getElementById('keyboard'); 
+      k.innerHTML = '';
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(c => {
+        const b = document.createElement('button'); 
+        b.className = 'key-btn'; 
+        b.innerText = c;
+        b.onclick = () => handleGuess(c, b); 
+        k.appendChild(b);
+      });
+    }
+
+    function checkWinCondition() {
+      if (currentWordObj.word.replace(/\s/g, '').split('').every(c => guessedChars.includes(c))) {
+        score += 4;
+        document.getElementById('score-val').innerText = score;
+        setTimeout(() => showModal(true), 400);
+      }
+    }
+
+    // 아이스크림 게임 패배 시
+    function checkLoseCondition() {
+      if (mistakes >= maxAllowed) {
+        setTimeout(() => showModal(false), 400);
+      }
+    }
+
+    function showModal(isWin) {
+      document.getElementById('result-modal').style.display = 'flex';
+      document.getElementById('modal-title').innerText = isWin ? '정답입니다!' : '아이스크림이 녹았어요!';
+      document.getElementById('modal-answer').innerText = `정답: ${currentWordObj.word}`;
+      document.getElementById('word-input').value = ''; 
+      document.getElementById('word-input').focus();
+      
+      const nextBtn = document.getElementById('btn-next');
+      if (currentRound < wordsList.length - 1) {
+        nextBtn.disabled = true; 
+        nextBtn.classList.remove('active');
+        nextBtn.innerText = `다음 단어 (${currentRound + 2}/${wordsList.length})`;
+      } else {
+        nextBtn.disabled = true;
+        nextBtn.classList.remove('active');
+        nextBtn.innerText = '마지막 단어 완료!';
+      }
+    }
+
+    function checkTypedWord() {
+const typed = document.getElementById('word-input').value.trim().toLowerCase();
+const answer = currentWordObj.word.trim().toLowerCase(); // 정답도 소문자로 변환하여 비교
+if (typed === answer) {
+        if (currentRound < wordsList.length - 1) {
+          document.getElementById('btn-next').disabled = false;
+          document.getElementById('btn-next').classList.add('active');
+        } else { 
+          alert("축하합니다! 이번 세트의 모든 단어를 완료했습니다!");
+          document.getElementById('result-modal').style.display = 'none';
+          document.getElementById('game-screen').style.display = 'none';
+          document.getElementById('category-screen').style.display = 'flex'; 
+        }
+      } else { 
+        alert("스펠링을 다시 확인해보세요!");
+      }
+    }
+
+    function nextRound() { 
+      startGame(currentRound + 1);
+    }
+
+    function showHint() {
+      const hintDisplay = document.getElementById('hint-display');
+      if (currentWordObj && currentWordObj.meaning) {
+        hintDisplay.innerText = "💡 힌트: " + currentWordObj.meaning;
+        setTimeout(() => {
+          hintDisplay.innerText = "";
+        }, 5000);
+      } else {
+        hintDisplay.innerText = "이 단어는 힌트가 없습니다.";
+      }
+    }
+
+// --- 실시간 자동 화면 배율 및 줌 스케일링 설정 함수 ---
+function resizeGame() {
+      const wrapper = document.getElementById('scale-wrapper');
+      const baseWidth = 715;
+      const baseHeight = 750;
+
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+
+      // 너비 비율과 높이 비율 중 작은 비율에 맞추어 완전한 박스 형태를 유지
+      const scaleX = windowWidth / baseWidth;
+      const scaleY = windowHeight / baseHeight;
+      const scale = Math.min(scaleX, scaleY);
+
+      // 모바일 및 소형 화면 대응 최소/최대 배율 (1배를 초과하지 않음)
+      const finalScale = Math.min(Math.max(scale, 0.15), 1);
+      
+      // 스케일 적용
+      wrapper.style.transform = `scale(${finalScale})`;
+
+      // [핵심 보정] transform-origin: center center 일 때 발생하는 물리적 오차를 메워줍니다.
+      // 축소되면서 남는 빈 공간을 마이너스 마진으로 상쇄하여 화면 정중앙에 완벽히 정렬되도록 제어합니다.
+      if (finalScale < 1) {
+        const offsetHeight = (baseHeight * (1 - finalScale)) / 2;
+        wrapper.style.marginTop = `-${offsetHeight}px`;
+        wrapper.style.marginBottom = `-${offsetHeight}px`;
+      } else {
+        wrapper.style.marginTop = `0px`;
+        wrapper.style.marginBottom = `0px`;
+      }
+    }
+
+    // 크기 변경 이벤트 리스너 등록
+    window.addEventListener('resize', resizeGame);
+    window.addEventListener('DOMContentLoaded', resizeGame);
+  </script>
+</body>
+</html>
