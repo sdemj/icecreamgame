@@ -1,1 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <style>
+    /* 기존 스타일 유지 */
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fcf8f2; margin: 0; padding: 30px 15px; display: flex; flex-direction: column; align-items: center; color: #333; }
+    .header-title { display: flex; align-items: center; gap: 10px; margin: 0 0 20px 0; font-size: 28px; }
+    .target-icon { background: white; border-radius: 50%; padding: 5px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .stats-container { display: flex; gap: 15px; margin-bottom: 20px; font-weight: bold; font-size: 15px; }
+    .score-badge { background-color: #fef08a; padding: 6px 18px; border-radius: 20px; color: #b45309; }
+    .round-badge { background-color: #e0f2fe; padding: 6px 18px; border-radius: 20px; color: #0369a1; }
+    
+    .ice-cream-svg { width: 120px; height: 150px; margin-bottom: 15px; transition: transform 0.2s ease-in-out; }
+    .lives-container { font-size: 30px; margin-bottom: 20px; height: 40px; display: flex; justify-content: center; }
+    
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      100% { transform: translate(0px, 0px) rotate(0deg); }
+    }
+    .shake-ice { animation: shake 0.5s infinite; }
 
+    .word-display { display: flex; gap: 10px; margin-bottom: 40px; min-height: 40px; }
+    .letter-box { width: 40px; height: 40px; border-bottom: 3px solid #333; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: bold; color: #6366f1; }
+    .keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 500px; }
+    .key-btn { width: 45px; height: 50px; background: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.2s; }
+    .key-btn.correct { background: #34d399; color: white; }
+    .key-btn.wrong { background: #fca5a5; color: white; }
+    .key-btn:disabled { cursor: not-allowed; opacity: 0.8; }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    .action-btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+    .btn-confirm { background: #6366f1; color: white; }
+    .btn-next { background: #e5e7eb; color: #9ca3af; cursor: not-allowed; }
+    .btn-next.active { background: #10b981; color: white; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <!-- 인트로 화면 -->
+  <div id="intro-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:linear-gradient(135deg, #fce7f3, #e0f2fe); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; font-family:'Segoe UI', sans-serif;">
+    <div style="font-size: 80px; margin-bottom: 20px;">🍦</div>
+    <h1 style="color:#0ea5e9; margin-bottom: 30px; text-shadow: 1px 1px 2px white;">Save the Ice Cream!</h1>
+    <div style="background:rgba(255, 255, 255, 0.8); padding:30px; border-radius:25px; border:3px solid #bae6fd; width:80%; max-width:450px; margin-bottom:40px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+      <h2 style="margin-top:0; color:#334155;">📋 활동 방법</h2>
+      <ul style="line-height:1.8; font-size:16px; color:#475569; text-align:left; padding-left: 20px;">
+        <li><strong>학습목표:</strong> 영단어 철자를 맞혀 아이스크림을 지키세요!</li>
+        <li><strong>점수 기준:</strong> 단어 성공 시 <strong>+4점</strong></li>
+        <li><strong>감점:</strong> 오답 시 아이스크림이 하나씩 녹아요!</li>
+        <li><strong>성공 조건:</strong> 기회가 끝나기 전에 단어 완성하기</li>
+      </ul>
+    </div>
+    <button onclick="document.getElementById('intro-screen').style.display='none'" style="padding:20px 70px; font-size:28px; background:#fb7185; color:white; border:none; border-radius:15px; cursor:pointer; font-weight:bold; box-shadow: 0 4px 10px rgba(251, 113, 133, 0.4); transition: transform 0.2s;">
+      Start
+    </button>
+  </div>
+
+  <h1 class="header-title">
+    <div class="target-icon">🍦</div> Ice Cream Game 
+    <button onclick="document.getElementById('help-modal').style.display='flex'" style="margin-left:10px; cursor:pointer; border-radius:50%; border:none; background:#eee; width:30px; height:30px;">?</button>
+  </h1>
+  <div class="stats-container">
+    <div class="score-badge">⭐ <span id="score-val">0</span> 점</div>
+    <div class="round-badge"><span id="round-val">1</span> / 12</div>
+  </div>
+
+  <svg class="ice-cream-svg" id="ice-cream-graphic" viewBox="0 0 100 150">
+    <polygon points="30,140 70,140 50,110" fill="#d97706" />
+    <circle id="scoop-7" cx="50" cy="95" r="18" fill="#fca5a5" />
+    <circle id="scoop-6" cx="50" cy="85" r="18" fill="#fbbf24" />
+    <circle id="scoop-5" cx="50" cy="75" r="18" fill="#a78bfa" />
+    <circle id="scoop-4" cx="50" cy="65" r="18" fill="#34d399" />
+    <circle id="scoop-3" cx="50" cy="55" r="18" fill="#60a5fa" />
+    <circle id="scoop-2" cx="50" cy="45" r="18" fill="#f472b6" />
+    <circle id="scoop-1" cx="50" cy="35" r="18" fill="#fb923c" />
+  </svg>
+
+  <div class="lives-container" id="lives-display"></div>
+  <div class="word-display" id="word-display"></div>
+  <div class="keyboard" id="keyboard"></div>
+
+  <!-- 도움말 모달 -->
+  <div class="modal-overlay" id="help-modal" style="z-index:3000;">
+    <div class="modal-content">
+      <h2>활동 방법</h2>
+      <p style="text-align:left; font-size:14px;">
+        1. <strong>학습목표:</strong> 영단어 철자를 맞혀 아이스크림을 지키세요!<br>
+        2. <strong>점수 기준:</strong> 단어 성공 시 +4점<br>
+        3. <strong>감점:</strong> 오답 시 아이스크림이 녹아요!<br>
+        4. <strong>성공 조건:</strong> 제한 기회 내 단어 완성
+      </p>
+      <button class="action-btn btn-confirm" onclick="document.getElementById('help-modal').style.display='none'">닫기</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="result-modal">
+    <div class="modal-content">
+      <h2 id="modal-title">정답입니다!</h2>
+      <div id="modal-answer" style="font-size:18px; margin:15px 0;"></div>
+      <input type="text" id="word-input" style="width:90%; padding:10px; margin-bottom:10px;" placeholder="단어 입력">
+      <button class="action-btn btn-confirm" onclick="checkTypedWord()">확인</button>
+      <button class="action-btn btn-next" id="btn-next" onclick="nextRound()" disabled>다음 단어 ▶</button>
+    </div>
+  </div>
+
+  <script>
+ const wordData = [
+    { word: "RED" },
+    { word: "ORANGE" },
+    { word: "YELLOW" }
+  ];
+
+  let wordsList = [], currentRound = 0, currentWordObj = null, guessedChars = [], mistakes = 0, score = 0, maxAllowed = 5;
+  const soundCorrect = new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3');
+  const soundWrong = new Audio('https://www.soundjay.com/buttons/sounds/button-4.mp3');
+
+window.onload = () => {
+    initGame(wordData);
+  };
+
+function initGame(data) { 
+    wordsList = data; 
+    startGame(0); 
+  }
+    function startGame(roundIndex) {
+      if (roundIndex >= wordsList.length) { alert("모든 단어를 마쳤습니다!"); return; }
+      currentRound = roundIndex; currentWordObj = wordsList[currentRound];
+      guessedChars = []; mistakes = 0;
+      const len = currentWordObj.word.replace(/\s/g, '').length;
+      maxAllowed = Math.min(len + 2, 7); 
+      for(let i=1; i<=7; i++) document.getElementById('scoop-' + i).style.display = 'block';
+      document.getElementById('ice-cream-graphic').classList.remove('shake-ice');
+      document.getElementById('round-val').innerText = currentRound + 1;
+      renderLives(); renderWordBox(); renderKeyboard();
+      document.getElementById('result-modal').style.display = 'none';
+    }
+
+    function renderLives() {
+      const livesDiv = document.getElementById('lives-display');
+      livesDiv.innerHTML = '';
+      for (let i = 0; i < maxAllowed; i++) {
+        livesDiv.innerHTML += (i < mistakes) ? '💧 ' : '🧊 ';
+      }
+    }
+
+    function handleGuess(char, btn) {
+      if (guessedChars.includes(char)) return;
+      guessedChars.push(char); btn.disabled = true;
+      if (currentWordObj.word.includes(char)) {
+        soundCorrect.play(); btn.classList.add('correct'); renderWordBox(); checkWinCondition();
+      } else {
+        soundWrong.play(); btn.classList.add('wrong'); mistakes++;
+        if (mistakes <= 7) document.getElementById('scoop-' + mistakes).style.display = 'none';
+        const remaining = maxAllowed - mistakes;
+        document.getElementById('ice-cream-graphic').className = (remaining === 1) ? 'ice-cream-svg shake-ice' : 'ice-cream-svg';
+        renderLives(); checkLoseCondition();
+      }
+    }
+
+    function renderWordBox() {
+      const wordDiv = document.getElementById('word-display'); wordDiv.innerHTML = '';
+      currentWordObj.word.split('').forEach(char => {
+        const box = document.createElement('div'); box.className = 'letter-box';
+        if (char === ' ') box.style.border = 'none';
+        else if (guessedChars.includes(char)) box.innerText = char;
+        wordDiv.appendChild(box);
+      });
+    }
+
+    function renderKeyboard() {
+      const k = document.getElementById('keyboard'); k.innerHTML = '';
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(c => {
+        const b = document.createElement('button'); b.className = 'key-btn'; b.innerText = c;
+        b.onclick = () => handleGuess(c, b); k.appendChild(b);
+      });
+    }
+
+    function checkWinCondition() {
+      if (currentWordObj.word.replace(/\s/g, '').split('').every(c => guessedChars.includes(c))) {
+        score += 4; document.getElementById('score-val').innerText = score;
+        setTimeout(() => showModal(true), 400);
+      }
+    }
+
+    function checkLoseCondition() {
+      if (mistakes >= maxAllowed) setTimeout(() => showModal(false), 400);
+    }
+
+    function showModal(isWin) {
+      document.getElementById('result-modal').style.display = 'flex';
+      document.getElementById('modal-title').innerText = isWin ? '정답입니다!' : '아이스크림이 녹았어요!';
+      document.getElementById('modal-answer').innerText = `정답: ${currentWordObj.word}`;
+      document.getElementById('word-input').value = ''; 
+      document.getElementById('word-input').focus();
+      const nextBtn = document.getElementById('btn-next');
+      if (currentRound < wordsList.length - 1) {
+        nextBtn.disabled = true; nextBtn.classList.remove('active');
+        nextBtn.innerText = `다음 단어 (${currentRound + 2}/${wordsList.length})`;
+      } else nextBtn.innerText = '마지막 단어 완료!';
+    }
+
+    function checkTypedWord() {
+      if (document.getElementById('word-input').value.toUpperCase().trim() === currentWordObj.word) {
+        if (currentRound < wordsList.length - 1) {
+          document.getElementById('btn-next').disabled = false;
+          document.getElementById('btn-next').classList.add('active');
+        } else { alert("축하합니다! 모든 단어를 마스터했습니다!"); startGame(0); }
+      } else { alert("스펠링을 다시 확인해보세요!"); }
+    }
+    function nextRound() { startGame(currentRound + 1); }
+  </script>
+</body>
+</html>
