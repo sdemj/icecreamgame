@@ -33,15 +33,15 @@ body {
       transform-origin: center center;
       flex-shrink: 0;
 
-      /* [수정] 아래 3줄을 바꾸세요 */
-      border: 6px solid transparent; 
-      border-image: linear-gradient(to bottom right, #fb7185, #fef08a, #34d399, #0ea5e9, #6366f1);
-      border-image-slice: 1;
+      /* [수정된 코드] 그라데이션 테두리와 둥근 모서리 구현 */
+      border: 6px solid transparent;
+      background: 
+        linear-gradient(#fcf8f2, #fcf8f2) padding-box, 
+        linear-gradient(to bottom right, #fb7185, #fef08a, #34d399, #0ea5e9, #6366f1) border-box;
       
-      border-radius: 40px;         
+      border-radius: 40px;          
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); 
-      overflow: hidden;           
-      background-color: #fcf8f2;  
+      overflow: hidden;             
     }
 
     /* 3. 각 화면의 가로세로 규격 고정 */
