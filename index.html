@@ -23,27 +23,32 @@ body {
     }
 
     /* 2. 게임 영역 고정 및 통째로 스케일링하기 위한 Wrapper 설정 */
-    .game-wrapper {
-      width: 550px;
+.game-wrapper {
+      width: 715px;
       height: 750px;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      transform-origin: center center; /* [변경] 다시 정중앙 기준으로 배율 조정 */
+      transform-origin: center center;
       flex-shrink: 0;
 
-      border: 6px solid #fb7185; 
-      border-radius: 25px;       
+      /* [수정] 아래 3줄을 바꾸세요 */
+      border: 6px solid transparent; 
+      border-image: linear-gradient(to bottom right, #fb7185, #fef08a, #34d399, #0ea5e9, #6366f1);
+      border-image-slice: 1;
+      
+      border-radius: 40px;         
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); 
-      overflow: hidden;          
-      background-color: #fcf8f2; 
+      overflow: hidden;           
+      background-color: #fcf8f2;  
     }
+
     /* 3. 각 화면의 가로세로 규격 고정 */
     #intro-screen, .selection-screen, #game-screen {
-      width: 550px !important;
+      width: 715px !important;
       height: 750px !important;
-      max-width: 550px !important;
+      max-width: 715px !important;
       position: absolute !important;
       top: 0 !important;
       left: 0 !important;
@@ -666,8 +671,8 @@ body {
           vocabularyData[sub].forEach(w => {
             if (typeof w === 'object' && w !== null) {
               tempWords.push({ 
-                word: w.word.toUpperCase(), 
-                meaning: w.meaning || "" 
+              word: w.word.charAt(0).toUpperCase() + w.word.slice(1).toLowerCase(), 
+  meaning: w.meaning || ""
               });
             } else if (typeof w === 'string') {
               tempWords.push({ 
@@ -817,8 +822,9 @@ body {
     }
 
     function checkTypedWord() {
-      const typed = document.getElementById('word-input').value.toUpperCase().trim();
-      if (typed === currentWordObj.word) {
+const typed = document.getElementById('word-input').value.trim().toLowerCase();
+const answer = currentWordObj.word.trim().toLowerCase(); // 정답도 소문자로 변환하여 비교
+if (typed === answer) {
         if (currentRound < wordsList.length - 1) {
           document.getElementById('btn-next').disabled = false;
           document.getElementById('btn-next').classList.add('active');
@@ -852,7 +858,7 @@ body {
 // --- 실시간 자동 화면 배율 및 줌 스케일링 설정 함수 ---
 function resizeGame() {
       const wrapper = document.getElementById('scale-wrapper');
-      const baseWidth = 550;
+      const baseWidth = 715;
       const baseHeight = 750;
 
       const windowWidth = window.innerWidth;
