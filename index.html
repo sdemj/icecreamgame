@@ -252,7 +252,7 @@ body {
       color: #be123c !important; 
     }
 
-    .box-btn {
+.box-btn {
       background: white;
       border: 3px solid #e2e8f0;
       border-radius: 15px;
@@ -263,6 +263,9 @@ body {
       transition: all 0.2s ease;
       text-align: center;
       box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      
+      /* [추가] 모바일(iOS Safari 등)에서 강제로 파란색 글씨로 변하는 기본 설정을 방지 */
+      color: #333333; 
     }
     .box-btn:hover {
       transform: translateY(-2px);
