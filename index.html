@@ -5,8 +5,21 @@
   <meta charset="UTF-8">
   <style>
     /* 기존 스타일 유지 */
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fcf8f2; margin: 0; padding: 30px 15px; display: flex; flex-direction: column; align-items: center; color: #333; }
-    .header-title { display: flex; align-items: center; gap: 10px; margin: 0 0 20px 0; font-size: 28px; }
+body { 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+  /* 배경 이미지 설정 및 연하게 만들기 */
+  background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('background.png');
+  background-size: cover; 
+  background-position: center; 
+  background-attachment: fixed;
+  margin: 0; 
+  padding: 30px 15px; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  color: #333;
+  min-height: 100vh;
+}    .header-title { display: flex; align-items: center; gap: 10px; margin: 0 0 20px 0; font-size: 28px; }
     .target-icon { background: white; border-radius: 50%; padding: 5px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     .stats-container { display: flex; gap: 15px; margin-bottom: 20px; font-weight: bold; font-size: 15px; }
     .score-badge { background-color: #fef08a; padding: 6px 18px; border-radius: 20px; color: #b45309; }
