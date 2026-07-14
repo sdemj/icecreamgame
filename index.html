@@ -742,12 +742,12 @@ function playSound(audio) {
     }
 
 function handleGuess(char, btn) {
-  if (guessedChars.includes(char)) return;
-  guessedChars.push(char); 
+  const upperChar = char.toUpperCase();
+  if (guessedChars.includes(upperChar)) return;
+  guessedChars.push(upperChar); 
   btn.disabled = true;
 
-  // [수정 포인트] 단어와 입력값을 모두 대문자로 변경하여 비교
-  if (currentWordObj.word.toUpperCase().includes(char)) {
+  if (currentWordObj.word.toUpperCase().includes(upperChar)) {
     playSound(soundCorrect);
     btn.classList.add('correct'); 
     renderWordBox(); 
@@ -756,11 +756,8 @@ function handleGuess(char, btn) {
     playSound(soundWrong);
     btn.classList.add('wrong'); 
     mistakes++;
-    
-    // 아이스크림 이미지 로직 (파일명 확인 필수!)
     const imageIndex = Math.min(mistakes + 1, 7);
     document.getElementById('ice-cream-graphic').src = `${imageIndex}.png`;
-    
     renderLives(); 
     checkLoseCondition();
   }
@@ -768,8 +765,6 @@ function handleGuess(char, btn) {
 function renderWordBox() {
   const wordDiv = document.getElementById('word-display');
   wordDiv.innerHTML = '';
-  
-  // [수정 포인트] 단어를 대문자로 통일
   currentWordObj.word.toUpperCase().split('').forEach(char => {
     const box = document.createElement('div'); 
     box.className = 'letter-box';
@@ -777,6 +772,8 @@ function renderWordBox() {
       box.style.border = 'none';
     } else if (guessedChars.includes(char)) {
       box.innerText = char;
+    } else {
+      box.innerText = '';
     }
     wordDiv.appendChild(box);
   });
@@ -794,13 +791,14 @@ function renderWordBox() {
       });
     }
 
-    function checkWinCondition() {
-      if (currentWordObj.word.replace(/\s/g, '').split('').every(c => guessedChars.includes(c))) {
-        score += 4;
-        document.getElementById('score-val').innerText = score;
-        setTimeout(() => showModal(true), 400);
-      }
-    }
+function checkWinCondition() {
+  const cleanWord = currentWordObj.word.toUpperCase().replace(/\s/g, '');
+  if (cleanWord.split('').every(c => guessedChars.includes(c))) {
+    score += 4;
+    document.getElementById('score-val').innerText = score;
+    setTimeout(() => showModal(true), 400);
+  }
+}
 
     // 아이스크림 게임 패배 시
     function checkLoseCondition() {
@@ -828,23 +826,21 @@ function renderWordBox() {
       }
     }
 
-    function checkTypedWord() {
-const typed = document.getElementById('word-input').value.trim().toLowerCase();
-const answer = currentWordObj.word.trim().toLowerCase(); // 정답도 소문자로 변환하여 비교
-if (typed === answer) {
-        if (currentRound < wordsList.length - 1) {
-          document.getElementById('btn-next').disabled = false;
-          document.getElementById('btn-next').classList.add('active');
-        } else { 
-          alert("축하합니다! 이번 세트의 모든 단어를 완료했습니다!");
-          document.getElementById('result-modal').style.display = 'none';
-          document.getElementById('game-screen').style.display = 'none';
-          document.getElementById('category-screen').style.display = 'flex'; 
-        }
-      } else { 
-        alert("스펠링을 다시 확인해보세요!");
-      }
+function checkTypedWord() {
+  const typed = document.getElementById('word-input').value.trim().toUpperCase();
+  const answer = currentWordObj.word.trim().toUpperCase();
+  if (typed === answer) {
+    if (currentRound < wordsList.length - 1) {
+      document.getElementById('btn-next').disabled = false;
+      document.getElementById('btn-next').classList.add('active');
+    } else { 
+      alert("축하합니다! 모든 단어를 완료했습니다!");
+      location.reload(); 
     }
+  } else { 
+    alert("스펠링을 다시 확인해보세요!");
+  }
+}
 
     function nextRound() { 
       startGame(currentRound + 1);
