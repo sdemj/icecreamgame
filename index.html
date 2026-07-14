@@ -399,7 +399,8 @@ body {
       <div class="modal-content">
         <h2 id="modal-title">정답입니다!</h2>
         <div id="modal-answer" style="font-size:18px; margin:15px 0;"></div>
-        <input type="text" id="word-input" style="width:90%; padding:10px; margin-bottom:10px;" placeholder="단어 입력">
+        <input type="text" id="word-input" style="width:90%; padding:10px; margin-bottom:10px;" 
+       placeholder="단어 입력" onkeypress="if(event.keyCode==13) checkTypedWord()">
         <button class="action-btn btn-confirm" onclick="checkTypedWord()">확인</button>
         <button class="action-btn btn-next" id="btn-next" onclick="nextRound()" disabled>다음 단어 ▶</button>
       </div>
