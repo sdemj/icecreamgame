@@ -154,7 +154,7 @@ body {
       50% { transform: translate(-1px, 2px) rotate(-1deg); }
       100% { transform: translate(0px, 0px) rotate(0deg); }
     }
-    .shake-ice { animation: shake 0.5s infinite; }
+  .shake-scoop { animation: shake 0.5s infinite; }
 
     .word-display { 
       display: flex; 
@@ -386,7 +386,7 @@ body {
         <p style="text-align:left; font-size:14px; line-height:1.6;">
           1. 원하는 주제를 선택합니다.<br>
           2. 화면 아래 알파벳 버튼을 눌러서 단어에 들어갈 알파벳을 찾아보세요.<br>
-          3. 한 번 틀릴 때마다 🧊(얼음)이 💧(물)로 변하며 아이스크림이 조금씩 녹아요.<br>
+          3. 한 번 틀릴 때마다 🍨(스쿱)이 하나씩 사라집니다.<br>
           4. 아이스크림이 다 녹기 전에 단어를 완성해서 아이스크림을 지켜주세요!<br>
           5. 단어 완성 후 입력까지 끝내면 4점을 얻고 다음 문제로 넘어갑니다.<br>
           💡 주의: 틀릴 수 있는 기회는 단어 길이에 따라 달라지니 신중하게 생각해요!
@@ -720,8 +720,7 @@ function playSound(audio) {
       maxAllowed = Math.min(len + 2, 7);
 
       document.getElementById('ice-cream-graphic').src = '1.png';
-      document.getElementById('ice-cream-graphic').classList.remove('shake-ice');
-      
+document.getElementById('ice-cream-graphic').classList.remove('shake-scoop');      
       document.getElementById('round-val').innerText = currentRound + 1;
       renderLives(); 
       renderWordBox(); 
@@ -729,15 +728,13 @@ function playSound(audio) {
       document.getElementById('result-modal').style.display = 'none';
     }
 
-    function renderLives() {
+function renderLives() {
       const display = document.getElementById('lives-display');
       display.innerHTML = '';
       const remaining = maxAllowed - mistakes;
+      // 남은 기회만큼 스쿱(🍨)을 표시합니다.
       for (let i = 0; i < remaining; i++) {
-        display.innerHTML += '🧊 ';
-      }
-      for (let i = 0; i < mistakes; i++) {
-        display.innerHTML += '💧 ';
+        display.innerHTML += '🍨 ';
       }
     }
 
