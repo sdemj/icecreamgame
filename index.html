@@ -670,19 +670,19 @@ function playSound(audio) {
     }
 
     // --- 단어 세트 빌드 및 게임 화면으로 진입 ---
-    function generateGameWords() {
+function generateGameWords() {
       let tempWords = [];
       selectedSubcategories.forEach(sub => {
         if (vocabularyData[sub]) {
           vocabularyData[sub].forEach(w => {
             if (typeof w === 'object' && w !== null) {
               tempWords.push({ 
-              word: w.word.charAt(0).toUpperCase() + w.word.slice(1).toLowerCase(), 
-  meaning: w.meaning || ""
+                word: w.word.toLowerCase(), 
+                meaning: w.meaning || ""
               });
             } else if (typeof w === 'string') {
               tempWords.push({ 
-                word: w.toUpperCase(), 
+                word: w.toLowerCase(), 
                 meaning: "" 
               });
             }
@@ -804,10 +804,10 @@ function checkWinCondition() {
       }
     }
 
-    function showModal(isWin) {
+function showModal(isWin) {
       document.getElementById('result-modal').style.display = 'flex';
       document.getElementById('modal-title').innerText = isWin ? '정답입니다!' : '아이스크림이 녹았어요!';
-      document.getElementById('modal-answer').innerText = `정답: ${currentWordObj.word}`;
+      document.getElementById('modal-answer').innerText = `정답: ${currentWordObj.word.toLowerCase()}`;
       document.getElementById('word-input').value = ''; 
       document.getElementById('word-input').focus();
       
@@ -824,8 +824,8 @@ function checkWinCondition() {
     }
 
 function checkTypedWord() {
-  const typed = document.getElementById('word-input').value.trim().toUpperCase();
-  const answer = currentWordObj.word.trim().toUpperCase();
+  const typed = document.getElementById('word-input').value.trim().toLowerCase();
+  const answer = currentWordObj.word.trim().toLowerCase();
   if (typed === answer) {
     if (currentRound < wordsList.length - 1) {
       document.getElementById('btn-next').disabled = false;
