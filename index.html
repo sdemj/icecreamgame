@@ -860,7 +860,68 @@
       box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
     }
 
-    /* ===== 완료 화면 ===== */
+    /* ===== 틀린 문제 리뷰 화면 ===== */
+    #review-screen {
+      display: none;
+      background: linear-gradient(180deg, var(--sky) 0%, var(--sea) 50%, var(--grass) 50.5%, var(--grass) 100%);
+      flex-direction: column;
+      z-index: 50;
+      overflow-y: auto;
+    }
+
+    .review-content {
+      flex: 1;
+      padding: clamp(20px, 4vh, 40px) clamp(15px, 2vw, 30px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+    }
+
+    #review-list {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .review-item {
+      background: var(--cream-board);
+      border: 4px solid #D9CCBF;
+      border-radius: 20px;
+      padding: clamp(15px, 3vw, 25px);
+      text-align: center;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    .review-item-word {
+      font-size: clamp(22px, 4vw, 28px);
+      font-weight: 900;
+      color: var(--wood-dark);
+      font-family: 'Courier New', monospace;
+      margin-bottom: 10px;
+    }
+
+    .review-item-meaning {
+      font-size: clamp(16px, 3vw, 20px);
+      color: #666;
+      font-weight: 700;
+    }
+
+    .completion-btn {
+      padding: clamp(12px, 2.5vw, 18px) clamp(25px, 4vw, 40px);
+      font-size: clamp(16px, 3vw, 22px);
+      font-family: 'Jua', sans-serif;
+      font-weight: 900;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      color: white;
+      white-space: nowrap;
+    }
     #completion-screen {
       display: none;
       background: linear-gradient(180deg, var(--sky) 0%, var(--sea) 50%, var(--grass) 50.5%, var(--grass) 100%);
@@ -1110,15 +1171,34 @@
   </div>
 </div>
 
-<!-- 완료 화면 -->
+<!-- 틀린 문제 리뷰 화면 -->
+<div id="review-screen" class="screen">
+  <div class="header-bar">
+    <div class="header-left">
+      <button class="nav-icon-btn" onclick="showCompletionScreen()" title="뒤로">←</button>
+      <span class="header-title">틀린 문제 복습</span>
+    </div>
+    <div class="header-right">
+      <button class="nav-icon-btn" id="music-toggle-header4" onclick="toggleMusic()" title="음악">🔊</button>
+      <button class="nav-icon-btn" onclick="backToIntro()" title="처음으로">🏠</button>
+    </div>
+  </div>
+  <div class="review-content">
+    <div id="review-list"></div>
+  </div>
+</div>
 <div id="completion-screen" class="screen">
   <div class="completion-content">
     <div class="completion-title">🎉 아이스크림을 구했어요!</div>
     <div class="completion-emoji">🍦</div>
     <div class="completion-score" id="final-score">최종 점수</div>
+    <div style="font-size: clamp(16px, 3vw, 20px); color: #666; font-weight: 700; margin-bottom: 20px;" id="wrong-count">틀린 문제: 0개</div>
     <div class="completion-buttons">
       <button class="completion-btn btn-replay" onclick="replayGame()">🎮 다시 플레이하기</button>
       <button class="completion-btn btn-home-completion" onclick="goHome()">🏠 처음으로</button>
+    </div>
+    <div id="review-btn-container" style="display: none; width: 100%; margin-top: 20px;">
+      <button class="completion-btn" style="background: linear-gradient(135deg, #FFB347, #FFA500); width: 100%;" onclick="showReviewScreen()">📖 틀린 문제 복습하기</button>
     </div>
   </div>
 </div>
@@ -1562,6 +1642,7 @@
   let isAnswerPhase = false;
   let score = 0;
   let musicEnabled = true;
+  let wrongWords = [];
 
   // ========== 전체화면 ==========
   function toggleFullscreen() {
@@ -1789,11 +1870,32 @@
 
     wordsList = tempWords.slice(0, 5);
     score = 0;
+    wrongWords = [];
 
     hideAllScreens();
     document.getElementById('game-screen').style.display = 'flex';
     document.getElementById('total-val').innerText = wordsList.length;
     startGame(0);
+  }
+
+  function showReviewScreen() {
+    hideAllScreens();
+    
+    const reviewList = document.getElementById('review-list');
+    reviewList.innerHTML = '';
+    
+    wrongWords.forEach((wordObj, index) => {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'review-item';
+      itemDiv.innerHTML = `
+        <div style="font-size: clamp(16px, 3vw, 18px); color: #999; margin-bottom: 8px; font-weight: 700;">문제 ${index + 1}</div>
+        <div class="review-item-word">${wordObj.word.toUpperCase()}</div>
+        <div class="review-item-meaning">뜻: ${wordObj.meaning}</div>
+      `;
+      reviewList.appendChild(itemDiv);
+    });
+    
+    document.getElementById('review-screen').style.display = 'flex';
   }
 
   function replayGame() {
@@ -1942,6 +2044,7 @@
   function checkLoseCondition() {
     if (mistakes >= maxAllowed) {
       isAnswerPhase = true;
+      wrongWords.push(currentWordObj);
       setTimeout(() => showResultModal(false), 400);
     }
   }
@@ -1978,7 +2081,7 @@
       } else {
         nextBtn.disabled = false;
         nextBtn.classList.add('active');
-        nextBtn.innerText = '게임 완료!';
+        nextBtn.innerText = '🎉 게임 완료!';
       }
     } else {
       resultDiv.classList.remove('success');
@@ -2014,7 +2117,11 @@
   }
 
   function nextRound() {
-    startGame(currentRound + 1);
+    if (currentRound < wordsList.length - 1) {
+      startGame(currentRound + 1);
+    } else {
+      showCompletionScreen();
+    }
   }
 
   // ========== 힌트 ==========
@@ -2032,7 +2139,18 @@
 
   // ========== 완료 화면 ==========
   function showCompletionScreen() {
+    document.getElementById('result-modal').style.display = 'none';
+    document.getElementById('game-screen').style.display = 'none';
+    
     document.getElementById('final-score').innerText = `최종 점수: ${score}점`;
+    document.getElementById('wrong-count').innerText = `틀린 문제: ${wrongWords.length}개`;
+    
+    if (wrongWords.length > 0) {
+      document.getElementById('review-btn-container').style.display = 'block';
+    } else {
+      document.getElementById('review-btn-container').style.display = 'none';
+    }
+    
     hideAllScreens();
     document.getElementById('completion-screen').style.display = 'flex';
   }
