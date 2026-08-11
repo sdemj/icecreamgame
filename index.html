@@ -64,11 +64,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px 20px;
+      padding: clamp(10px, 1.5vh, 15px) clamp(12px, 2vw, 20px);
       background: rgba(255, 255, 255, 0.95);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
+      flex-shrink: 0;
     }
 
     .header-left {
@@ -78,7 +79,7 @@
     }
 
     .header-title {
-      font-size: 20px;
+      font-size: clamp(16px, 2.8vw, 20px);
       font-weight: 900;
       color: #333;
     }
@@ -90,13 +91,13 @@
     }
 
     .nav-icon-btn {
-      width: 40px;
-      height: 40px;
+      width: clamp(34px, 6vw, 40px);
+      height: clamp(34px, 6vw, 40px);
       border-radius: 50%;
       border: 2px solid #E5E7EB;
       background: white;
       cursor: pointer;
-      font-size: 20px;
+      font-size: clamp(16px, 2.5vw, 20px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -473,11 +474,11 @@
 
     .game-content-wrapper {
       flex: 1;
-      padding: clamp(20px, 3vh, 40px) clamp(15px, 2vw, 30px);
+      padding: clamp(15px, 2.5vh, 30px) clamp(10px, 2vw, 20px);
       display: flex;
       flex-direction: column;
       align-items: center;
-      overflow-y: auto;
+      overflow: hidden;
     }
 
     .game-wrapper {
@@ -486,6 +487,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-height: 0;
     }
 
     .game-stats {
@@ -495,7 +499,8 @@
       font-weight: 700;
       flex-wrap: wrap;
       justify-content: center;
-      margin-bottom: clamp(20px, 3vh, 40px);
+      margin-bottom: clamp(8px, 1.5vh, 15px);
+      flex-shrink: 0;
     }
 
     .stat-badge {
@@ -510,30 +515,33 @@
 
     .game-main {
       display: flex;
-      gap: clamp(20px, 3vw, 40px);
+      gap: clamp(15px, 2vw, 30px);
       align-items: flex-start;
       width: 100%;
       justify-content: center;
       flex-wrap: nowrap;
+      flex: 1;
+      min-height: 0;
     }
 
     .ice-cream-section {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(15px, 2vw, 20px);
+      gap: clamp(8px, 1.2vw, 12px);
       flex: 0 0 auto;
-      width: clamp(130px, 18vw, 200px);
+      width: clamp(120px, 16vw, 180px);
     }
 
     #ice-cream-display {
-      width: clamp(150px, 20vw, 220px);
-      height: clamp(280px, 45vh, 400px);
+      width: clamp(130px, 18vw, 180px);
+      height: clamp(220px, 35vh, 320px);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
       position: relative;
+      flex-shrink: 0;
     }
 
     .ice-cream-image {
@@ -573,32 +581,34 @@
     }
 
     .hint-display {
-      min-height: 35px;
-      font-size: clamp(16px, 3vw, 20px);
+      min-height: 25px;
+      font-size: clamp(14px, 2.5vw, 18px);
       color: #D97706;
       font-weight: 700;
       text-align: center;
-      margin-top: 10px;
+      margin-top: 0;
       word-break: keep-all;
+      flex-shrink: 0;
     }
 
     .game-content {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(20px, 3vh, 30px);
+      gap: clamp(12px, 2vh, 18px);
       flex: 0 1 auto;
       min-width: clamp(280px, 70%, 650px);
     }
 
     .word-display {
       display: flex;
-      gap: clamp(8px, 1.5vw, 12px);
+      gap: clamp(6px, 1vw, 10px);
       justify-content: center;
       flex-wrap: wrap;
-      min-height: 90px;
+      min-height: auto;
       align-items: center;
       width: 100%;
+      flex-shrink: 0;
     }
 
     .letter-box {
@@ -622,10 +632,11 @@
     .keyboard {
       display: flex;
       flex-direction: column;
-      gap: clamp(8px, 1.5vw, 12px);
+      gap: clamp(6px, 1vw, 10px);
       width: 100%;
       max-width: 650px;
-      margin-bottom: clamp(15px, 2vh, 25px);
+      margin-bottom: clamp(8px, 1.2vh, 12px);
+      flex-shrink: 0;
     }
 
     .key-btn {
@@ -677,9 +688,11 @@
 
     .game-buttons {
       display: flex;
-      gap: clamp(10px, 2vw, 15px);
+      gap: clamp(8px, 1.5vw, 12px);
       flex-wrap: wrap;
       justify-content: center;
+      flex-shrink: 0;
+      margin-bottom: clamp(8px, 1.2vh, 12px);
     }
 
     .game-btn {
@@ -708,6 +721,63 @@
     .btn-help-game {
       background: linear-gradient(135deg, var(--coral), var(--coral));
       color: white;
+    }
+
+    /* ===== 게임 진행도 바 ===== */
+    .game-progress-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+
+    .game-progress-bar {
+      width: clamp(150px, 50vw, 350px);
+      height: clamp(20px, 3vh, 28px);
+      background: linear-gradient(135deg, #FFE9F3, #FFF0FA);
+      border: 3px solid #F0C4D8;
+      border-radius: 16px;
+      overflow: visible;
+      box-shadow: 0 4px 12px rgba(240, 196, 216, 0.2);
+      position: relative;
+    }
+
+    .game-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #FFB3D9, #FFC8E1);
+      border-radius: 13px;
+      transition: width 0.5s ease-out;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: -2px;
+      position: relative;
+      overflow: visible;
+    }
+
+    .game-progress-emoji {
+      font-size: clamp(20px, 3.5vh, 28px);
+      animation: progress-bounce 0.6s ease-in-out;
+      display: inline-block;
+      position: relative;
+      z-index: 10;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+      margin-right: clamp(-8px, -1.2vw, -6px);
+    }
+
+    @keyframes progress-bounce {
+      0%, 100% { transform: translateY(-8px) scale(1); }
+      50% { transform: translateY(-12px) scale(1.15); }
+    }
+
+    .game-progress-text {
+      font-size: clamp(12px, 2vw, 14px);
+      font-weight: 700;
+      color: #D991B8;
+      font-family: 'Jua', sans-serif;
     }
 
     /* ===== 모달 ===== */
@@ -1107,7 +1177,6 @@
       <span class="header-title">대분류 선택</span>
     </div>
     <div class="header-right">
-      <button class="nav-icon-btn" onclick="document.getElementById('help-modal').style.display='flex'" title="How to Play">❓</button>
       <button class="nav-icon-btn" id="music-toggle-header1" onclick="toggleMusic()" title="음악">🔊</button>
       <button class="nav-icon-btn" onclick="backToIntro()" title="처음으로">🏠</button>
     </div>
@@ -1131,7 +1200,6 @@
       <span class="header-title">소분류 선택</span>
     </div>
     <div class="header-right">
-      <button class="nav-icon-btn" onclick="document.getElementById('help-modal').style.display='flex'" title="How to Play">❓</button>
       <button class="nav-icon-btn" id="music-toggle-header2" onclick="toggleMusic()" title="음악">🔊</button>
       <button class="nav-icon-btn" onclick="backToIntro()" title="처음으로">🏠</button>
     </div>
@@ -1155,7 +1223,6 @@
       <span class="header-title">🍦 Save the Ice Cream!</span>
     </div>
     <div class="header-right">
-      <button class="nav-icon-btn" onclick="document.getElementById('help-modal').style.display='flex'" title="How to Play">❓</button>
       <button class="nav-icon-btn" id="music-toggle-header3" onclick="toggleMusic()" title="음악">🔊</button>
       <button class="nav-icon-btn" onclick="backToIntro()" title="처음으로">🏠</button>
     </div>
@@ -1180,8 +1247,19 @@
           <div class="keyboard" id="keyboard"></div>
           <div class="game-buttons">
             <button class="game-btn btn-hint" onclick="showHint()">💡 Hint</button>
-            <button class="game-btn btn-help-game" onclick="document.getElementById('help-modal').style.display='flex'">❓ Help</button>
           </div>
+        </div>
+      </div>
+
+      <!-- 게임 진행도 바 -->
+      <div class="game-progress-container">
+        <div class="game-progress-bar">
+          <div class="game-progress-fill" id="game-progress-fill">
+            <div class="game-progress-emoji">🍦</div>
+          </div>
+        </div>
+        <div class="game-progress-text">
+          <span id="progress-round">1</span> / <span id="progress-total">5</span>
         </div>
       </div>
     </div>
@@ -1231,6 +1309,7 @@
       2️⃣ 알파벳 버튼을 눌러 단어를 완성하세요<br>
       3️⃣ 틀릴 때마다 아이스크림이 녹아요<br>
       4️⃣ 단어를 완성하고 철자를 입력해요<br>
+      💡 <strong>Hint 버튼:</strong> 답을 잊었다면 Hint로 영어뜻을 확인하세요 (점수 차감 없음)<br>
       5️⃣ 남은 스쿱이 점수가 됩니다<br>
     </p>
     <button class="modal-btn modal-btn-confirm" onclick="document.getElementById('help-modal').style.display='none'" style="width: 200px; margin-top: 20px;">닫기</button>
@@ -1935,6 +2014,7 @@
     hideAllScreens();
     document.getElementById('game-screen').style.display = 'flex';
     document.getElementById('total-val').innerText = wordsList.length;
+    document.getElementById('progress-total').innerText = wordsList.length;
     startGame(0);
   }
 
@@ -1967,6 +2047,16 @@
   }
 
   // ========== 게임 시작 ==========
+  // ========== 게임 진행도 바 업데이트 ==========
+  function updateGameProgress() {
+    const totalRounds = wordsList.length;
+    const currentRoundNum = currentRound + 1;
+    const progressPercent = (currentRoundNum / totalRounds) * 100;
+    
+    document.getElementById('game-progress-fill').style.width = progressPercent + '%';
+    document.getElementById('progress-round').innerText = currentRoundNum;
+  }
+
   function startGame(roundIndex) {
     if (roundIndex >= wordsList.length) {
       showCompletionScreen();
@@ -1984,6 +2074,10 @@
     if (maxAllowed < 1) maxAllowed = 1;
 
     document.getElementById('round-val').innerText = currentRound + 1;
+    
+    // 게임 진행도 바 업데이트
+    updateGameProgress();
+    
     updateIceCream();
     renderWordBox();
     renderKeyboard();
