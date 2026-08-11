@@ -266,6 +266,22 @@
       flex-shrink: 0;
     }
 
+    .selection-card {
+      width: 100%;
+      max-width: 1000px;
+      background: radial-gradient(circle at top left, rgba(242, 220, 158, 0.45) 0%, transparent 32%), radial-gradient(circle at top right, rgba(232, 144, 124, 0.2) 0%, transparent 32%), rgba(255, 251, 240, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 40px;
+      border: 6px solid var(--cream-board);
+      box-shadow: 0 15px 35px rgba(140, 104, 68, 0.12), 0 5px 0 var(--wood);
+      padding: clamp(20px, 4vh, 40px) clamp(15px, 3vw, 40px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
+    }
+
     .selection-grid-wrapper {
       width: 100%;
       max-width: 100%;
@@ -366,6 +382,55 @@
       border-color: #4CAF50;
       background: linear-gradient(135deg, #A5D6A7, #C8E6C9);
       color: #2E7D32;
+    }
+
+    /* ===== 소분류 선택 화면: 카드/버튼 확대 ===== */
+    #word-screen .selection-card {
+      max-width: 1300px;
+    }
+
+    #subcategory-grid {
+      gap: clamp(16px, 2.5vw, 28px);
+    }
+
+    #subcategory-grid .select-btn {
+      min-height: clamp(150px, 22vh, 230px);
+      padding: clamp(22px, 3.5vh, 34px) clamp(12px, 2vw, 20px);
+      border-radius: 30px;
+    }
+
+    #subcategory-grid .select-btn-title {
+      font-size: clamp(22px, 4vw, 34px);
+    }
+
+    #subcategory-grid .select-btn-count {
+      font-size: clamp(16px, 3vw, 22px);
+    }
+
+    #subcategory-grid .select-all-btn {
+      min-height: clamp(90px, 13vh, 140px);
+      padding: clamp(22px, 3.5vh, 34px);
+    }
+
+    #subcategory-grid .select-all-btn .select-btn-title {
+      font-size: clamp(24px, 4.5vw, 38px);
+    }
+
+    #subcategory-grid .select-all-btn .select-btn-count {
+      font-size: clamp(18px, 3.2vw, 26px);
+    }
+
+    #word-screen .selection-status {
+      font-size: clamp(20px, 4vw, 28px);
+    }
+
+    #word-screen .nav-btn {
+      padding: clamp(18px, 3.5vw, 26px) clamp(35px, 6vw, 60px);
+      font-size: clamp(20px, 4vw, 28px);
+    }
+
+    #word-screen .selection-buttons {
+      max-width: 760px;
     }
 
     /* 커스텀 툴팁 */
@@ -484,6 +549,14 @@
     .game-wrapper {
       width: 100%;
       max-width: 1400px;
+      background: radial-gradient(circle at top left, rgba(242, 220, 158, 0.45) 0%, transparent 32%), radial-gradient(circle at top right, rgba(232, 144, 124, 0.2) 0%, transparent 32%), rgba(255, 251, 240, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 40px;
+      border: 6px solid var(--cream-board);
+      box-shadow: 0 15px 35px rgba(140, 104, 68, 0.12), 0 5px 0 var(--wood);
+      padding: clamp(16px, 2.5vh, 30px) clamp(15px, 3vw, 36px);
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -516,7 +589,7 @@
     .game-main {
       display: flex;
       gap: clamp(15px, 2vw, 30px);
-      align-items: flex-start;
+      align-items: stretch;
       width: 100%;
       justify-content: center;
       flex-wrap: nowrap;
@@ -530,12 +603,12 @@
       align-items: center;
       gap: clamp(8px, 1.2vw, 12px);
       flex: 0 0 auto;
-      width: clamp(120px, 16vw, 180px);
+      width: clamp(160px, 22vw, 260px);
     }
 
     #ice-cream-display {
-      width: clamp(130px, 18vw, 180px);
-      height: clamp(220px, 35vh, 320px);
+      width: clamp(170px, 24vw, 260px);
+      height: clamp(280px, 44vh, 420px);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -597,7 +670,7 @@
       align-items: center;
       gap: clamp(12px, 2vh, 18px);
       flex: 0 1 auto;
-      min-width: clamp(280px, 70%, 650px);
+      min-width: clamp(320px, 72%, 820px);
     }
 
     .word-display {
@@ -632,21 +705,22 @@
     .keyboard {
       display: flex;
       flex-direction: column;
-      gap: clamp(6px, 1vw, 10px);
+      gap: clamp(8px, 1.2vw, 14px);
       width: 100%;
-      max-width: 650px;
+      max-width: 800px;
+      margin-top: auto;
       margin-bottom: clamp(8px, 1.2vh, 12px);
       flex-shrink: 0;
     }
 
     .key-btn {
-      min-width: clamp(40px, 7vw, 56px);
-      width: clamp(40px, 7vw, 56px);
+      min-width: clamp(46px, 8.5vw, 68px);
+      width: clamp(46px, 8.5vw, 68px);
       aspect-ratio: 1;
       background: var(--cream-board);
       border: 3px solid #D9CCBF;
-      border-radius: 12px;
-      font-size: clamp(16px, 3vw, 21px);
+      border-radius: 14px;
+      font-size: clamp(18px, 3.6vw, 25px);
       font-family: 'Jua', sans-serif;
       font-weight: 900;
       cursor: pointer;
@@ -1182,12 +1256,14 @@
     </div>
   </div>
   <div class="selection-content">
-    <div class="selection-title">어떤 단어를 연습할까요?</div>
-    <div class="selection-grid-wrapper">
-      <div class="selection-grid" id="category-grid"></div>
-    </div>
-    <div class="selection-buttons">
-      <button class="nav-btn btn-next" id="category-next-btn" onclick="goToWordSelection()" disabled>다음 →</button>
+    <div class="selection-card">
+      <div class="selection-title">어떤 단어를 연습할까요?</div>
+      <div class="selection-grid-wrapper">
+        <div class="selection-grid" id="category-grid"></div>
+      </div>
+      <div class="selection-buttons">
+        <button class="nav-btn btn-next" id="category-next-btn" onclick="goToWordSelection()" disabled>다음 →</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1205,13 +1281,15 @@
     </div>
   </div>
   <div class="selection-content">
-    <div class="selection-title">주제를 선택하세요</div>
-    <div class="selection-grid-wrapper">
-      <div class="selection-grid" id="subcategory-grid"></div>
-    </div>
-    <div class="selection-status" id="selection-status">0단어 선택됨</div>
-    <div class="selection-buttons">
-      <button class="nav-btn btn-next" id="start-play-btn" onclick="generateGameWords()" disabled>게임 시작 →</button>
+    <div class="selection-card">
+      <div class="selection-title">주제를 선택하세요</div>
+      <div class="selection-grid-wrapper">
+        <div class="selection-grid" id="subcategory-grid"></div>
+      </div>
+      <div class="selection-status" id="selection-status">0단어 선택됨</div>
+      <div class="selection-buttons">
+        <button class="nav-btn btn-next" id="start-play-btn" onclick="generateGameWords()" disabled>게임 시작 →</button>
+      </div>
     </div>
   </div>
 </div>
@@ -2169,8 +2247,8 @@
       const rowDiv = document.createElement('div');
       rowDiv.style.display = 'flex';
       rowDiv.style.justifyContent = 'center';
-      rowDiv.style.gap = 'clamp(8px, 1.5vw, 12px)';
-      rowDiv.style.marginBottom = 'clamp(8px, 1.5vw, 12px)';
+      rowDiv.style.gap = 'clamp(8px, 1.8vw, 14px)';
+      rowDiv.style.marginBottom = 'clamp(8px, 1.8vw, 14px)';
       rowDiv.style.width = '100%';
       
       row.forEach(char => {
