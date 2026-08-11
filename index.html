@@ -119,14 +119,14 @@
 
     /* ===== 인트로 화면 ===== */
     #intro-screen {
-      background: url('0.png') center/cover no-repeat;
-      background-attachment: fixed;
+      background: url('0.png') center top/contain no-repeat;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 50px 20px;
+      justify-content: flex-end;
+      padding: 20px 20px 60px 20px;
       z-index: 100;
+      background-color: #FFF5E6;
     }
 
     .intro-button-group {
@@ -189,20 +189,19 @@
 
     .selection-content {
       flex: 1;
-      padding: clamp(20px, 4vh, 40px) clamp(15px, 3vw, 30px);
+      padding: clamp(15px, 3vh, 30px) clamp(15px, 3vw, 30px);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      overflow-y: auto;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
     .selection-title {
-      font-size: clamp(24px, 5vw, 36px);
+      font-size: clamp(22px, 4vw, 32px);
       font-weight: 900;
       color: #333;
-      margin-bottom: clamp(20px, 4vh, 35px);
+      margin-bottom: clamp(10px, 2vh, 20px);
       text-align: center;
       flex-shrink: 0;
     }
@@ -220,18 +219,26 @@
     /* 3x3 그리드 */
     .selection-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
       width: 100%;
       max-width: 900px;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
+    }
+    
+    #category-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    #subcategory-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
 
     .select-btn {
       background: white;
       border: 4px solid #E5E7EB;
       border-radius: 25px;
-      padding: 20px 15px;
+      padding: clamp(12px, 2vh, 15px) clamp(8px, 1.5vw, 12px);
       font-family: 'Jua', sans-serif;
       cursor: pointer;
       transition: all 0.3s;
@@ -243,7 +250,7 @@
       text-align: center;
       word-break: keep-all;
       position: relative;
-      min-height: 140px;
+      min-height: 110px;
       width: 100%;
     }
 
@@ -260,26 +267,26 @@
     }
 
     .select-btn-emoji {
-      font-size: clamp(40px, 8vw, 60px);
-      margin-bottom: 8px;
-    }
-
-    .select-btn-title {
-      font-size: clamp(16px, 2.5vw, 19px);
-      font-weight: 900;
-      margin-bottom: 8px;
-      line-height: 1.3;
-    }
-
-    .select-btn-subtitle {
-      font-size: clamp(11px, 1.8vw, 13px);
-      color: #999;
-      font-weight: 400;
+      font-size: clamp(35px, 7vw, 50px);
       margin-bottom: 5px;
     }
 
+    .select-btn-title {
+      font-size: clamp(14px, 2.2vw, 17px);
+      font-weight: 900;
+      margin-bottom: 5px;
+      line-height: 1.2;
+    }
+
+    .select-btn-subtitle {
+      font-size: clamp(10px, 1.5vw, 12px);
+      color: #999;
+      font-weight: 400;
+      margin-bottom: 3px;
+    }
+
     .select-btn-count {
-      font-size: clamp(12px, 2vw, 15px);
+      font-size: clamp(11px, 1.8vw, 13px);
       color: #666;
       font-weight: 700;
     }
@@ -291,7 +298,7 @@
       border-color: #BBF7D0;
       min-height: auto;
       aspect-ratio: auto;
-      padding: 20px;
+      padding: clamp(10px, 2vh, 14px);
     }
 
     .select-all-btn.selected {
@@ -337,22 +344,22 @@
     }
 
     .selection-status {
-      font-size: clamp(18px, 3.5vw, 24px);
+      font-size: clamp(16px, 3vw, 20px);
       color: #666;
       font-weight: 700;
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 15px;
     }
 
     .selection-buttons {
       display: flex;
-      gap: clamp(12px, 3vw, 20px);
+      gap: clamp(10px, 2vw, 15px);
       width: 100%;
       max-width: 600px;
       justify-content: center;
       flex-wrap: wrap;
-      margin-top: 20px;
-      margin-bottom: 20px;
+      margin-top: 10px;
+      margin-bottom: clamp(20px, 2.5vh, 30px);
       flex-shrink: 0;
     }
 
@@ -875,17 +882,21 @@
 
     /* ===== 반응형 ===== */
     @media (max-width: 1024px) {
-      .selection-grid {
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      #category-grid, #subcategory-grid {
+        grid-template-columns: repeat(3, 1fr);
         max-width: 800px;
       }
     }
 
     @media (max-width: 768px) {
-      .selection-grid {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 12px;
+      #category-grid, #subcategory-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
         max-width: 100%;
+      }
+
+      .select-btn {
+        min-height: 100px;
       }
 
       .game-main {
@@ -903,14 +914,13 @@
     }
 
     @media (max-width: 600px) {
-      .selection-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+      #category-grid, #subcategory-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 7px;
       }
 
       .select-btn {
-        min-height: 120px;
-        padding: 15px 10px;
+        min-height: 90px;
       }
 
       .keyboard {
@@ -924,8 +934,13 @@
     }
 
     @media (max-width: 400px) {
-      .selection-grid {
-        grid-template-columns: 1fr;
+      #category-grid, #subcategory-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+      }
+
+      .select-btn {
+        min-height: 85px;
       }
     }
   </style>
@@ -1727,7 +1742,8 @@
     isAnswerPhase = false;
     
     const len = currentWordObj.word.replace(/\s/g, '').length;
-    maxAllowed = Math.min(len + 1, 7);
+    maxAllowed = Math.min(len, 7);
+    if (maxAllowed < 1) maxAllowed = 1;
 
     document.getElementById('round-val').innerText = currentRound + 1;
     updateIceCream();
@@ -1742,19 +1758,23 @@
     const remaining = maxAllowed - mistakes;
     const iceCreamImg = document.getElementById('ice-cream-image');
     
-    let imagePath = '';
-    if (remaining >= 7) {
-      imagePath = '1786315689763_image.png';
-    } else if (remaining >= 6) {
-      imagePath = '1786404421232_image.png';
-    } else if (remaining >= 5) {
-      imagePath = '1786404438805_image.png';
-    } else {
-      imagePath = '1786404438805_image.png';
-    }
+    // remaining 값에 따라 이미지 선택
+    // remaining = 7 → 1.png (풀스쿱)
+    // remaining = 6 → 2.png
+    // remaining = 5 → 3.png
+    // remaining = 4 → 4.png
+    // remaining = 3 → 5.png
+    // remaining = 2 → 6.png
+    // remaining = 1 → 7.png
+    // remaining = 0 또는 음수 → 8.png (아이스크림 없음)
     
-    iceCreamImg.src = imagePath;
+    let imageNum = Math.max(1, 8 - remaining);
+    if (imageNum > 8) imageNum = 8;
+    
+    iceCreamImg.src = imageNum + '.png';
     iceCreamImg.classList.remove('shake');
+    
+    // remaining이 2 이하일 때 흔들리는 효과
     if (remaining <= 2 && remaining > 0) {
       iceCreamImg.classList.add('shake');
     }
