@@ -7,6 +7,32 @@
   <title>Save the Ice Cream!</title>
   <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --sky: #DCE0EF;
+      --sea: #BFD9EE;
+      --hill-pink: #F2C6D8;
+      --hill-yellow: #F2E0A8;
+      --grass: #C2E0A0;
+      --truck-mint: #AEDCD6;
+      --cream: #F5EDD4;
+      --cream-board: #FAF3E2;
+      --awning-yellow: #F2DC9E;
+      --wood: #A67C52;
+      --wood-dark: #8C6844;
+      --coral: #E8907C;
+      --coral-shadow: #C9705E;
+      --mint-btn: #AEDCD6;
+      --mint-btn-shadow: #8CBCB6;
+      --menu-pink: #F2B8CC;
+      --alert-red: #E85D5D;
+      --title-pink: #F27BA8;
+      --title-yellow: #F2D06B;
+      --title-green: #9ED9A8;
+      --title-blue: #8FC2E8;
+      --title-purple: #A98BD6;
+      --text-white: #FFFFFF;
+    }
+
     * { box-sizing: border-box; }
 
     html, body { 
@@ -119,7 +145,7 @@
 
     /* ===== 인트로 화면 ===== */
     #intro-screen {
-      background: url('0.png') center top/contain no-repeat;
+      background: url('0.png') center/contain no-repeat;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -127,6 +153,36 @@
       padding: 20px 20px 60px 20px;
       z-index: 100;
       background-color: #FFF5E6;
+      position: relative;
+    }
+    
+    .fullscreen-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 45px;
+      height: 45px;
+      border: none;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s;
+      z-index: 10;
+    }
+    
+    .fullscreen-btn:hover {
+      transform: scale(1.1);
+      background: white;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+    
+    .fullscreen-btn:active {
+      transform: scale(0.95);
     }
 
     .intro-button-group {
@@ -163,19 +219,21 @@
     }
 
     .btn-help {
-      background: linear-gradient(135deg, #87CEEB, #87CEEB);
+      background: linear-gradient(135deg, var(--mint-btn), var(--mint-btn));
       color: #333;
+      box-shadow: 0 8px 0 var(--mint-btn-shadow), 0 12px 20px rgba(0, 0, 0, 0.15);
     }
 
     .btn-start {
-      background: linear-gradient(135deg, #FFB6D9, #FF69B4);
+      background: linear-gradient(135deg, var(--coral), var(--coral));
       color: white;
+      box-shadow: 0 8px 0 var(--coral-shadow), 0 12px 20px rgba(0, 0, 0, 0.15);
     }
 
     /* ===== 선택 화면 ===== */
     .selection-screen {
       display: none;
-      background: linear-gradient(135deg, #FFF5E6 0%, #FFE4F0 100%);
+      background: linear-gradient(135deg, var(--cream-board) 0%, #F5E8DC 100%);
       flex-direction: column;
       z-index: 50;
       height: 100vh;
@@ -235,8 +293,8 @@
     }
 
     .select-btn {
-      background: white;
-      border: 4px solid #E5E7EB;
+      background: var(--cream-board);
+      border: 4px solid #E5D9CC;
       border-radius: 25px;
       padding: clamp(12px, 2vh, 15px) clamp(8px, 1.5vw, 12px);
       font-family: 'Jua', sans-serif;
@@ -260,10 +318,10 @@
     }
 
     .select-btn.selected {
-      border-color: #FF69B4;
-      background: linear-gradient(135deg, #FFE4F0, #FFF0F5);
-      color: #FF1493;
-      box-shadow: 0 12px 28px rgba(255, 105, 180, 0.3);
+      border-color: var(--title-pink);
+      background: linear-gradient(135deg, #FFE0E6, #FFF0F5);
+      color: #D8419F;
+      box-shadow: 0 12px 28px rgba(242, 123, 168, 0.25);
     }
 
     .select-btn-emoji {
@@ -294,17 +352,17 @@
     /* 전체 선택 버튼 */
     .select-all-btn {
       grid-column: 1 / -1;
-      background: linear-gradient(135deg, #F0FDF4, #F0FDF4);
-      border-color: #BBF7D0;
+      background: linear-gradient(135deg, #E8F5E9, #E8F5E9);
+      border-color: #A5D6A7;
       min-height: auto;
       aspect-ratio: auto;
       padding: clamp(10px, 2vh, 14px);
     }
 
     .select-all-btn.selected {
-      border-color: #10b981;
-      background: linear-gradient(135deg, #D1FAE5, #ECFDF5);
-      color: #059669;
+      border-color: #4CAF50;
+      background: linear-gradient(135deg, #A5D6A7, #C8E6C9);
+      color: #2E7D32;
     }
 
     /* 커스텀 툴팁 */
@@ -394,14 +452,14 @@
     }
 
     .btn-next {
-      background: linear-gradient(135deg, #FF69B4, #FF1493);
+      background: linear-gradient(135deg, var(--coral), var(--coral));
       color: white;
     }
 
     /* ===== 게임 화면 ===== */
     #game-screen {
       display: none;
-      background: linear-gradient(135deg, #FFF5E6 0%, #FFE4F0 100%);
+      background: linear-gradient(180deg, var(--sky) 0%, var(--sea) 50%, var(--grass) 50.5%, var(--grass) 100%);
       flex-direction: column;
       z-index: 50;
       overflow-y: auto;
@@ -439,21 +497,21 @@
     }
 
     .stat-badge {
-      background: #FFF0F5;
+      background: var(--cream-board);
       padding: clamp(8px, 1.5vw, 12px) clamp(15px, 3vw, 20px);
       border-radius: 20px;
-      color: #FF69B4;
-      border: 3px solid #FFB6D9;
+      color: var(--wood);
+      border: 3px solid #D9CCBF;
       white-space: nowrap;
     }
 
     .game-main {
       display: flex;
-      gap: clamp(30px, 5vw, 60px);
+      gap: clamp(20px, 3vw, 40px);
       align-items: flex-start;
       width: 100%;
       justify-content: center;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
     }
 
     .ice-cream-section {
@@ -462,6 +520,7 @@
       align-items: center;
       gap: clamp(15px, 2vw, 20px);
       flex: 0 0 auto;
+      width: clamp(130px, 18vw, 200px);
     }
 
     #ice-cream-display {
@@ -525,8 +584,8 @@
       flex-direction: column;
       align-items: center;
       gap: clamp(20px, 3vh, 30px);
-      flex: 1;
-      min-width: clamp(280px, 90%, 600px);
+      flex: 0 1 auto;
+      min-width: clamp(280px, 70%, 650px);
     }
 
     .word-display {
@@ -558,8 +617,8 @@
     }
 
     .keyboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(clamp(40px, 7vw, 55px), 1fr));
+      display: flex;
+      flex-direction: column;
       gap: clamp(8px, 1.5vw, 12px);
       width: 100%;
       max-width: 650px;
@@ -567,9 +626,11 @@
     }
 
     .key-btn {
+      min-width: clamp(35px, 6vw, 48px);
+      width: clamp(35px, 6vw, 48px);
       aspect-ratio: 1;
-      background: white;
-      border: 3px solid #E5E7EB;
+      background: var(--cream-board);
+      border: 3px solid #D9CCBF;
       border-radius: 12px;
       font-size: clamp(14px, 2.5vw, 18px);
       font-family: 'Jua', sans-serif;
@@ -600,10 +661,10 @@
     }
 
     .key-btn.wrong {
-      background: #FCA5A5;
+      background: var(--alert-red);
       color: white;
-      border-color: #EF4444;
-      box-shadow: 0 4px 12px rgba(252, 165, 165, 0.4);
+      border-color: #C9424F;
+      box-shadow: 0 4px 12px rgba(232, 93, 93, 0.4);
     }
 
     .key-btn:disabled {
@@ -642,7 +703,7 @@
     }
 
     .btn-help-game {
-      background: linear-gradient(135deg, #FF69B4, #FF1493);
+      background: linear-gradient(135deg, var(--coral), var(--coral));
       color: white;
     }
 
@@ -707,11 +768,11 @@
     }
 
     .modal-content.failure {
-      border: 6px solid #FCA5A5;
+      border: 6px solid var(--alert-red);
     }
 
     .modal-content.failure h2 {
-      color: #DC2626;
+      color: #C9424F;
     }
 
     .modal-emoji {
@@ -733,10 +794,10 @@
       font-size: clamp(20px, 4vw, 28px);
       font-family: 'Courier New', monospace;
       font-weight: bold;
-      color: #FF69B4;
+      color: var(--wood-dark);
       margin: 15px 0;
       padding: 12px;
-      background: #FFF0F5;
+      background: var(--cream-board);
       border-radius: 12px;
       word-break: break-all;
     }
@@ -781,9 +842,9 @@
     }
 
     .modal-btn-confirm {
-      background: linear-gradient(135deg, #6366F1, #4F46E5);
+      background: linear-gradient(135deg, var(--coral), var(--coral));
       color: white;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      box-shadow: 0 4px 12px rgba(232, 115, 124, 0.3);
     }
 
     .modal-btn-next {
@@ -802,7 +863,7 @@
     /* ===== 완료 화면 ===== */
     #completion-screen {
       display: none;
-      background: linear-gradient(135deg, #FFF5E6 0%, #FFE4F0 100%);
+      background: linear-gradient(180deg, var(--sky) 0%, var(--sea) 50%, var(--grass) 50.5%, var(--grass) 100%);
       align-items: center;
       justify-content: center;
       padding: 20px;
@@ -868,11 +929,13 @@
     }
 
     .btn-replay {
-      background: linear-gradient(135deg, #FF69B4, #FF1493);
+      background: linear-gradient(135deg, var(--coral), var(--coral));
+      box-shadow: 0 6px 0 var(--coral-shadow);
     }
 
     .btn-home-completion {
-      background: linear-gradient(135deg, #0ea5e9, #06B6D4);
+      background: linear-gradient(135deg, var(--mint-btn), var(--mint-btn));
+      box-shadow: 0 6px 0 var(--mint-btn-shadow);
     }
 
     @keyframes bounce {
@@ -952,6 +1015,7 @@
 
 <!-- 인트로 화면 -->
 <div id="intro-screen" class="screen">
+  <button class="fullscreen-btn" onclick="toggleFullscreen()" title="전체화면">⛶</button>
   <div class="intro-button-group">
     <button class="intro-btn btn-help" onclick="document.getElementById('help-modal').style.display='flex'">How to Play</button>
     <button class="intro-btn btn-start" onclick="goToCategorySelection()">Game Start</button>
@@ -1499,6 +1563,18 @@
   let score = 0;
   let musicEnabled = true;
 
+  // ========== 전체화면 ==========
+  function toggleFullscreen() {
+    const elem = document.documentElement;
+    if (!document.fullscreenElement) {
+      elem.requestFullscreen().catch(err => {
+        console.log(`Error: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  }
+
   // ========== 오디오 ==========
   function playCorrectSound() {
     const audio = document.getElementById('correct-sound');
@@ -1822,16 +1898,34 @@
     });
   }
 
-  // ========== 키보드 렌더링 ==========
+  // ========== 키보드 렌더링 (QWERTY 배열) ==========
   function renderKeyboard() {
     const k = document.getElementById('keyboard');
     k.innerHTML = '';
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(c => {
-      const b = document.createElement('button');
-      b.className = 'key-btn';
-      b.innerText = c;
-      b.onclick = () => handleGuess(c, b);
-      k.appendChild(b);
+    
+    const qwertyLayout = [
+      ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+      ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+      ['Z', 'X', 'C', 'V', 'B', 'N', 'M']
+    ];
+    
+    qwertyLayout.forEach(row => {
+      const rowDiv = document.createElement('div');
+      rowDiv.style.display = 'flex';
+      rowDiv.style.justifyContent = 'center';
+      rowDiv.style.gap = 'clamp(8px, 1.5vw, 12px)';
+      rowDiv.style.marginBottom = 'clamp(8px, 1.5vw, 12px)';
+      rowDiv.style.width = '100%';
+      
+      row.forEach(char => {
+        const b = document.createElement('button');
+        b.className = 'key-btn';
+        b.innerText = char;
+        b.onclick = () => handleGuess(char, b);
+        rowDiv.appendChild(b);
+      });
+      
+      k.appendChild(rowDiv);
     });
   }
 
