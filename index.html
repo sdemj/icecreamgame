@@ -3,7 +3,7 @@
 <head>
   <base target="_top">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Save the Ice Cream!</title>
   <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
@@ -35,25 +35,41 @@
 
     * { box-sizing: border-box; }
 
-    html, body { 
+    html, body {
       width: 100%;
       height: 100%;
-      margin: 0; 
+      margin: 0;
       padding: 0;
       overflow: hidden;
     }
 
-    body { 
+    body {
       font-family: 'Jua', 'Noto Sans KR', sans-serif;
       color: #333;
+      background: #F5E8DC;   /* 무대 바깥(레터박스) 여백 색 */
+    }
+
+    /* ===== 고정 비율 무대 (1280x720) : 화면 크기에 맞춰 통짜로 확대/축소 =====
+       PC·태블릿·모바일 어디서든 배치와 비율, 아이콘 위치가 완전히 동일하게 유지된다. */
+    #stage {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: 1280px;
+      height: 720px;
+      transform: translate(-50%, -50%) scale(1);
+      transform-origin: center center;
+      overflow: hidden;
+      background: #F5E8DC;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.25);
     }
 
     .screen {
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       display: none;
       flex-direction: column;
       z-index: 50;
@@ -64,7 +80,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: clamp(10px, 1.5vh, 15px) clamp(12px, 2vw, 20px);
+      padding: 10.8px 20px;
       background: rgba(255, 255, 255, 0.95);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       flex-wrap: wrap;
@@ -79,7 +95,7 @@
     }
 
     .header-title {
-      font-size: clamp(16px, 2.8vw, 20px);
+      font-size: 20px;
       font-weight: 900;
       color: #333;
     }
@@ -91,13 +107,13 @@
     }
 
     .nav-icon-btn {
-      width: clamp(34px, 6vw, 40px);
-      height: clamp(34px, 6vw, 40px);
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       border: 2px solid #E5E7EB;
       background: white;
       cursor: pointer;
-      font-size: clamp(16px, 2.5vw, 20px);
+      font-size: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -115,9 +131,36 @@
       transform: scale(0.95);
     }
 
+    /* 게임 중에 활동 방법을 다시 볼 수 있는 버튼 (글자가 들어가므로 원형이 아닌 알약 모양) */
+    .nav-help-btn {
+      width: auto;
+      height: 40px;
+      padding: 0 16px;
+      gap: 6px;
+      border-radius: 20px;
+      font-family: 'Jua', sans-serif;
+      font-weight: 900;
+      font-size: 17px;
+      color: #555;
+      white-space: nowrap;
+    }
+
+    /* 갈 곳이 없는 뒤로·앞으로 버튼은 숨기지 않고 흐리게만 표시한다 */
+    .nav-icon-btn:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .nav-icon-btn:disabled:hover,
+    .nav-icon-btn:disabled:active {
+      background: white;
+      border-color: #E5E7EB;
+      transform: none;
+    }
+
     /* ===== 음악 토글 버튼 ===== */
     .music-toggle {
-      position: fixed;
+      position: absolute;
       bottom: 20px;
       right: 20px;
       width: 50px;
@@ -144,9 +187,15 @@
       transform: scale(0.95);
     }
 
+    /* 배경음악 꺼짐 상태 — 눌러서 켤 수 있다는 걸 흐린 표시로 알린다 */
+    .music-off {
+      filter: grayscale(1);
+      opacity: 0.65;
+    }
+
     /* ===== 인트로 화면 ===== */
     #intro-screen {
-      background: url('0.png') center/contain no-repeat;
+      background: url('0.png') center/cover no-repeat;   /* 무대가 16:9라 여백 없이 꽉 채운다 */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -195,8 +244,8 @@
     }
 
     .intro-btn {
-      padding: clamp(16px, 3vw, 20px) clamp(40px, 6vw, 60px);
-      font-size: clamp(20px, 4vw, 28px);
+      padding: 20px 60px;
+      font-size: 28px;
       font-family: 'Jua', sans-serif;
       font-weight: 900;
       border: none;
@@ -237,8 +286,8 @@
       background: linear-gradient(135deg, var(--cream-board) 0%, #F5E8DC 100%);
       flex-direction: column;
       z-index: 50;
-      height: 100vh;
-      max-height: 100vh;
+      height: 100%;
+      max-height: 100%;
     }
 
     .selection-header-bar {
@@ -248,7 +297,7 @@
 
     .selection-content {
       flex: 1;
-      padding: clamp(10px, 2vh, 20px) clamp(10px, 2vw, 20px);
+      padding: 14.4px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -258,12 +307,28 @@
     }
 
     .selection-title {
-      font-size: clamp(28px, 6vw, 42px);
+      font-size: 42px;
       font-weight: 900;
       color: #333;
-      margin-bottom: clamp(8px, 1.5vh, 15px);
+      margin-bottom: 10.8px;
       text-align: center;
       flex-shrink: 0;
+    }
+
+    .selection-card {
+      width: 100%;
+      max-width: 1000px;
+      background: radial-gradient(circle at top left, rgba(242, 220, 158, 0.45) 0%, transparent 32%), radial-gradient(circle at top right, rgba(232, 144, 124, 0.2) 0%, transparent 32%), rgba(255, 251, 240, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 40px;
+      border: 6px solid var(--cream-board);
+      box-shadow: 0 15px 35px rgba(140, 104, 68, 0.12), 0 5px 0 var(--wood);
+      padding: 28.8px 38.4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
     }
 
     .selection-grid-wrapper {
@@ -299,7 +364,7 @@
       background: var(--cream-board);
       border: 4px solid #E5D9CC;
       border-radius: 25px;
-      padding: clamp(10px, 1.5vh, 12px) clamp(6px, 1vw, 10px);
+      padding: 10.8px 10px;
       font-family: 'Jua', sans-serif;
       cursor: pointer;
       transition: all 0.3s;
@@ -318,6 +383,7 @@
     .select-btn:hover {
       transform: translateY(-8px);
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+      z-index: 20;   /* 툴팁이 아래줄 버튼에 가리지 않도록 */
     }
 
     .select-btn.selected {
@@ -328,28 +394,61 @@
     }
 
     .select-btn-emoji {
-      font-size: clamp(45px, 9vw, 65px);
+      font-size: 65px;
       margin-bottom: 5px;
     }
 
     .select-btn-title {
-      font-size: clamp(16px, 2.8vw, 20px);
+      font-size: 20px;
       font-weight: 900;
       margin-bottom: 5px;
       line-height: 1.2;
     }
 
     .select-btn-subtitle {
-      font-size: clamp(11px, 1.8vw, 13px);
+      font-size: 13px;
       color: #999;
       font-weight: 400;
       margin-bottom: 3px;
     }
 
     .select-btn-count {
-      font-size: clamp(13px, 2.2vw, 16px);
+      font-size: 16px;
       color: #666;
       font-weight: 700;
+    }
+
+    /* 대분류 화면: 9칸 + [다음] 버튼이 무대(720px) 안에 모두 보이도록 크기 조정 */
+    #category-screen .selection-title {
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
+
+    #category-screen .selection-card {
+      padding: 20px 38.4px;
+    }
+
+    #category-grid {
+      margin-bottom: 10px;
+    }
+
+    #category-grid .select-btn {
+      min-height: 0;
+      padding: 8px 10px;
+    }
+
+    #category-grid .select-btn-emoji {
+      font-size: 42px;
+      margin-bottom: 2px;
+    }
+
+    #category-grid .select-btn-title {
+      font-size: 19px;
+      margin-bottom: 2px;
+    }
+
+    #category-grid .select-btn-count {
+      font-size: 14px;
     }
 
     /* 전체 선택 버튼 */
@@ -359,7 +458,7 @@
       border-color: #A5D6A7;
       min-height: auto;
       aspect-ratio: auto;
-      padding: clamp(10px, 2vh, 14px);
+      padding: 14px;
     }
 
     .select-all-btn.selected {
@@ -368,17 +467,67 @@
       color: #2E7D32;
     }
 
+    /* ===== 소분류 선택 화면: 카드/버튼 확대 ===== */
+    #word-screen .selection-card {
+      max-width: 1300px;
+    }
+
+    #subcategory-grid {
+      gap: 28px;
+    }
+
+    #subcategory-grid .select-btn {
+      min-height: 158.4px;
+      padding: 25.2px 20px;
+      border-radius: 30px;
+    }
+
+    #subcategory-grid .select-btn-title {
+      font-size: 34px;
+    }
+
+    #subcategory-grid .select-btn-count {
+      font-size: 22px;
+    }
+
+    #subcategory-grid .select-all-btn {
+      min-height: 93.6px;
+      padding: 25.2px;
+    }
+
+    #subcategory-grid .select-all-btn .select-btn-title {
+      font-size: 38px;
+    }
+
+    #subcategory-grid .select-all-btn .select-btn-count {
+      font-size: 26px;
+    }
+
+    #word-screen .selection-status {
+      font-size: 28px;
+    }
+
+    #word-screen .nav-btn {
+      padding: 26px 60px;
+      font-size: 28px;
+    }
+
+    #word-screen .selection-buttons {
+      max-width: 760px;
+    }
+
     /* 커스텀 툴팁 */
     .custom-tooltip {
       position: absolute;
-      bottom: -200px;
+      top: calc(100% + 6px);   /* 버튼 바로 아래에 붙여서 표시 */
+      bottom: auto;
       left: 50%;
       transform: translateX(-50%);
       background: rgba(0, 0, 0, 0.88);
       color: white;
       padding: 12px 16px;
       border-radius: 12px;
-      font-size: clamp(14px, 2.5vw, 18px);
+      font-size: 18px;
       white-space: normal;
       width: 220px;
       max-height: 180px;
@@ -405,7 +554,7 @@
     }
 
     .selection-status {
-      font-size: clamp(16px, 3vw, 20px);
+      font-size: 20px;
       color: #666;
       font-weight: 700;
       text-align: center;
@@ -414,19 +563,19 @@
 
     .selection-buttons {
       display: flex;
-      gap: clamp(10px, 2vw, 15px);
+      gap: 15px;
       width: 100%;
       max-width: 600px;
       justify-content: center;
       flex-wrap: wrap;
       margin-top: 10px;
-      margin-bottom: clamp(20px, 2.5vh, 30px);
+      margin-bottom: 20px;
       flex-shrink: 0;
     }
 
     .nav-btn {
-      padding: clamp(12px, 2.5vw, 16px) clamp(25px, 4vw, 40px);
-      font-size: clamp(16px, 3vw, 20px);
+      padding: 16px 40px;
+      font-size: 20px;
       font-family: 'Jua', sans-serif;
       font-weight: 900;
       border: none;
@@ -474,7 +623,7 @@
 
     .game-content-wrapper {
       flex: 1;
-      padding: clamp(15px, 2.5vh, 30px) clamp(10px, 2vw, 20px);
+      padding: 18px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -484,6 +633,14 @@
     .game-wrapper {
       width: 100%;
       max-width: 1400px;
+      background: radial-gradient(circle at top left, rgba(242, 220, 158, 0.45) 0%, transparent 32%), radial-gradient(circle at top right, rgba(232, 144, 124, 0.2) 0%, transparent 32%), rgba(255, 251, 240, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 40px;
+      border: 6px solid var(--cream-board);
+      box-shadow: 0 15px 35px rgba(140, 104, 68, 0.12), 0 5px 0 var(--wood);
+      padding: 18px 36px;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -492,31 +649,33 @@
       min-height: 0;
     }
 
-    .game-stats {
+    /* 상단 한 줄: 문제 진행 | 진행도 바 | 점수 */
+    .game-top {
       display: flex;
-      gap: clamp(10px, 2vw, 20px);
-      font-size: clamp(20px, 4vw, 28px);
+      align-items: center;
+      gap: 16px;
+      width: 100%;
       font-weight: 700;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: clamp(8px, 1.5vh, 15px);
+      flex-wrap: nowrap;
+      margin-bottom: 12px;
       flex-shrink: 0;
     }
 
     .stat-badge {
       background: var(--cream-board);
-      padding: clamp(10px, 2vw, 16px) clamp(18px, 3.5vw, 28px);
-      border-radius: 20px;
+      padding: 11px 22px;
+      border-radius: 18px;
       color: var(--wood);
       border: 3px solid #D9CCBF;
       white-space: nowrap;
-      font-size: clamp(18px, 3.5vw, 25px);
+      font-size: 22px;
+      flex: 0 0 auto;   /* 좌우 배지는 내용만큼, 가운데 진행도 바가 남는 폭을 채운다 */
     }
 
     .game-main {
       display: flex;
-      gap: clamp(15px, 2vw, 30px);
-      align-items: flex-start;
+      gap: 25.6px;
+      align-items: stretch;
       width: 100%;
       justify-content: center;
       flex-wrap: nowrap;
@@ -528,20 +687,22 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(8px, 1.2vw, 12px);
+      gap: 12px;
       flex: 0 0 auto;
-      width: clamp(120px, 16vw, 180px);
+      width: 280px;
+      /* 아래 여백 = 힌트글 아래 남는 만큼. 이미지 아랫단이 키보드 마지막 줄과 맞춰진다 */
+      padding-bottom: 42px;
     }
 
     #ice-cream-display {
-      width: clamp(130px, 18vw, 180px);
-      height: clamp(220px, 35vh, 320px);
+      width: 280px;
+      flex: 1 1 auto;      /* 남는 높이를 모두 차지해서 아이스크림을 크게 보여준다 */
+      min-height: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
       position: relative;
-      flex-shrink: 0;
     }
 
     .ice-cream-image {
@@ -582,7 +743,7 @@
 
     .hint-display {
       min-height: 25px;
-      font-size: clamp(14px, 2.5vw, 18px);
+      font-size: 18px;
       color: #D97706;
       font-weight: 700;
       text-align: center;
@@ -595,30 +756,31 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(12px, 2vh, 18px);
+      gap: 12px;
       flex: 0 1 auto;
-      min-width: clamp(280px, 70%, 650px);
+      min-width: clamp(320px, 72%, 820px);
     }
 
     .word-display {
       display: flex;
-      gap: clamp(6px, 1vw, 10px);
+      gap: 10px;
       justify-content: center;
       flex-wrap: wrap;
       min-height: auto;
       align-items: center;
       width: 100%;
       flex-shrink: 0;
+      margin-top: 26px;   /* 정답 칸을 살짝 아래로 */
     }
 
     .letter-box {
-      width: clamp(55px, 10vw, 80px);
-      height: clamp(70px, 12vh, 95px);
+      width: 80px;
+      height: 86.4px;
       border-bottom: 4px solid #333;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: clamp(40px, 8vw, 56px);
+      font-size: 56px;
       font-weight: bold;
       color: #FF69B4;
       font-family: 'Jua', sans-serif;
@@ -632,21 +794,22 @@
     .keyboard {
       display: flex;
       flex-direction: column;
-      gap: clamp(6px, 1vw, 10px);
+      gap: 14px;
       width: 100%;
-      max-width: 650px;
-      margin-bottom: clamp(8px, 1.2vh, 12px);
+      max-width: 800px;
+      margin-top: auto;
+      margin-bottom: 8.6px;
       flex-shrink: 0;
     }
 
     .key-btn {
-      min-width: clamp(40px, 7vw, 56px);
-      width: clamp(40px, 7vw, 56px);
+      min-width: 68px;
+      width: 68px;
       aspect-ratio: 1;
       background: var(--cream-board);
       border: 3px solid #D9CCBF;
-      border-radius: 12px;
-      font-size: clamp(16px, 3vw, 21px);
+      border-radius: 14px;
+      font-size: 25px;
       font-family: 'Jua', sans-serif;
       font-weight: 900;
       cursor: pointer;
@@ -688,16 +851,16 @@
 
     .game-buttons {
       display: flex;
-      gap: clamp(8px, 1.5vw, 12px);
+      gap: 12px;
       flex-wrap: wrap;
       justify-content: center;
       flex-shrink: 0;
-      margin-bottom: clamp(8px, 1.2vh, 12px);
+      margin-bottom: 8.6px;
     }
 
     .game-btn {
-      padding: clamp(12px, 2vw, 16px) clamp(20px, 3vw, 28px);
-      font-size: clamp(14px, 2.5vw, 18px);
+      padding: 16px 28px;
+      font-size: 18px;
       font-family: 'Jua', sans-serif;
       font-weight: 900;
       border: none;
@@ -723,20 +886,33 @@
       color: white;
     }
 
-    /* ===== 게임 진행도 바 ===== */
+    /* ===== 게임 진행도 바 (상단 가운데, 남는 폭을 모두 차지) ===== */
     .game-progress-container {
-      width: 100%;
+      flex: 1 1 auto;
+      min-width: 0;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
-      gap: 6px;
-      margin-top: 8px;
+      gap: 12px;
+      background: var(--cream-board);
+      border: 3px solid #D9CCBF;
+      border-radius: 18px;
+      padding: 10px 20px;
+      height: 100%;
+    }
+
+    .game-progress-label {
+      font-family: 'Jua', sans-serif;
+      font-size: 17px;
+      color: var(--wood);
+      white-space: nowrap;
       flex-shrink: 0;
     }
 
     .game-progress-bar {
-      width: clamp(150px, 50vw, 350px);
-      height: clamp(20px, 3vh, 28px);
+      flex: 1 1 auto;
+      min-width: 0;
+      height: 22px;
       background: linear-gradient(135deg, #FFE9F3, #FFF0FA);
       border: 3px solid #F0C4D8;
       border-radius: 16px;
@@ -759,13 +935,13 @@
     }
 
     .game-progress-emoji {
-      font-size: clamp(20px, 3.5vh, 28px);
+      font-size: 25.2px;
       animation: progress-bounce 0.6s ease-in-out;
       display: inline-block;
       position: relative;
       z-index: 10;
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
-      margin-right: clamp(-8px, -1.2vw, -6px);
+      margin-right: -8px;
     }
 
     @keyframes progress-bounce {
@@ -774,15 +950,17 @@
     }
 
     .game-progress-text {
-      font-size: clamp(12px, 2vw, 14px);
+      font-size: 19px;
       font-weight: 700;
       color: #D991B8;
       font-family: 'Jua', sans-serif;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     /* ===== 모달 ===== */
     .modal-overlay {
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
       width: 100%;
@@ -803,12 +981,12 @@
 
     .modal-content {
       background: white;
-      padding: clamp(30px, 5vw, 50px);
+      padding: 50px;
       border-radius: 35px;
       text-align: center;
       width: 100%;
       max-width: 500px;
-      max-height: 90vh;
+      max-height: 648px;
       overflow-y: auto;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
       animation: modal-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -825,19 +1003,26 @@
       }
     }
 
+    .modal-content h2 {
+      font-size: 40px;
+      font-weight: 900;
+      margin: 0 0 15px 0;
+      font-family: 'Jua', sans-serif;
+    }
+
     /* ===== 학습 목표 (How to Play) ===== */
     .learning-goal {
       background: linear-gradient(135deg, #FFF6FA, #FFE9F3);
       border: 3px dashed var(--title-pink);
       border-radius: 22px;
-      padding: clamp(14px, 2.5vw, 18px) clamp(16px, 3vw, 22px);
-      margin: 0 0 clamp(15px, 2.5vh, 22px);
-      text-align: left;
+      padding: 18px 22px;
+      margin: 0 0 18px;
+      text-align: center;
       box-shadow: 0 6px 16px rgba(242, 123, 168, 0.18);
     }
 
     .learning-goal-label {
-      font-size: clamp(16px, 3vw, 20px);
+      font-size: 20px;
       font-weight: 900;
       color: #D8419F;
       font-family: 'Jua', sans-serif;
@@ -845,62 +1030,15 @@
       margin-bottom: 10px;
     }
 
-    .learning-goal-list {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .learning-goal-list li {
-      position: relative;
-      padding-left: 27px;
-      margin-bottom: 6px;
-      font-size: clamp(14px, 2.7vw, 18px);
+    .learning-goal-text {
+      font-size: 19px;
       font-weight: 700;
       color: #555;
-      line-height: 1.6;
+      line-height: 1.7;
       word-break: keep-all;
     }
 
-    .learning-goal-list li:last-child { margin-bottom: 0; }
-
-    .learning-goal-list li::before {
-      content: '🍦';
-      position: absolute;
-      left: 0;
-      top: 0;
-      font-size: 0.95em;
-    }
-
-    .learning-goal-list b { color: #D8419F; }
-
-    .help-modal-buttons {
-      display: flex;
-      gap: clamp(10px, 2vw, 15px);
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 20px;
-    }
-
-    .btn-help-close {
-      background: #E5E7EB;
-      color: #6B7280;
-    }
-
-    .btn-help-start {
-      background: linear-gradient(135deg, var(--coral), var(--coral));
-      color: white;
-      box-shadow: 0 4px 0 var(--coral-shadow), 0 6px 14px rgba(0, 0, 0, 0.15);
-      font-size: clamp(16px, 3vw, 20px);
-      padding: clamp(12px, 2.2vw, 16px) clamp(28px, 4vw, 40px);
-    }
-
-    .modal-content h2 {
-      font-size: clamp(30px, 6vw, 40px);
-      font-weight: 900;
-      margin: 0 0 15px 0;
-      font-family: 'Jua', sans-serif;
-    }
+    .learning-goal-text b { color: #D8419F; }
 
     .modal-content.success {
       border: 6px solid #34d399;
@@ -919,14 +1057,14 @@
     }
 
     .modal-emoji {
-      font-size: clamp(100px, 18vw, 150px);
+      font-size: 150px;
       margin: 20px 0;
       animation: bounce 0.6s ease-out;
       display: inline-block;
     }
 
     .modal-text {
-      font-size: clamp(22px, 4.5vw, 30px);
+      font-size: 30px;
       font-family: 'Jua', sans-serif;
       font-weight: 700;
       margin: 15px 0;
@@ -934,7 +1072,7 @@
     }
 
     .modal-answer {
-      font-size: clamp(24px, 5vw, 34px);
+      font-size: 34px;
       font-family: 'Courier New', monospace;
       font-weight: bold;
       color: var(--wood-dark);
@@ -947,8 +1085,8 @@
 
     #word-input {
       width: 90%;
-      padding: clamp(10px, 2vw, 14px);
-      font-size: clamp(16px, 3vw, 20px);
+      padding: 14px;
+      font-size: 20px;
       border: 3px solid #E5E7EB;
       border-radius: 12px;
       font-family: 'Jua', sans-serif;
@@ -962,15 +1100,15 @@
 
     .modal-buttons {
       display: flex;
-      gap: clamp(10px, 2vw, 15px);
+      gap: 15px;
       margin-top: 20px;
       flex-wrap: wrap;
       justify-content: center;
     }
 
     .modal-btn {
-      padding: clamp(10px, 2vw, 14px) clamp(20px, 3vw, 30px);
-      font-size: clamp(14px, 2.5vw, 18px);
+      padding: 14px 30px;
+      font-size: 18px;
       font-family: 'Jua', sans-serif;
       font-weight: 900;
       border: none;
@@ -1014,7 +1152,7 @@
 
     .review-content {
       flex: 1;
-      padding: clamp(20px, 4vh, 40px) clamp(15px, 2vw, 30px);
+      padding: 28.8px 25.6px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1033,13 +1171,13 @@
       background: var(--cream-board);
       border: 4px solid #D9CCBF;
       border-radius: 20px;
-      padding: clamp(15px, 3vw, 25px);
+      padding: 25px;
       text-align: center;
       box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
     }
 
     .review-item-word {
-      font-size: clamp(22px, 4vw, 28px);
+      font-size: 28px;
       font-weight: 900;
       color: var(--wood-dark);
       font-family: 'Courier New', monospace;
@@ -1047,14 +1185,14 @@
     }
 
     .review-item-meaning {
-      font-size: clamp(16px, 3vw, 20px);
+      font-size: 20px;
       color: #666;
       font-weight: 700;
     }
 
     .completion-btn {
-      padding: clamp(12px, 2.5vw, 18px) clamp(25px, 4vw, 40px);
-      font-size: clamp(16px, 3vw, 22px);
+      padding: 18px 40px;
+      font-size: 22px;
       font-family: 'Jua', sans-serif;
       font-weight: 900;
       border: none;
@@ -1076,7 +1214,7 @@
     .completion-content {
       text-align: center;
       background: white;
-      padding: clamp(40px, 5vw, 70px);
+      padding: 64px;
       border-radius: 50px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
       max-width: 600px;
@@ -1085,21 +1223,21 @@
     }
 
     .completion-title {
-      font-size: clamp(40px, 8vw, 56px);
+      font-size: 56px;
       font-weight: 900;
       color: #10b981;
       margin: 0 0 15px 0;
     }
 
     .completion-emoji {
-      font-size: clamp(90px, 18vw, 140px);
+      font-size: 140px;
       margin: 20px 0;
       animation: bounce 0.6s ease-out infinite;
       display: inline-block;
     }
 
     .completion-score {
-      font-size: clamp(28px, 6vw, 40px);
+      font-size: 40px;
       font-weight: 900;
       color: #333;
       margin: 20px 0;
@@ -1107,15 +1245,15 @@
 
     .completion-buttons {
       display: flex;
-      gap: clamp(12px, 2vw, 20px);
+      gap: 20px;
       margin-top: 30px;
       flex-wrap: wrap;
       justify-content: center;
     }
 
     .completion-btn {
-      padding: clamp(12px, 2.5vw, 18px) clamp(25px, 4vw, 40px);
-      font-size: clamp(16px, 3vw, 22px);
+      padding: 18px 40px;
+      font-size: 22px;
       font-family: 'Jua', sans-serif;
       font-weight: 900;
       border: none;
@@ -1149,84 +1287,24 @@
 
     @keyframes confetti-fall {
       to {
-        transform: translateY(100vh) rotate(360deg);
+        transform: translateY(720px) rotate(360deg);
         opacity: 0;
       }
     }
 
     @keyframes drop-fall {
       to {
-        transform: translateY(100vh);
+        transform: translateY(720px);
         opacity: 0;
       }
     }
 
-    /* ===== 반응형 ===== */
-    @media (max-width: 1024px) {
-      #category-grid, #subcategory-grid {
-        grid-template-columns: repeat(3, 1fr);
-        max-width: 800px;
-      }
-    }
-
-    @media (max-width: 768px) {
-      #category-grid, #subcategory-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-        max-width: 100%;
-      }
-
-      .select-btn {
-        min-height: 100px;
-      }
-
-      .game-main {
-        flex-direction: column;
-      }
-
-      .header-bar {
-        flex-direction: column;
-      }
-
-      .header-left, .header-right {
-        width: 100%;
-        justify-content: center;
-      }
-    }
-
-    @media (max-width: 600px) {
-      #category-grid, #subcategory-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 7px;
-      }
-
-      .select-btn {
-        min-height: 90px;
-      }
-
-      .keyboard {
-        grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
-      }
-
-      .custom-tooltip {
-        width: 140px;
-        font-size: clamp(12px, 2.5vw, 16px);
-      }
-    }
-
-    @media (max-width: 400px) {
-      #category-grid, #subcategory-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
-      }
-
-      .select-btn {
-        min-height: 85px;
-      }
-    }
+    /* 화면 폭에 따른 @media 분기는 더 이상 쓰지 않는다.
+       무대(1280x720)를 통째로 확대/축소하므로 모든 기기에서 배치가 동일하다. */
   </style>
 </head>
 <body>
+<div id="stage">
 
 <!-- 음악 토글 버튼 -->
 <button class="music-toggle" id="music-toggle" onclick="toggleMusic()" title="배경음악 ON/OFF">🔊</button>
@@ -1236,6 +1314,7 @@
   <button class="fullscreen-btn" onclick="toggleFullscreen()" title="전체화면">⛶</button>
   <div class="intro-button-group">
     <button class="intro-btn btn-help" onclick="openHelp()">How to Play</button>
+    <button class="intro-btn btn-start" onclick="goToCategorySelection()">GAME START</button>
   </div>
 </div>
 
@@ -1243,20 +1322,25 @@
 <div id="category-screen" class="selection-screen">
   <div class="header-bar selection-header-bar">
     <div class="header-left">
+      <button class="nav-icon-btn nav-back-btn" onclick="navBack()" title="뒤로">←</button>
+      <button class="nav-icon-btn nav-fwd-btn" onclick="navFwd()" title="앞으로">→</button>
       <span class="header-title">대분류 선택</span>
     </div>
     <div class="header-right">
+      <button class="nav-icon-btn nav-help-btn" onclick="openHelp()" title="게임 방법 보기">❓ How to Play</button>
       <button class="nav-icon-btn" id="music-toggle-header1" onclick="toggleMusic()" title="음악">🔊</button>
       <button class="nav-icon-btn" onclick="backToIntro()" title="처음으로">🏠</button>
     </div>
   </div>
   <div class="selection-content">
-    <div class="selection-title">어떤 단어를 연습할까요?</div>
-    <div class="selection-grid-wrapper">
-      <div class="selection-grid" id="category-grid"></div>
-    </div>
-    <div class="selection-buttons">
-      <button class="nav-btn btn-next" id="category-next-btn" onclick="goToWordSelection()" disabled>다음 →</button>
+    <div class="selection-card">
+      <div class="selection-title">어떤 단어를 연습할까요?</div>
+      <div class="selection-grid-wrapper">
+        <div class="selection-grid" id="category-grid"></div>
+      </div>
+      <div class="selection-buttons">
+        <button class="nav-btn btn-next" id="category-next-btn" onclick="goToWordSelection()" disabled>다음 →</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1265,22 +1349,26 @@
 <div id="word-screen" class="selection-screen">
   <div class="header-bar selection-header-bar">
     <div class="header-left">
-      <button class="nav-icon-btn" onclick="backToCategory()" title="뒤로">←</button>
+      <button class="nav-icon-btn nav-back-btn" onclick="backToCategory()" title="뒤로">←</button>
+      <button class="nav-icon-btn nav-fwd-btn" onclick="navFwd()" title="앞으로">→</button>
       <span class="header-title">소분류 선택</span>
     </div>
     <div class="header-right">
+      <button class="nav-icon-btn nav-help-btn" onclick="openHelp()" title="게임 방법 보기">❓ How to Play</button>
       <button class="nav-icon-btn" id="music-toggle-header2" onclick="toggleMusic()" title="음악">🔊</button>
       <button class="nav-icon-btn" onclick="backToIntro()" title="처음으로">🏠</button>
     </div>
   </div>
   <div class="selection-content">
-    <div class="selection-title">주제를 선택하세요</div>
-    <div class="selection-grid-wrapper">
-      <div class="selection-grid" id="subcategory-grid"></div>
-    </div>
-    <div class="selection-status" id="selection-status">0단어 선택됨</div>
-    <div class="selection-buttons">
-      <button class="nav-btn btn-next" id="start-play-btn" onclick="generateGameWords()" disabled>게임 시작 →</button>
+    <div class="selection-card">
+      <div class="selection-title">주제를 선택하세요</div>
+      <div class="selection-grid-wrapper">
+        <div class="selection-grid" id="subcategory-grid"></div>
+      </div>
+      <div class="selection-status" id="selection-status">0단어 선택됨</div>
+      <div class="selection-buttons">
+        <button class="nav-btn btn-next" id="start-play-btn" onclick="generateGameWords()" disabled>GAME START →</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1292,15 +1380,26 @@
       <span class="header-title">🍦 Save the Ice Cream!</span>
     </div>
     <div class="header-right">
+      <button class="nav-icon-btn nav-help-btn" onclick="openHelp()" title="게임 방법 보기">❓ How to Play</button>
       <button class="nav-icon-btn" id="music-toggle-header3" onclick="toggleMusic()" title="음악">🔊</button>
       <button class="nav-icon-btn" onclick="backToIntro()" title="처음으로">🏠</button>
     </div>
   </div>
   <div class="game-content-wrapper">
     <div class="game-wrapper">
-      <div class="game-stats">
-        <div class="stat-badge">⭐ <span id="score-val">0</span>점</div>
-        <div class="stat-badge"><span id="round-val">1</span> / <span id="total-val">5</span></div>
+      <!-- 상단 한 줄: 문제 진행 → 진행도 바 → 점수 -->
+      <div class="game-top">
+        <div class="stat-badge">🧩 문제 <span id="round-val">1</span> / <span id="total-val">5</span></div>
+        <div class="game-progress-container">
+          <span class="game-progress-label">Progress</span>
+          <div class="game-progress-bar">
+            <div class="game-progress-fill" id="game-progress-fill">
+              <div class="game-progress-emoji">🍦</div>
+            </div>
+          </div>
+          <span class="game-progress-text"><span id="progress-round">1</span> / <span id="progress-total">5</span></span>
+        </div>
+        <div class="stat-badge">⭐ 점수: <span id="score-val">0</span></div>
       </div>
 
       <div class="game-main">
@@ -1317,18 +1416,6 @@
           <div class="game-buttons">
             <button class="game-btn btn-hint" onclick="showHint()">💡 Hint</button>
           </div>
-        </div>
-      </div>
-
-      <!-- 게임 진행도 바 -->
-      <div class="game-progress-container">
-        <div class="game-progress-bar">
-          <div class="game-progress-fill" id="game-progress-fill">
-            <div class="game-progress-emoji">🍦</div>
-          </div>
-        </div>
-        <div class="game-progress-text">
-          <span id="progress-round">1</span> / <span id="progress-total">5</span>
         </div>
       </div>
     </div>
@@ -1354,10 +1441,10 @@
 <div id="completion-screen" class="screen">
   <div class="completion-content">
     <div class="completion-title">🎉 아이스크림을 구했어요!</div>
-    <div style="font-size: clamp(18px, 3.5vw, 26px); color: #FF69B4; font-weight: 700; margin-bottom: 15px;">아이스크림을 잘 지켰나요?</div>
+    <div style="font-size: 26px; color: #FF69B4; font-weight: 700; margin-bottom: 15px;">아이스크림을 잘 지켰나요?</div>
     <div class="completion-emoji">🍦</div>
     <div class="completion-score" id="final-score">최종 점수</div>
-    <div style="font-size: clamp(18px, 3.5vw, 26px); color: #666; font-weight: 700; margin-bottom: 20px;" id="wrong-count">틀린 문제: 0개</div>
+    <div style="font-size: 26px; color: #666; font-weight: 700; margin-bottom: 20px;" id="wrong-count">틀린 문제: 0개</div>
     <div class="completion-buttons">
       <button class="completion-btn btn-replay" onclick="replayGame()">🎮 다시 플레이하기</button>
       <button class="completion-btn btn-home-completion" onclick="goHome()">🏠 처음으로</button>
@@ -1374,13 +1461,12 @@
     <h2>How to Play 🎮</h2>
     <div class="learning-goal">
       <div class="learning-goal-label">🎯 오늘의 학습 목표</div>
-      <ul class="learning-goal-list">
-        <li>주제별 영어 단어와 <b>우리말 뜻</b>을 연결하여 이해할 수 있다.</li>
-        <li>알파벳을 하나씩 떠올려 단어의 <b>철자를 정확하게</b> 완성할 수 있다.</li>
-        <li>완성한 단어를 직접 <b>입력하며</b> 오래 기억할 수 있다.</li>
-      </ul>
+      <div class="learning-goal-text">
+        주제별 영어 단어의 <b>우리말 뜻</b>을 알고,<br>
+        <b>철자를 정확하게</b> 완성할 수 있다.
+      </div>
     </div>
-    <p style="text-align:left; font-size:clamp(14px, 3vw, 18px); line-height:2; color:#555;">
+    <p style="text-align:left; font-size:18px; line-height:2; color:#555;">
       <strong>게임 방법:</strong><br>
       1️⃣ 원하는 주제를 선택합니다<br>
       2️⃣ 알파벳 버튼을 눌러 단어를 완성하세요<br>
@@ -1389,10 +1475,7 @@
       💡 <strong>Hint 버튼:</strong> 답을 잊었다면 Hint로 영어뜻을 확인하세요 (점수 차감 없음)<br>
       5️⃣ 남은 스쿱이 점수가 됩니다<br>
     </p>
-    <div class="help-modal-buttons">
-      <button class="modal-btn btn-help-close" onclick="closeHelp()">닫기</button>
-      <button class="modal-btn btn-help-start" onclick="startFromHelp()">Game Start ▶</button>
-    </div>
+    <button class="modal-btn modal-btn-confirm" id="help-close-btn" onclick="closeHelp()" style="width: 220px; margin-top: 20px;">🍦 GAME START</button>
   </div>
 </div>
 
@@ -1411,6 +1494,8 @@
   </div>
 </div>
 
+</div><!-- /#stage -->
+
 <audio id="bg-music" loop>
   <source src="background music.mp3" type="audio/mpeg">
 </audio>
@@ -1422,6 +1507,19 @@
 </audio>
 
 <script>
+  // ========== 무대 배율 (PC·모바일 공통) ==========
+  // 1280x720 무대를 화면에 들어가는 최대 배율로 통짜 확대/축소한다.
+  // 요소마다 따로 늘어나지 않으므로 어떤 기기에서도 배치·비율·아이콘 위치가 같다.
+  const STAGE_W = 1280, STAGE_H = 720;
+  function fitStage() {
+    const stage = document.getElementById('stage');
+    const scale = Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  }
+  window.addEventListener('resize', fitStage);
+  window.addEventListener('orientationchange', fitStage);
+  fitStage();
+
   // ========== 데이터 ==========
   const categoryEmojis = {
     "숫자·색깔·시간": "🔢",
@@ -1818,7 +1916,7 @@
   let maxAllowed = 5;
   let isAnswerPhase = false;
   let score = 0;
-  let musicEnabled = true;
+  let musicEnabled = false;   // 배경음악은 기본 꺼짐 — 음악 버튼을 눌러야 재생된다
   let wrongWords = [];
 
   // ========== 전체화면 ==========
@@ -1840,7 +1938,7 @@
     for (let i = 0; i < dropCount; i++) {
       const drop = document.createElement('div');
       drop.textContent = '💧';
-      drop.style.position = 'fixed';
+      drop.style.position = 'absolute';   // 무대 기준 (배율에 같이 따라감)
       drop.style.left = Math.random() * 100 + '%';  // 화면 전체 너비에서 랜덤
       drop.style.top = '-10px';  // 화면 위쪽에서 시작
       drop.style.fontSize = (Math.random() * 24 + 20) + 'px';  // 20-44px
@@ -1848,7 +1946,7 @@
       drop.style.pointerEvents = 'none';
       drop.style.animation = `drop-fall ${Math.random() * 2 + 2}s linear forwards`;  // 2-4초
       drop.style.animationDelay = (i * 0.12) + 's';  // 0.12초 간격
-      document.body.appendChild(drop);
+      document.getElementById('stage').appendChild(drop);
       
       setTimeout(() => drop.remove(), (Math.random() * 2 + 2 + 0.12 * dropCount) * 1000);
     }
@@ -1857,12 +1955,12 @@
   // ========== 컨페티 효과 ==========
   function createConfetti() {
     const confettiEmojis = ['🎉', '🎊', '✨', '🌟', '⭐', '💫', '🎈', '🍦'];
-    const container = document.body;
+    const container = document.getElementById('stage');   // 무대 안에서 뿌린다
     
     for (let i = 0; i < 30; i++) {
       const confetti = document.createElement('div');
       confetti.textContent = confettiEmojis[Math.floor(Math.random() * confettiEmojis.length)];
-      confetti.style.position = 'fixed';
+      confetti.style.position = 'absolute';
       confetti.style.left = Math.random() * 100 + '%';
       confetti.style.top = '-10px';
       confetti.style.fontSize = (Math.random() * 20 + 20) + 'px';
@@ -1888,30 +1986,42 @@
     audio.play().catch(e => console.log("재생 불가"));
   }
 
+  // 화면마다 흩어져 있는 음악 버튼들의 표시를 한 번에 맞춘다
+  const MUSIC_BTN_IDS = ['music-toggle', 'music-toggle-header1', 'music-toggle-header2',
+                         'music-toggle-header3', 'music-toggle-header4'];
+
+  function syncMusicButtons() {
+    MUSIC_BTN_IDS.forEach(id => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      btn.textContent = musicEnabled ? '🔊' : '🔇';
+      btn.classList.toggle('music-off', !musicEnabled);
+      btn.title = musicEnabled ? '배경음악 끄기' : '배경음악 켜기';
+    });
+  }
+
   function toggleMusic() {
     const bgMusic = document.getElementById('bg-music');
     musicEnabled = !musicEnabled;
     if (musicEnabled) {
-      bgMusic.play();
-      document.getElementById('music-toggle').textContent = '🔊';
-      document.getElementById('music-toggle-header1')?.textContent === undefined || (document.getElementById('music-toggle-header1').textContent = '🔊');
-      document.getElementById('music-toggle-header2')?.textContent === undefined || (document.getElementById('music-toggle-header2').textContent = '🔊');
-      document.getElementById('music-toggle-header3')?.textContent === undefined || (document.getElementById('music-toggle-header3').textContent = '🔊');
+      // 버튼을 누른 시점이므로 브라우저 자동재생 차단에 걸리지 않는다
+      bgMusic.play().catch(() => {
+        musicEnabled = false;
+        syncMusicButtons();
+      });
     } else {
       bgMusic.pause();
-      document.getElementById('music-toggle').textContent = '🔇';
-      document.getElementById('music-toggle-header1')?.textContent === undefined || (document.getElementById('music-toggle-header1').textContent = '🔇');
-      document.getElementById('music-toggle-header2')?.textContent === undefined || (document.getElementById('music-toggle-header2').textContent = '🔇');
-      document.getElementById('music-toggle-header3')?.textContent === undefined || (document.getElementById('music-toggle-header3').textContent = '🔇');
     }
+    syncMusicButtons();
   }
 
   // ========== 초기화 ==========
   window.onload = () => {
     const bgMusic = document.getElementById('bg-music');
     bgMusic.volume = 0.3;
+    syncMusicButtons();   // 처음엔 꺼진 상태(🔇)로 표시하고 재생하지 않는다
     renderCategoryScreen();
-    document.getElementById('intro-screen').style.display = 'flex';
+    rawShowScreen('intro-screen');   // 화면 기록·내비 버튼 상태를 함께 초기화
   };
 
   // ========== 카테고리 렌더링 ==========
@@ -1947,32 +2057,83 @@
     document.getElementById('category-next-btn').disabled = false;
   }
 
-  // ========== 화면 전환 ==========
+  // ========== How to Play 모달 ==========
+  // 인트로에서 열면 'GAME START'(→대분류 선택), 그 외 화면에서 열면 '알겠어요!'(닫기만)
+  function openHelp() {
+    const atIntro = document.getElementById('intro-screen').style.display !== 'none';
+    const btn = document.getElementById('help-close-btn');
+    btn.textContent = atIntro ? '🍦 GAME START' : '알겠어요!';
+    btn.classList.toggle('go', atIntro);
+    document.getElementById('help-modal').style.display = 'flex';
+  }
+
+  function closeHelp() {
+    const start = document.getElementById('help-close-btn').classList.contains('go');
+    document.getElementById('help-modal').style.display = 'none';
+    if (start) goToCategorySelection();
+  }
+
+  // ========== 화면 전환 + 뒤로/앞으로 (anagram game 과 같은 방식) ==========
   function hideAllScreens() {
     document.querySelectorAll('.screen, .selection-screen').forEach(el => {
       el.style.display = 'none';
     });
   }
 
-  function goToCategorySelection() {
+  let currentScreenId = 'intro-screen';
+  let histBack = [];   // 지나온 화면
+  let histFwd  = [];   // 뒤로 눌러서 되돌아온 화면
+
+  function rawShowScreen(id) {
     hideAllScreens();
-    document.getElementById('category-screen').style.display = 'flex';
+    document.getElementById(id).style.display = 'flex';
+    currentScreenId = id;
+    syncNavButtons();
   }
 
-  function backToIntro() {
-    hideAllScreens();
-    document.getElementById('intro-screen').style.display = 'flex';
+  // 주제 선택 화면의 뒤로·앞으로 버튼은 항상 자리를 지키고,
+  // 갈 곳이 없을 때는 사라지지 않고 비활성(흐리게)으로만 표시된다.
+  function syncNavButtons() {
+    document.querySelectorAll('.nav-back-btn').forEach(b => b.disabled = histBack.length === 0);
+    document.querySelectorAll('.nav-fwd-btn').forEach(b => b.disabled = histFwd.length === 0);
+  }
+
+  function navTo(id) {
+    histBack.push(currentScreenId);
+    histFwd = [];
+    rawShowScreen(id);
+  }
+
+  function navBack() {
+    if (!histBack.length) return;
+    histFwd.push(currentScreenId);
+    rawShowScreen(histBack.pop());
+  }
+
+  function navFwd() {
+    if (!histFwd.length) return;
+    histBack.push(currentScreenId);
+    rawShowScreen(histFwd.pop());
+  }
+
+  function goToCategorySelection() {
+    navTo('category-screen');
   }
 
   function goToWordSelection() {
-    hideAllScreens();
-    document.getElementById('word-screen').style.display = 'flex';
     renderSubcategoryScreen();
+    navTo('word-screen');
   }
 
   function backToCategory() {
-    hideAllScreens();
-    document.getElementById('category-screen').style.display = 'flex';
+    navBack();
+  }
+
+  // 🏠 처음으로 : 기록을 모두 지우고 인트로로
+  function backToIntro() {
+    histBack = [];
+    histFwd = [];
+    rawShowScreen('intro-screen');
   }
 
   // ========== 소분류 렌더링 ==========
@@ -2091,16 +2252,13 @@
     score = 0;
     wrongWords = [];
 
-    hideAllScreens();
-    document.getElementById('game-screen').style.display = 'flex';
+    rawShowScreen('game-screen');
     document.getElementById('total-val').innerText = wordsList.length;
     document.getElementById('progress-total').innerText = wordsList.length;
     startGame(0);
   }
 
   function showReviewScreen() {
-    hideAllScreens();
-    
     const reviewList = document.getElementById('review-list');
     reviewList.innerHTML = '';
     
@@ -2108,14 +2266,14 @@
       const itemDiv = document.createElement('div');
       itemDiv.className = 'review-item';
       itemDiv.innerHTML = `
-        <div style="font-size: clamp(16px, 3vw, 18px); color: #999; margin-bottom: 8px; font-weight: 700;">문제 ${index + 1}</div>
+        <div style="font-size: 18px; color: #999; margin-bottom: 8px; font-weight: 700;">문제 ${index + 1}</div>
         <div class="review-item-word">${wordObj.word.toUpperCase()}</div>
         <div class="review-item-meaning">뜻: ${wordObj.meaning}</div>
       `;
       reviewList.appendChild(itemDiv);
     });
     
-    document.getElementById('review-screen').style.display = 'flex';
+    rawShowScreen('review-screen');
   }
 
   function replayGame() {
@@ -2218,17 +2376,30 @@
   function renderWordBox() {
     const wordDiv = document.getElementById('word-display');
     wordDiv.innerHTML = '';
-    currentWordObj.word.toUpperCase().split('').forEach(char => {
+
+    const chars = currentWordObj.word.toUpperCase().split('');
+    // 긴 단어는 칸을 줄여서 항상 한 줄에 담는다.
+    // (두 줄로 접히면 아래 키보드·힌트 버튼이 화면 밖으로 밀려난다)
+    const GAP = 10, MAX_W = 800, MAX_BOX = 80;
+    const size = Math.max(34, Math.min(MAX_BOX,
+      Math.floor((MAX_W - (chars.length - 1) * GAP) / chars.length)));
+
+    chars.forEach(char => {
       const box = document.createElement('div');
       box.className = 'letter-box';
       if (char === ' ') {
         box.style.border = 'none';
-        box.style.width = '30px';
-      } else if (guessedChars.includes(char)) {
-        box.innerText = char;
+        box.style.width = Math.round(size * 0.4) + 'px';
       } else {
-        box.innerText = '_';
-        box.classList.add('blank');
+        box.style.width = size + 'px';
+        box.style.height = Math.round(size * 1.08) + 'px';
+        box.style.fontSize = Math.round(size * 0.7) + 'px';
+        if (guessedChars.includes(char)) {
+          box.innerText = char;
+        } else {
+          box.innerText = '_';
+          box.classList.add('blank');
+        }
       }
       wordDiv.appendChild(box);
     });
@@ -2249,8 +2420,8 @@
       const rowDiv = document.createElement('div');
       rowDiv.style.display = 'flex';
       rowDiv.style.justifyContent = 'center';
-      rowDiv.style.gap = 'clamp(8px, 1.5vw, 12px)';
-      rowDiv.style.marginBottom = 'clamp(8px, 1.5vw, 12px)';
+      rowDiv.style.gap = '14px';
+      // 행 간격은 .keyboard 의 gap 으로만 준다 (margin 을 같이 주면 세로가 넘쳐 진행도 바와 겹침)
       rowDiv.style.width = '100%';
       
       row.forEach(char => {
@@ -2410,8 +2581,7 @@
       document.getElementById('review-btn-container').style.display = 'none';
     }
     
-    hideAllScreens();
-    document.getElementById('completion-screen').style.display = 'flex';
+    rawShowScreen('completion-screen');
   }
 </script>
 
