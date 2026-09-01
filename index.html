@@ -1471,6 +1471,24 @@
     .modal-x:hover { transform: translateY(-2px); filter: brightness(1.04); }
     .modal-x:active { transform: translateY(2px); }
 
+    /* ===== 게임 종료 확인 팝업 ===== */
+    #leave-modal-content {
+      max-width: 520px;
+      padding: 28px 44px;
+      border-color: var(--kit-lavender);
+    }
+
+    #leave-modal-content h2 { color: var(--lav-ink); }
+
+    /* 녹아버린 아이스크림 — '지금 나가면 아까워요' 라는 뜻이 그림으로 전해진다 */
+    .leave-icon {
+      width: 168px;
+      height: auto;
+      display: block;
+      margin: 6px auto 2px;
+      filter: drop-shadow(0 6px 12px rgba(139, 96, 44, 0.25));
+    }
+
     /* 보조 행동이라 민트 */
     .modal-btn-quit {
       background: linear-gradient(180deg, #93E3DA, var(--kit-mint));
@@ -1980,6 +1998,19 @@
     <div class="modal-buttons">
       <button class="modal-btn modal-btn-confirm" id="confirm-btn" onclick="checkTypedWord()">확인</button>
       <button class="modal-btn modal-btn-next" id="btn-next" onclick="nextRound()" disabled>다음</button>
+    </div>
+  </div>
+</div>
+
+<!-- 게임 도중에 홈·뒤로를 눌렀을 때 확인받는 팝업 -->
+<div class="modal-overlay" id="leave-modal">
+  <div class="modal-content" id="leave-modal-content">
+    <h2>게임을 종료할까요?</h2>
+    <img class="leave-icon" src="kit/melted_icecream.png" alt="" loading="lazy">
+    <div class="modal-text">지금 나가면 풀던 문제가 사라져요.</div>
+    <div class="modal-buttons">
+      <button class="modal-btn modal-btn-confirm" id="leave-ok-btn" onclick="confirmLeave()">확인</button>
+      <button class="modal-btn modal-btn-quit" id="leave-cancel-btn" onclick="cancelLeave()">계속하기</button>
     </div>
   </div>
 </div>
@@ -2888,11 +2919,36 @@
     rawShowScreen(id);
   }
 
+  /* ===== 게임 도중 나가기 확인 =====
+     문제를 푸는 중에 홈·뒤로를 누르면 곧바로 나가지 않고 한 번 물어본다.
+     게임 화면이 아닐 때는 물어볼 것이 없으므로 그대로 이동한다. */
+  let pendingLeave = null;
+
+  function askLeaveGame(go) {
+    if (currentScreenId !== 'game-screen') { go(); return; }
+    pendingLeave = go;
+    document.getElementById('leave-modal').style.display = 'flex';
+  }
+
+  function confirmLeave() {
+    document.getElementById('leave-modal').style.display = 'none';
+    const go = pendingLeave;
+    pendingLeave = null;
+    if (go) go();
+  }
+
+  function cancelLeave() {
+    document.getElementById('leave-modal').style.display = 'none';
+    pendingLeave = null;
+  }
+
   function navBack() {
     if (!histBack.length) return;
-    stopVoice();   // 화면을 옮길 때 재생 중이던 단어 음성은 끊는다
-    histFwd.push(currentScreenId);
-    rawShowScreen(histBack.pop());
+    askLeaveGame(() => {
+      stopVoice();   // 화면을 옮길 때 재생 중이던 단어 음성은 끊는다
+      histFwd.push(currentScreenId);
+      rawShowScreen(histBack.pop());
+    });
   }
 
   function navFwd() {
@@ -2906,8 +2962,10 @@
 
   function navHome() {
     if (currentScreenId === 'intro-screen') return;   // 첫 화면에서는 갈 곳이 없음
-    stopVoice();
-    backToIntro();
+    askLeaveGame(() => {
+      stopVoice();
+      backToIntro();
+    });
   }
 
   // 화면 전환이 rawShowScreen 을 거치지 않고 style.display 로 직접 일어날 수도 있으므로
@@ -3191,6 +3249,8 @@
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (document.getElementById('practice-modal').style.display === 'flex') closePractice();
+    // 종료 확인 팝업에서 Esc 는 '계속하기'(나가지 않음)
+    else if (document.getElementById('leave-modal').style.display === 'flex') cancelLeave();
   });
 
   /* ========== Enter 로 팝업의 확인 버튼 누르기 ==========
@@ -3198,6 +3258,9 @@
      팝업마다 누를 버튼이 하나뿐이라 Enter 가 무엇을 누를지 헷갈릴 일이 없다. */
   function primaryModalButton() {
     const open = (id) => document.getElementById(id).style.display === 'flex';
+
+    // 게임 종료 확인 : 확인
+    if (open('leave-modal')) return document.getElementById('leave-ok-btn');
 
     // 연습 팝업 : 확인 (맞힌 뒤에는 같은 버튼이 닫기 역할을 한다)
     if (open('practice-modal')) return document.getElementById('practice-confirm-btn');
