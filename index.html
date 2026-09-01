@@ -68,7 +68,22 @@
       --text-white: #FFFFFF;
     }
 
+    /* 이 게임은 밝은 화면 하나로만 만들어져 있다.
+       기기가 다크모드일 때 브라우저가 입력칸·스크롤막대를 어둡게 뒤집어
+       글자가 안 보이는 일이 없도록, 밝은 화면임을 못박아 둔다 */
+    :root { color-scheme: light; }
+
+    /* 휴대폰이 가로로 돌렸을 때 글자를 제멋대로 키우지 않게 한다.
+       무대를 통째로 확대·축소하는 방식이라 글자만 커지면 배치가 깨진다 */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
     * { box-sizing: border-box; }
+
+    /* 화면의 글자는 읽을 거리가 아니라 놀잇감이라, 끌었을 때 파랗게 잡히지 않게 한다.
+       (마침표·빈칸 같은 글자가 텍스트로 선택돼 파란 블록으로 보이는 것을 막는다) */
+    #stage { user-select: none; -webkit-user-select: none; }
+    /* 단, 철자를 치는 칸은 선택·복사가 되어야 한다 */
+    #stage input { user-select: text; -webkit-user-select: text; }
 
     html, body {
       width: 100%;
@@ -1985,6 +2000,8 @@
 <!-- 결과 모달 -->
 <div class="modal-overlay" id="result-modal">
   <div class="modal-content" id="result-modal-content">
+    <!-- 철자를 아직 치는 중일 때는 JS(syncResultX)가 이 버튼을 감춘다 -->
+    <button type="button" class="modal-x" id="result-x-btn" onclick="closeModal()" title="닫기" aria-label="닫기">✕</button>
     <h2 id="modal-title">정답입니다!</h2>
     <!-- 정답이면 민트 체크, 오답이면 라벤더 X 로 JS 에서 바꿔 끼운다 -->
     <img class="modal-icon" id="modal-icon" src="kit/icon_check.png" alt="">
@@ -2010,6 +2027,7 @@
 <!-- 게임 도중에 홈·뒤로를 눌렀을 때 확인받는 팝업 -->
 <div class="modal-overlay" id="leave-modal">
   <div class="modal-content" id="leave-modal-content">
+    <button type="button" class="modal-x" onclick="closeModal()" title="닫기" aria-label="닫기">✕</button>
     <h2>게임을 종료할까요?</h2>
     <img class="leave-icon" src="kit/melted_icecream.png" alt="" loading="lazy">
     <div class="modal-text">지금 나가면 풀던 문제가 사라져요.</div>
@@ -2023,6 +2041,7 @@
 <!-- 복습 화면에서 단어 카드를 누르면 열리는 타이핑 연습 팝업 -->
 <div class="modal-overlay" id="practice-modal">
   <div class="modal-content" id="practice-modal-content">
+    <button type="button" class="modal-x" onclick="closeModal()" title="닫기" aria-label="닫기">✕</button>
     <h2 id="practice-title">단어를 따라 써 볼까요?</h2>
     <img class="modal-icon" id="practice-icon" src="kit/icon_hint.png" alt="" loading="lazy">
     <div class="answer-box">
@@ -2111,12 +2130,18 @@
   // 요소마다 따로 늘어나지 않으므로 어떤 기기에서도 배치·비율·아이콘 위치가 같다.
   const STAGE_W = 1280, STAGE_H = 720;
   function fitStage() {
+    /* 글자를 입력하는 중이면 건너뛴다.
+       휴대폰은 자판이 올라오면 창 높이가 확 줄어드는데, 그때 배율을 다시 잡으면
+       무대가 갑자기 쪼그라들었다가 자판을 내리면 되돌아온다 */
+    const el = document.activeElement;
+    if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) return;
     const stage = document.getElementById('stage');
     const scale = Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H);
     stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
   }
   window.addEventListener('resize', fitStage);
-  window.addEventListener('orientationchange', fitStage);
+  /* 가로·세로를 돌리면 창 크기가 바로 반영되지 않는 기기가 있어 한 박자 뒤에 한 번 더 맞춘다 */
+  window.addEventListener('orientationchange', () => { fitStage(); setTimeout(fitStage, 300); });
   fitStage();
 
   // ========== 데이터 ==========
@@ -2511,7 +2536,10 @@
   function updateFullscreenIcon() {
     const icon = document.getElementById('fullscreen-toggle-icon');
     if (icon) icon.className = getFullscreenElement() ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
-    fitStage();   // 전체화면 진입·해제 후 무대 배율 다시 맞추기
+    // 전체화면 진입·해제 후 무대 배율 다시 맞추기.
+    // 창 크기가 늦게 잡히는 기기가 있어 한 박자 뒤에 한 번 더 맞춘다
+    fitStage();
+    setTimeout(fitStage, 300);
   }
   document.addEventListener('fullscreenchange', updateFullscreenIcon);
   document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
@@ -2784,6 +2812,17 @@
     else tryPlayCurrentBgm();
   }
 
+  /* 화면을 옮기거나 팝업을 닫을 때, 그때까지 나던 소리를 함께 끊는다.
+     단어 발음이 다음 화면까지 이어서 들리거나, 나간 뒤에 결과음이 울리는 것을 막는다.
+     (배경음악은 stopVoice 가 원래 설정대로 되돌려 준다) */
+  function stopSpokenAudio() {
+    stopVoice();
+    ['round-success-sound', 'round-fail-sound', 'correct-sound', 'wrong-sound'].forEach(id => {
+      const a = document.getElementById(id);
+      if (a && !a.paused) { a.pause(); a.currentTime = 0; }
+    });
+  }
+
   /* ========== 단어 발음 파일 위치 ==========
      mp3 는 "<카테고리 폴더>/<단어>.mp3" 에 들어 있다.
      주의: 오디오 폴더 이름은 카테고리를 이름 바꾸기 전 그대로이므로 아래 표로 연결한다.
@@ -2860,13 +2899,15 @@
   function openHelp() {
     const atIntro = currentScreenId === 'intro-screen';
     document.getElementById('help-buttons').style.display = atIntro ? 'flex' : 'none';
-    document.getElementById('help-x-btn').style.display = atIntro ? 'none' : 'flex';
+    // ✕ 는 어느 경우에나 보여 준다 (모든 팝업에 닫기 버튼이 하나씩 있도록)
+    document.getElementById('help-x-btn').style.display = 'flex';
     document.getElementById('help-modal').style.display = 'flex';
   }
 
   function openHowToPlay() { openHelp(); }   // 공통 상단바가 부르는 이름
 
   function closeHelp() {
+    stopSpokenAudio();
     document.getElementById('help-modal').style.display = 'none';
   }
 
@@ -2893,6 +2934,7 @@
   function rawShowScreen(id) {
     clearGameTimers();   // 이전 화면에서 예약된 팝업·힌트 지우기 등을 취소한다
     clearEffects();      // 이전 화면에 흩날리던 콘페티·물방울을 남기지 않는다
+    stopSpokenAudio();   // 나가는 화면에서 나던 단어 발음·결과음을 끊는다
     hideAllScreens();
     document.getElementById(id).style.display = 'flex';
     currentScreenId = id;
@@ -2930,6 +2972,7 @@
   let pendingLeave = null;
 
   function askLeaveGame(go) {
+    stopSpokenAudio();   // 나가기를 누른 순간 듣고 있던 발음을 바로 끊는다
     if (currentScreenId !== 'game-screen') { go(); return; }
     pendingLeave = go;
     document.getElementById('leave-modal').style.display = 'flex';
@@ -3245,17 +3288,134 @@
   }
 
   function closePractice() {
+    stopSpokenAudio();   // 발음을 듣던 중이었으면 팝업과 함께 끊는다
     document.getElementById('practice-modal').style.display = 'none';
     practiceWordObj = null;
     practiceSolved = false;
   }
 
-  // Esc 로도 연습 팝업을 닫을 수 있게 한다
+  /* ========== 팝업 닫기 : ✕ · 바깥 배경 클릭 · Esc 공통 ==========
+     팝업마다 '닫는다'는 것이 무슨 뜻인지 달라서 여기 한 곳에 모아 둔다.
+     null 을 돌려주면 지금은 닫을 수 없다는 뜻이다. */
+  function dismissAction(id) {
+    if (id === 'help-modal') return closeHelp;
+    if (id === 'leave-modal') return cancelLeave;      // 닫기 = 나가지 않고 계속하기
+    if (id === 'practice-modal') return closePractice;
+    if (id === 'result-modal') {
+      // 정답이거나 철자를 다 친 뒤에는 [다음] 과 같은 뜻으로 닫는다.
+      // 오답이라 아직 철자를 치는 중이면 닫을 수 없다 —
+      // 그냥 닫으면 문제가 넘어가지 않아 게임이 멈춰 버린다.
+      const next = document.getElementById('btn-next');
+      if (next.disabled || next.style.display === 'none') return null;
+      return nextRound;
+    }
+    return null;
+  }
+
+  function openModalEls() {
+    return Array.from(document.querySelectorAll('.modal-overlay'))
+      .filter(m => m.style.display === 'flex');
+  }
+
+  // 지금 열려 있는 팝업 중 맨 위의 것을 닫는다. 닫을 수 없으면 false
+  function dismissTopModal() {
+    const open = openModalEls();
+    if (!open.length) return false;
+    const act = dismissAction(open[open.length - 1].id);
+    if (!act) return false;
+    act();
+    return true;
+  }
+
+  // 팝업의 ✕ 버튼이 부르는 이름
+  function closeModal() { dismissTopModal(); }
+
+  // 결과 팝업의 ✕ 는 '지금 닫아도 되는 상태'일 때만 보여 준다
+  function syncResultX() {
+    const x = document.getElementById('result-x-btn');
+    if (x) x.style.display = dismissAction('result-modal') ? 'flex' : 'none';
+  }
+
+  // 팝업 바깥(어두운 배경)을 누르면 닫는다. 팝업 안을 누른 것은 그대로 둔다
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', (e) => { if (e.target === m) dismissTopModal(); });
+  });
+
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    if (document.getElementById('practice-modal').style.display === 'flex') closePractice();
-    // 종료 확인 팝업에서 Esc 는 '계속하기'(나가지 않음)
-    else if (document.getElementById('leave-modal').style.display === 'flex') cancelLeave();
+    if (dismissTopModal()) e.preventDefault();
+  });
+
+  // 마우스 오른쪽 버튼 메뉴는 뜨지 않게 한다 (아이들이 잘못 눌러 헤매는 것을 막는다)
+  document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  /* ========== 화살표 방향키로 이동 ==========
+     Tab 은 화면에 적힌 순서대로만 움직여서, 자판처럼 격자로 놓인 버튼에서는
+     엉뚱한 곳으로 튄다. 화살표는 '눈에 보이는 방향'으로 옮긴다.
+     팝업이 떠 있으면 그 안에서만 움직인다. */
+  function focusablesInScope() {
+    const open = openModalEls();
+    const root = open.length ? open[open.length - 1] : document;
+    const sel = 'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    return Array.from(root.querySelectorAll(sel)).filter(el => {
+      if (el.offsetParent === null && getComputedStyle(el).position !== 'fixed') return false;
+      const r = el.getBoundingClientRect();
+      return r.width > 0 && r.height > 0;
+    });
+  }
+
+  function moveFocusByArrow(key) {
+    const list = focusablesInScope();
+    if (!list.length) return false;
+    const cur = document.activeElement;
+    if (!cur || !list.includes(cur)) { list[0].focus(); return true; }
+
+    const a = cur.getBoundingClientRect();
+    const cx = a.left + a.width / 2, cy = a.top + a.height / 2;
+    const horizontal = (key === 'ArrowLeft' || key === 'ArrowRight');
+    let best = null, bestScore = Infinity;
+
+    for (const el of list) {
+      if (el === cur) continue;
+      const r = el.getBoundingClientRect();
+      const dx = (r.left + r.width / 2) - cx;
+      const dy = (r.top + r.height / 2) - cy;
+      if (key === 'ArrowRight' && dx <= 1) continue;
+      if (key === 'ArrowLeft' && dx >= -1) continue;
+      if (key === 'ArrowDown' && dy <= 1) continue;
+      if (key === 'ArrowUp' && dy >= -1) continue;
+      // 누른 방향으로 가까울수록, 옆으로 덜 벗어날수록 좋은 후보로 본다
+      const along = horizontal ? Math.abs(dx) : Math.abs(dy);
+      const across = horizontal ? Math.abs(dy) : Math.abs(dx);
+      const score = along + across * 2;
+      if (score < bestScore) { bestScore = score; best = el; }
+    }
+    if (!best) return false;
+    best.focus();
+    return true;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (!/^Arrow(Up|Down|Left|Right)$/.test(e.key)) return;
+    // 글자를 치는 중에는 화살표로 커서를 움직여야 하므로 건드리지 않는다
+    const el = document.activeElement;
+    if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) return;
+    if (moveFocusByArrow(e.key)) e.preventDefault();
+  });
+
+  /* ========== 진짜 자판으로 글자 맞히기 ==========
+     화면 속 자판을 일일이 찾아 누르지 않아도, 키보드에서 그 글자를 바로 누르면 된다.
+     (팝업이 떠 있거나 글자를 치는 중이면 넘긴다) */
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.altKey || e.metaKey) return;
+    if (!/^[a-zA-Z]$/.test(e.key)) return;
+    if (openModalEls().length) return;
+    const el = document.activeElement;
+    if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) return;
+    if (currentScreenId !== 'game-screen') return;
+    const btn = Array.from(document.querySelectorAll('#keyboard .key-btn'))
+      .find(b => b.textContent.trim().toLowerCase() === e.key.toLowerCase());
+    if (btn && !btn.disabled) { e.preventDefault(); btn.click(); }
   });
 
   /* ========== Enter 로 팝업의 확인 버튼 누르기 ==========
@@ -3589,6 +3749,7 @@
       laterInGame(() => createFallingDrops(), 300);
     }
 
+    syncResultX();   // 지금 닫아도 되는 상태인지에 따라 ✕ 를 보이거나 감춘다
     document.getElementById('result-modal').style.display = 'flex';
 
     // 커서 넣기는 팝업을 띄운 '다음에' 해야 한다.
@@ -3618,6 +3779,7 @@
       } else {
         nextBtn.innerText = '게임 완료!';
       }
+      syncResultX();   // 철자를 다 쳤으니 이제 ✕ 로도 닫을 수 있다
     } else {
       // 틀렸을 때
       alert("철자를 다시 확인해보세요!");
@@ -3627,6 +3789,8 @@
   }
 
   function nextRound() {
+    stopSpokenAudio();   // 발음을 듣던 중에 넘어가도 소리가 이어지지 않게 한다
+    document.getElementById('result-modal').style.display = 'none';
     if (currentRound < wordsList.length - 1) {
       startGame(currentRound + 1);
     } else {
