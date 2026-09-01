@@ -2568,7 +2568,10 @@
       drop.className = 'fx-particle';   // 화면이 바뀌면 clearEffects() 가 한 번에 지운다
       document.getElementById('stage').appendChild(drop);
 
-      setTimeout(() => drop.remove(), (Math.random() * 2 + 2 + 0.12 * dropCount) * 1000);
+      // laterInGame 으로 걸어야 화면을 옮길 때 함께 취소된다.
+      // (그냥 setTimeout 으로 두면 완료 화면까지 따라가 뒤늦게 실행된다.
+      //  방울 자체는 clearEffects 가 화면을 옮기는 순간 이미 지워 준다)
+      laterInGame(() => drop.remove(), (Math.random() * 2 + 2 + 0.12 * dropCount) * 1000);
     }
   }
 
@@ -2595,7 +2598,8 @@
       confetti.className = 'fx-particle';   // 화면이 바뀌면 clearEffects() 가 한 번에 지운다
       container.appendChild(confetti);
 
-      setTimeout(() => confetti.remove(), (Math.random() * 2 + 2) * 1000);
+      // 위 방울과 같은 이유로 laterInGame 을 쓴다 (화면을 옮기면 함께 취소)
+      laterInGame(() => confetti.remove(), (Math.random() * 2 + 2) * 1000);
     }
   }
 
@@ -2902,6 +2906,7 @@
     // ✕ 는 어느 경우에나 보여 준다 (모든 팝업에 닫기 버튼이 하나씩 있도록)
     document.getElementById('help-x-btn').style.display = 'flex';
     document.getElementById('help-modal').style.display = 'flex';
+    focusIntoModal();
   }
 
   function openHowToPlay() { openHelp(); }   // 공통 상단바가 부르는 이름
@@ -2976,6 +2981,7 @@
     if (currentScreenId !== 'game-screen') { go(); return; }
     pendingLeave = go;
     document.getElementById('leave-modal').style.display = 'flex';
+    focusIntoModal();
   }
 
   function confirmLeave() {
@@ -3249,8 +3255,7 @@
     audioBtn.onclick = () => playWordAudio(wordObj.word, audioBtn);
 
     document.getElementById('practice-modal').style.display = 'flex';
-    // 커서 넣기는 팝업을 띄운 '다음에' 해야 한다 (display:none 인 동안에는 먹히지 않는다)
-    input.focus();
+    focusSpellInput('practice-input');   // 열자마자 바로 칠 수 있게 커서를 넣어 준다
   }
 
   function practiceConfirm() {
@@ -3348,6 +3353,45 @@
 
   // 마우스 오른쪽 버튼 메뉴는 뜨지 않게 한다 (아이들이 잘못 눌러 헤매는 것을 막는다)
   document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  /* ========== 철자 칸은 늘 소문자로 ==========
+     휴대폰 자판은 첫 글자를 저절로 대문자로 바꾸는 기기가 많다
+     (autocapitalize="none" 을 무시하는 자판도 있다).
+     치는 즉시 소문자로 되돌린다. 맞았는지 따질 때는 어차피 대소문자를 가리지 않는다 */
+  ['word-input', 'practice-input'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', () => {
+      const low = el.value.toLowerCase();
+      if (el.value === low) return;
+      const at = el.selectionStart;
+      el.value = low;
+      el.setSelectionRange(at, at);   // 커서가 맨 뒤로 튀지 않게 제자리에 둔다
+    });
+  });
+
+  /* 팝업이 뜨면 곧바로 칠 수 있도록 커서를 철자 칸에 넣어 준다.
+     한 박자 뒤에 넣는 이유는, 팝업이 화면에 그려지기 전에 focus 를 부르면
+     일부 브라우저가 무시하기 때문이다 */
+  function focusSpellInput(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const go = () => { if (el.offsetParent !== null) { el.focus(); el.select(); } };
+    go();                // 대개 이것으로 바로 들어간다
+    setTimeout(go, 0);   // 팝업이 아직 그려지지 않은 브라우저를 위해 한 번 더
+  }
+
+  /* 팝업이 열리면 초점을 팝업 안의 '지금 눌러야 할 버튼' 으로 옮긴다.
+     그러지 않으면 방금까지 누르던 자판 버튼에 초점이 남아,
+     Enter 를 눌러도 팝업의 버튼 대신 뒤에 있는 자판이 눌린다 */
+  function focusIntoModal() {
+    const go = () => {
+      const btn = primaryModalButton();
+      if (btn && !btn.disabled && btn.offsetParent !== null) btn.focus();
+    };
+    go();
+    setTimeout(go, 0);
+  }
 
   /* ========== 화살표 방향키로 이동 ==========
      Tab 은 화면에 적힌 순서대로만 움직여서, 자판처럼 격자로 놓인 버튼에서는
@@ -3450,9 +3494,13 @@
     if (e.key !== 'Enter') return;
     // 한글 입력기가 글자를 조합하는 중이면 그 Enter 는 조합을 끝내는 것이다
     if (e.isComposing || e.keyCode === 229) return;
-    // 이미 버튼에 초점이 가 있으면 브라우저가 알아서 눌러 준다 (여기서 또 누르면 두 번 눌린다)
+    /* 초점이 '지금 열린 팝업 안의' 버튼에 있으면 브라우저가 알아서 눌러 주므로 비켜 준다.
+       반대로 팝업 밖(예: 방금까지 누르던 자판 버튼)에 초점이 남아 있으면
+       그대로 두면 뒤에 있는 자판이 눌려 버리므로, 여기서 팝업 버튼을 눌러 준다 */
     const el = document.activeElement;
-    if (el && (el.tagName === 'BUTTON' || el.tagName === 'A')) return;
+    const open = openModalEls();
+    const top = open.length ? open[open.length - 1] : null;
+    if (el && (el.tagName === 'BUTTON' || el.tagName === 'A') && (!top || top.contains(el))) return;
 
     const btn = primaryModalButton();
     if (!btn || btn.disabled) return;
@@ -3752,10 +3800,12 @@
     syncResultX();   // 지금 닫아도 되는 상태인지에 따라 ✕ 를 보이거나 감춘다
     document.getElementById('result-modal').style.display = 'flex';
 
-    // 커서 넣기는 팝업을 띄운 '다음에' 해야 한다.
+    // 커서 넣기는 팝업을 띄운 '다음에' 해야 한다 (focusSpellInput 이 한 박자 뒤에 넣는다).
     // display:none 인 동안 focus() 를 부르면 아무 일도 일어나지 않아서,
     // 예전에는 입력칸을 마우스로 눌러야 타이핑이 됐다.
-    if (!isWin) inputEl.focus();
+    // 정답이면 [다음] 에, 오답이면 철자 칸에 커서를 둔다 (Enter 가 바로 먹히도록)
+    if (isWin) focusIntoModal();
+    else focusSpellInput('word-input');
   }
 
   // ========== 철자 확인 ==========
