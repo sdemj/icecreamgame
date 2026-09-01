@@ -17,28 +17,49 @@
     :root {
       --font-display: 'Hakgyoansim PosterB', sans-serif;
       --font-body: 'Hakgyoansim BoardmarkerR', sans-serif;
-      --sky: #DCE0EF;
-      --sea: #BFD9EE;
-      --hill-pink: #F2C6D8;
-      --hill-yellow: #F2E0A8;
-      --grass: #C2E0A0;
-      --truck-mint: #AEDCD6;
-      --cream: #F5EDD4;
-      --cream-board: #FAF3E2;
-      --awning-yellow: #F2DC9E;
-      --wood: #A67C52;
-      --wood-dark: #8C6844;
-      --coral: #E8907C;
-      --coral-shadow: #C9705E;
-      --mint-btn: #AEDCD6;
-      --mint-btn-shadow: #8CBCB6;
-      --menu-pink: #F2B8CC;
-      --alert-red: #E85D5D;
-      --title-pink: #F27BA8;
-      --title-yellow: #F2D06B;
-      --title-green: #9ED9A8;
-      --title-blue: #8FC2E8;
-      --title-purple: #A98BD6;
+
+      /* ══════════ DESIGN KIT : Save the Ice Cream ══════════
+         icecream_game_design_kit 의 컬러 팔레트 6종을 그대로 옮긴 값.
+         화면에 쓰는 색은 모두 여기서만 뽑아 쓴다. */
+      --kit-strawberry: #FF8FA3;   /* 주요 행동 (Game Start · 다음 · 확인) */
+      --kit-mint:       #7AD8CD;   /* 보조 행동 · 정답 */
+      --kit-sunny:      #FFD35F;   /* 강조 · 보상 (Hint · 점수) */
+      --kit-lavender:   #B98BE6;   /* 오답 · 보상 배지 */
+      --kit-cream:      #FFF0D5;   /* 바탕 패널 */
+      --kit-cone:       #E9A34A;   /* 콘 · 글자 */
+
+      /* 위 여섯 색에서 뽑은 밝은 톤 / 진한 톤 / 글자 톤.
+         키트가 말하는 '말랑한 클레이 토이' 는 아래쪽에 같은 색의 진한 면을 깔아
+         두께를 만들고(0 Npx 0 ...), 그림자는 검정 대신 그 색을 옅게 써서 대비를 낮춘다. */
+      --straw-lt:#FFC6D0; --straw-dk:#E8697F; --straw-ink:#B4485E;
+      --mint-lt: #C2EEE8; --mint-dk: #4FBAAD; --mint-ink: #2E8177;
+      --sunny-lt:#FFE9A6; --sunny-dk:#E5B336; --sunny-ink:#96690A;
+      --lav-lt:  #DFCAF3; --lav-dk:  #9A67CC; --lav-ink:  #6E44A0;
+      --cream-lt:#FFFAF0; --cream-dk:#EFDCB6; --cream-ink:#8A6A45;
+      --cone-dk: #C6832E;
+
+      /* 화면 바탕 : 민트빛 하늘에서 크림빛 모래로. 시작화면의 바닷가 트럭 그림과 이어진다 */
+      --scene-top:#DBF3EF; --scene-mid:#FFF7E7; --scene-bot:#FFEBD3;
+      --letterbox:#F3E1C4;         /* 무대 바깥 여백 */
+      --text-main:#5A4632;         /* 검정 대신 짙은 콘색 — 대비가 낮아 눈이 편하다 */
+      --text-sub: #907A63;
+
+      /* ── 예전 이름들 : 여기서 키트 색으로 이어 두어 기존 규칙이 그대로 새 팔레트를 쓴다 ── */
+      --cream-board: var(--cream-lt);
+      --cream: var(--kit-cream);
+      --coral: var(--kit-strawberry);
+      --coral-shadow: var(--straw-dk);
+      --mint-btn: var(--kit-mint);
+      --mint-btn-shadow: var(--mint-dk);
+      --awning-yellow: var(--kit-sunny);
+      --wood: var(--cream-ink);
+      --wood-dark: var(--cone-dk);
+      --alert-red: var(--kit-lavender);
+      --title-pink: var(--kit-strawberry);
+      --menu-pink: var(--straw-lt);
+      --sky: var(--scene-top);
+      --sea: var(--scene-mid);
+      --grass: var(--scene-bot);
       --text-white: #FFFFFF;
     }
 
@@ -54,8 +75,8 @@
 
     body {
       font-family: var(--font-body);
-      color: #333;
-      background: #F5E8DC;   /* 무대 바깥(레터박스) 여백 색 */
+      color: var(--text-main);
+      background: var(--letterbox);   /* 무대 바깥(레터박스) 여백 색 */
       /* 두 폰트 모두 굵기가 하나뿐 → 브라우저가 억지로 굵게 만드는 것(가짜 볼드)을 막는다 */
       font-synthesis: none;
       -webkit-font-synthesis: none;
@@ -81,8 +102,9 @@
       transform: translate(-50%, -50%) scale(1);
       transform-origin: center center;
       overflow: hidden;
-      background: #F5E8DC;
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.25);
+      background: var(--letterbox);
+      /* 그림자도 검정 대신 콘색을 옅게 — 키트의 '낮은 대비의 그림자' */
+      box-shadow: 0 0 40px rgba(139, 96, 44, 0.28);
     }
 
     .screen {
@@ -120,13 +142,16 @@
     /* ===== 헤더 공통 =====
        네비게이션 버튼은 위 공통 상단바로 옮겨갔고, 여기에는 화면 이름만 남는다.
        상단바 버튼이 화면 양쪽 끝에 떠 있으므로 제목은 가운데로 둔다. */
+    /* 키트의 민트 헤더 띠. 아래쪽에 같은 색의 진한 면을 깔아 두께가 있는 판으로 보이게 한다 */
     .header-bar {
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 10.8px 20px;
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      background: linear-gradient(180deg, #93E3DA, var(--kit-mint));
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .5),
+                  0 4px 0 var(--mint-dk),
+                  0 9px 16px rgba(79, 186, 173, .22);
       gap: 8px;
       flex-shrink: 0;
     }
@@ -135,7 +160,8 @@
       font-family: var(--font-display);
       font-size: 23px;
       font-weight: normal;
-      color: #333;
+      color: #FFFDF6;
+      text-shadow: 0 2px 2px rgba(38, 112, 103, .45);
     }
 
     /* ===== 인트로 화면 ===== */
@@ -150,7 +176,7 @@
       justify-content: flex-end;
       padding: 20px 20px 60px 20px;
       z-index: 100;
-      background-color: #FFF5E6;
+      background-color: var(--kit-cream);   /* 그림이 늦게 뜰 때 잠깐 보이는 바탕색 */
       position: relative;
     }
     
@@ -162,16 +188,18 @@
       align-items: center;
     }
 
+    /* 키트의 알약형 클레이 버튼 : 완전히 둥근 모서리 + 아래쪽 진한 면(두께) + 위쪽 하이라이트 */
     .intro-btn {
       padding: 20px 60px;
       font-size: 31px;
       font-family: var(--font-display);
       font-weight: 900;
       border: none;
-      border-radius: 30px;
+      border-radius: 999px;
       cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      /* box-shadow 는 아래에서 색마다 따로 잡으므로 transition 대상에서 뺀다
+         (all 로 두면 hover 때 두께가 잠깐 사라져 보인다) */
+      transition: transform 0.18s, filter 0.18s;
       color: white;
       white-space: nowrap;
       /* text-transform: uppercase 를 걸면 'Game Start' 가 'GAME START' 로 나와
@@ -179,31 +207,35 @@
       letter-spacing: 1px;
     }
 
+    /* hover 에서 box-shadow 를 덮어쓰면 클레이 두께가 사라진다. 밝기만 살짝 올린다 */
     .intro-btn:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+      transform: translateY(-4px);
+      filter: brightness(1.05);
     }
 
     .intro-btn:active {
-      transform: translateY(-2px);
+      transform: translateY(3px);
     }
 
     .btn-help {
-      background: linear-gradient(135deg, var(--mint-btn), var(--mint-btn));
-      color: #333;
-      box-shadow: 0 8px 0 var(--mint-btn-shadow), 0 12px 20px rgba(0, 0, 0, 0.15);
+      background: linear-gradient(180deg, #93E3DA, var(--kit-mint));
+      color: var(--mint-ink);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .55),
+                  0 8px 0 var(--mint-dk), 0 14px 20px rgba(79, 186, 173, .3);
     }
 
     .btn-start {
-      background: linear-gradient(135deg, var(--coral), var(--coral));
-      color: white;
-      box-shadow: 0 8px 0 var(--coral-shadow), 0 12px 20px rgba(0, 0, 0, 0.15);
+      background: linear-gradient(180deg, #FFA9B9, var(--kit-strawberry));
+      color: #FFF7F8;
+      text-shadow: 0 2px 2px rgba(160, 60, 80, .35);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .5),
+                  0 8px 0 var(--straw-dk), 0 14px 20px rgba(232, 105, 127, .3);
     }
 
     /* ===== 선택 화면 ===== */
     .selection-screen {
       display: none;
-      background: linear-gradient(135deg, var(--cream-board) 0%, #F5E8DC 100%);
+      background: linear-gradient(180deg, var(--scene-top) 0%, var(--scene-mid) 46%, var(--scene-bot) 100%);
       flex-direction: column;
       z-index: 50;
       height: 100%;
@@ -230,21 +262,23 @@
       font-family: var(--font-display);
       font-size: 46px;
       font-weight: normal;
-      color: #333;
+      color: var(--text-main);
       margin-bottom: 10.8px;
       text-align: center;
       flex-shrink: 0;
     }
 
+    /* 키트의 '크림 패널' : 크림 바탕 + 한 톤 짙은 크림 테두리 + 아래쪽 두께.
+       그림자는 검정이 아니라 콘색을 옅게 써서 대비를 낮춘다 */
     .selection-card {
       width: 100%;
       max-width: 1000px;
-      background: radial-gradient(circle at top left, rgba(242, 220, 158, 0.45) 0%, transparent 32%), radial-gradient(circle at top right, rgba(232, 144, 124, 0.2) 0%, transparent 32%), rgba(255, 251, 240, 0.92);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background: var(--cream-lt);
       border-radius: 40px;
-      border: 6px solid var(--cream-board);
-      box-shadow: 0 15px 35px rgba(140, 104, 68, 0.12), 0 5px 0 var(--wood);
+      border: 6px solid var(--kit-cream);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .9),
+                  0 8px 0 var(--cream-dk),
+                  0 18px 30px rgba(201, 160, 110, 0.2);
       padding: 28.8px 38.4px;
       display: flex;
       flex-direction: column;
@@ -282,14 +316,16 @@
     }
 
     .select-btn {
-      background: var(--cream-board);
-      border: 4px solid #E5D9CC;
-      border-radius: 25px;
+      background: linear-gradient(180deg, #FFFDF7, var(--kit-cream));
+      border: 4px solid var(--cream-dk);
+      border-radius: 28px;
       padding: 10.8px 10px;
       font-family: var(--font-display);
+      color: var(--text-main);
       cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s, filter 0.2s;
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .9),
+                  0 5px 0 var(--cream-dk), 0 9px 14px rgba(201, 160, 110, .18);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -302,17 +338,23 @@
     }
 
     .select-btn:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+      transform: translateY(-6px);
+      filter: brightness(1.03);
       z-index: 20;   /* 툴팁이 아래줄 버튼에 가리지 않도록 */
     }
 
+    /* 고른 칸 : 키트의 딸기색. 주요 선택이므로 한 화면에서 이 색만 튀도록 둔다 */
     .select-btn.selected {
-      border-color: var(--title-pink);
-      background: linear-gradient(135deg, #FFE0E6, #FFF0F5);
-      color: #D8419F;
-      box-shadow: 0 12px 28px rgba(242, 123, 168, 0.25);
+      border-color: var(--straw-dk);
+      background: linear-gradient(180deg, #FFB9C6, var(--kit-strawberry));
+      color: #FFF7F8;
+      text-shadow: 0 2px 2px rgba(160, 60, 80, .3);
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .5),
+                  0 5px 0 var(--straw-dk), 0 10px 16px rgba(232, 105, 127, .3);
     }
+
+    .select-btn.selected .select-btn-subtitle,
+    .select-btn.selected .select-btn-count { color: rgba(255, 255, 255, .9); }
 
     .select-btn-emoji {
       font-size: 65px;
@@ -328,14 +370,14 @@
 
     .select-btn-subtitle {
       font-size: 15px;
-      color: #999;
+      color: var(--text-sub);
       font-weight: 400;
       margin-bottom: 3px;
     }
 
     .select-btn-count {
       font-size: 18px;
-      color: #666;
+      color: var(--cream-ink);
       font-weight: 700;
     }
 
@@ -373,20 +415,26 @@
       font-size: 16px;
     }
 
-    /* 전체 선택 버튼 */
+    /* 전체 선택 버튼 : 보조 행동이라 키트의 민트를 쓴다 */
     .select-all-btn {
       grid-column: 1 / -1;
-      background: linear-gradient(135deg, #E8F5E9, #E8F5E9);
-      border-color: #A5D6A7;
+      background: linear-gradient(180deg, #EAFAF7, var(--mint-lt));
+      border-color: #9FE2D9;
+      color: var(--mint-ink);
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .9),
+                  0 5px 0 #9FE2D9, 0 9px 14px rgba(79, 186, 173, .18);
       min-height: auto;
       aspect-ratio: auto;
       padding: 14px;
     }
 
     .select-all-btn.selected {
-      border-color: #4CAF50;
-      background: linear-gradient(135deg, #A5D6A7, #C8E6C9);
-      color: #2E7D32;
+      border-color: var(--mint-dk);
+      background: linear-gradient(180deg, #93E3DA, var(--kit-mint));
+      color: #FFFDF6;
+      text-shadow: 0 2px 2px rgba(38, 112, 103, .35);
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .5),
+                  0 5px 0 var(--mint-dk), 0 10px 16px rgba(79, 186, 173, .3);
     }
 
     /* ===== 소분류 선택 화면: 카드/버튼 확대 ===== */
@@ -445,10 +493,10 @@
       bottom: auto;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.88);
-      color: white;
+      background: rgba(90, 70, 50, 0.94);
+      color: var(--kit-cream);
       padding: 12px 16px;
-      border-radius: 12px;
+      border-radius: 16px;
       font-size: 20px;
       white-space: normal;
       width: 300px;
@@ -460,7 +508,7 @@
       word-break: keep-all;
       overflow-wrap: normal;
       line-height: 1.5;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 6px 14px rgba(139, 96, 44, 0.35);
     }
 
     .custom-tooltip::before {
@@ -470,7 +518,7 @@
       left: 50%;
       transform: translateX(-50%);
       border: 4px solid transparent;
-      border-bottom-color: rgba(0, 0, 0, 0.88);
+      border-bottom-color: rgba(90, 70, 50, 0.94);
     }
 
     .sub-item:hover .custom-tooltip {
@@ -480,7 +528,7 @@
     .selection-status {
       font-family: var(--font-body);
       font-size: 22px;
-      color: #666;
+      color: var(--cream-ink);
       font-weight: normal;
       text-align: center;
       margin-bottom: 15px;
@@ -504,39 +552,61 @@
       font-family: var(--font-display);
       font-weight: 900;
       border: none;
-      border-radius: 25px;
+      border-radius: 999px;
       cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.18s, filter 0.18s;
       white-space: nowrap;
       flex: 1;
       min-width: 120px;
+      /* 아이콘을 글자 옆에 나란히 놓기 위한 정렬 */
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* 버튼 안의 키트 원형 아이콘. 한 화면에서는 같은 크기를 유지한다(키트 사용 원칙) */
+    .btn-ico {
+      height: 28px;
+      width: auto;
+      flex-shrink: 0;
+      /* 글자 기준선에 맞춰 아주 살짝 올린다 */
+      margin-top: -2px;
     }
 
     .nav-btn:hover:not(:disabled) {
       transform: translateY(-3px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+      filter: brightness(1.05);
     }
+
+    .nav-btn:active:not(:disabled) { transform: translateY(3px); }
 
     .nav-btn:disabled {
       cursor: not-allowed;
-      opacity: 0.5;
+      opacity: 0.45;
+      filter: grayscale(0.5);
     }
 
     .btn-back {
-      background: linear-gradient(135deg, #E0E7FF, #E0E7FF);
-      color: #6366F1;
+      background: linear-gradient(180deg, #EAFAF7, var(--mint-lt));
+      color: var(--mint-ink);
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .8),
+                  0 6px 0 #9FE2D9, 0 10px 16px rgba(79, 186, 173, .2);
     }
 
     .btn-next {
-      background: linear-gradient(135deg, var(--coral), var(--coral));
-      color: white;
+      background: linear-gradient(180deg, #FFA9B9, var(--kit-strawberry));
+      color: #FFF7F8;
+      text-shadow: 0 2px 2px rgba(160, 60, 80, .32);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .5),
+                  0 6px 0 var(--straw-dk), 0 11px 18px rgba(232, 105, 127, .28);
     }
 
     /* ===== 게임 화면 ===== */
+    /* 민트빛 하늘 → 크림빛 모래. 예전의 하늘/바다/잔디 3단 대신 키트 색으로 부드럽게 잇는다 */
     #game-screen {
       display: none;
-      background: linear-gradient(180deg, var(--sky) 0%, var(--sea) 50%, var(--grass) 50.5%, var(--grass) 100%);
+      background: linear-gradient(180deg, var(--scene-top) 0%, var(--scene-mid) 46%, var(--scene-bot) 100%);
       flex-direction: column;
       z-index: 50;
       overflow-y: auto;
@@ -555,15 +625,16 @@
       overflow: hidden;
     }
 
+    /* 선택 화면과 같은 '크림 패널' */
     .game-wrapper {
       width: 100%;
       max-width: 1400px;
-      background: radial-gradient(circle at top left, rgba(242, 220, 158, 0.45) 0%, transparent 32%), radial-gradient(circle at top right, rgba(232, 144, 124, 0.2) 0%, transparent 32%), rgba(255, 251, 240, 0.92);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background: var(--cream-lt);
       border-radius: 40px;
-      border: 6px solid var(--cream-board);
-      box-shadow: 0 15px 35px rgba(140, 104, 68, 0.12), 0 5px 0 var(--wood);
+      border: 6px solid var(--kit-cream);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .9),
+                  0 8px 0 var(--cream-dk),
+                  0 18px 30px rgba(201, 160, 110, 0.2);
       padding: 18px 36px;
       box-sizing: border-box;
       display: flex;
@@ -596,16 +667,24 @@
     }
 
     .stat-badge {
-      background: var(--cream-board);
-      padding: 11px 22px;
-      border-radius: 18px;
-      color: var(--wood);
-      border: 3px solid #D9CCBF;
+      background: linear-gradient(180deg, #FFFDF7, var(--kit-cream));
+      padding: 9px 20px;
+      border-radius: 999px;
+      color: var(--cone-dk);
+      border: 3px solid var(--cream-dk);
       white-space: nowrap;
       font-family: var(--font-display);
       font-size: 25px;
       flex: 0 0 auto;   /* 좌우 배지는 내용만큼, 가운데 진행도 바가 남는 폭을 채운다 */
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .9),
+                  0 4px 0 var(--cream-dk), 0 7px 12px rgba(201, 160, 110, .16);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
+
+    /* 배지 안의 키트 원형 아이콘 (⭐ 이모지 대체) */
+    .stat-badge .badge-ico { height: 32px; width: auto; }
 
     .game-main {
       display: flex;
@@ -630,14 +709,14 @@
       /* 아이스크림 가게 느낌의 연분홍 물방울무늬.
          맨 위 radial-gradient 가 하얀 점, 그 아래 linear-gradient 가 바탕색이다 */
       background-image:
-        radial-gradient(circle, rgba(255,255,255,.72) 2.6px, transparent 3.1px),
-        linear-gradient(180deg, #FFF6FA 0%, #FFE9F2 60%, #FFDDEB 100%);
+        radial-gradient(circle, rgba(255,255,255,.75) 2.6px, transparent 3.1px),
+        linear-gradient(180deg, #FFF6F8 0%, #FFE6EB 60%, #FFD9E1 100%);
       background-size: 26px 26px, 100% 100%;
-      border: 3px solid #F7C9DD;
-      border-radius: 30px;
-      box-shadow: inset 0 2px 0 rgba(255,255,255,.95),
-                  inset 0 -4px 10px rgba(240,150,190,.14),
-                  0 4px 12px rgba(200,120,160,.14);
+      border: 3px solid var(--straw-lt);
+      border-radius: 32px;
+      box-shadow: inset 0 3px 0 rgba(255,255,255,.95),
+                  inset 0 -4px 10px rgba(232,105,127,.12),
+                  0 5px 0 var(--straw-lt), 0 10px 16px rgba(232,105,127,.16);
     }
 
     /* 그림이 놓이는 자리는 크기를 고정한다.
@@ -659,7 +738,7 @@
       /* contain + bottom : 스쿱 수와 상관없이 확대율이 같고 콘이 항상 바닥에 붙는다 */
       object-fit: contain;
       object-position: center bottom;
-      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15));
+      filter: drop-shadow(0 6px 12px rgba(139, 96, 44, 0.22));
       animation: scoop-appear 0.5s ease-out;
     }
 
@@ -691,19 +770,50 @@
       90% { transform: translateX(-5px) rotate(-1deg); }
     }
 
+    /* 키트 원칙 : '민트 말풍선은 힌트'.
+       Hint 를 누르기 전에는 내용이 비어 있으므로 :empty 로 말풍선을 감춰 둔다 */
     .hint-display {
       /* 우리말 뜻 힌트는 멀리서도 보이도록 크게 (원래 21px) */
-      min-height: 42px;
+      min-height: 48px;
       font-family: var(--font-body);
-      font-size: 31px;
+      font-size: 27px;
       line-height: 1.25;
-      color: #D97706;
+      color: var(--mint-ink);
       font-weight: normal;
       text-align: center;
       margin-top: 0;
       word-break: keep-all;
       flex-shrink: 0;
+      position: relative;
+      align-self: stretch;
+      padding: 7px 14px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #CDF1EC, var(--mint-lt));
+      border: 3px solid var(--kit-mint);
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .85), 0 4px 0 var(--kit-mint);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+
+    /* 말풍선 꼬리 : 위쪽 아이스크림을 가리킨다 */
+    .hint-display::after {
+      content: '';
+      position: absolute;
+      top: -13px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 7px solid transparent;
+      border-bottom-color: var(--kit-mint);
+    }
+
+    .hint-display:empty {
+      background: none;
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    .hint-display:empty::after { display: none; }
 
     .game-content {
       display: flex;
@@ -723,25 +833,28 @@
       align-items: center;
       width: 100%;
       flex-shrink: 0;
-      margin-top: 26px;   /* 정답 칸을 살짝 아래로 */
+      /* 정답 칸을 살짝 아래로. 아래에 진행 결과 띠가 생긴 만큼 예전 26px 에서 줄였다 */
+      margin-top: 12px;
     }
 
     .letter-box {
       width: 80px;
       height: 86.4px;
-      border-bottom: 4px solid #333;
+      /* 밑줄도 검정 대신 콘색 — 키트의 낮은 대비 원칙 */
+      border-bottom: 5px solid var(--kit-cone);
+      border-radius: 0 0 8px 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 61px;
       font-weight: normal;
-      color: #FF69B4;
+      color: var(--straw-ink);
       font-family: var(--font-display);
       flex-shrink: 0;
     }
 
     .letter-box.blank {
-      color: #DDD;
+      color: var(--cream-dk);
     }
 
     .keyboard {
@@ -751,24 +864,26 @@
       width: 100%;
       max-width: 800px;
       margin-top: auto;
-      margin-bottom: 8.6px;
+      margin-bottom: 4px;
       flex-shrink: 0;
     }
 
+    /* 글자판도 클레이 블록처럼 : 아래쪽 진한 면이 두께가 되고, 누르면 그 두께만큼 내려간다 */
     .key-btn {
       min-width: 68px;
       width: 68px;
       aspect-ratio: 1;
-      background: var(--cream-board);
-      border: 3px solid #D9CCBF;
-      border-radius: 14px;
+      background: linear-gradient(180deg, #FFFDF7, var(--kit-cream));
+      border: 3px solid var(--cream-dk);
+      border-radius: 18px;
       font-size: 28px;
       font-family: var(--font-display);
       font-weight: 900;
       cursor: pointer;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-      transition: all 0.2s;
-      color: #333;
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .9),
+                  0 4px 0 var(--cream-dk), 0 7px 10px rgba(201, 160, 110, .16);
+      transition: transform 0.15s, filter 0.15s;
+      color: var(--text-main);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -776,29 +891,36 @@
 
     .key-btn:hover:not(:disabled) {
       transform: translateY(-3px);
-      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+      filter: brightness(1.04);
     }
 
     .key-btn:active:not(:disabled) {
-      transform: translateY(-1px);
+      transform: translateY(3px);
     }
 
+    /* 맞은 글자 = 민트, 틀린 글자 = 라벤더.
+       키트의 정답 아이콘(민트 체크)·오답 아이콘(라벤더 X)과 같은 색이라
+       팝업까지 같은 신호가 이어진다 */
     .key-btn.correct {
-      background: #34d399;
-      color: white;
-      border-color: #10b981;
-      box-shadow: 0 4px 12px rgba(52, 211, 153, 0.4);
+      background: linear-gradient(180deg, #93E3DA, var(--kit-mint));
+      color: #FFFDF6;
+      text-shadow: 0 2px 2px rgba(38, 112, 103, .35);
+      border-color: var(--mint-dk);
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .5),
+                  0 4px 0 var(--mint-dk), 0 8px 12px rgba(79, 186, 173, .3);
     }
 
     .key-btn.wrong {
-      background: var(--alert-red);
-      color: white;
-      border-color: #C9424F;
-      box-shadow: 0 4px 12px rgba(232, 93, 93, 0.4);
+      background: linear-gradient(180deg, #CBAAEE, var(--kit-lavender));
+      color: #FFFBF4;
+      text-shadow: 0 2px 2px rgba(90, 55, 135, .35);
+      border-color: var(--lav-dk);
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .45),
+                  0 4px 0 var(--lav-dk), 0 8px 12px rgba(154, 103, 204, .3);
     }
 
     .key-btn:disabled {
-      opacity: 0.6;
+      opacity: 0.62;
       cursor: not-allowed;
     }
 
@@ -808,37 +930,92 @@
       flex-wrap: wrap;
       justify-content: center;
       flex-shrink: 0;
-      margin-bottom: 8.6px;
+      margin-bottom: 2px;
     }
 
+    /* ===== 지난 문제 모아보기 띠 (Hint 버튼 아래) =====
+       anagram 게임의 진행 결과 띠와 같은 모양이지만, 열 칸이 모두 들어가야 해서
+       '진행 결과' 라는 이름표는 빼고 영어 단어만 담는다.
+       min-height 로 두 줄분을 미리 잡아 두어, 칸이 늘어도 자판이 밀리지 않는다.
+
+       ── 글자 크기를 정한 근거 ──
+       띠 안쪽 폭은 862.4 - 여백 18 - 테두리 6 = 838.4px.
+       열 칸이 두 줄에 들어가려면 한 줄에 다섯 칸 : (838.4 - 간격 4×5) / 5 = 163.7px.
+       칸 여백 18 + 테두리 4 를 빼면 글자에 쓸 수 있는 폭이 141.7px.
+       이 글꼴(학교안심 PosterB)은 영문 한 글자가 약 0.62em 이므로,
+       가장 긴 단어(photographer · table tennis = 12글자) 기준
+       141.7 / (12 × 0.62) = 19.0px 까지 가능하다. 여유를 두고 18px 로 잡았다. */
+    .result-strip {
+      width: 100%;
+      min-height: 73px;
+      flex-shrink: 0;
+      background: linear-gradient(180deg, #FFFDF7, var(--kit-cream));
+      border: 3px solid var(--cream-dk);
+      border-radius: 20px;
+      padding: 3px 9px;
+      display: flex;
+      flex-wrap: wrap;
+      align-content: center;
+      justify-content: center;
+      gap: 5px;
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .9);
+    }
+
+    .result-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 9px;
+      border-radius: 999px;
+      border: 2px solid;
+      font-family: var(--font-display);
+      font-size: 18px;
+      /* 두 줄이 73px 안에 들어가도록 줄 간격을 좁힌다.
+         1.2 아래로 내리면 photographer 의 p·g 꼬리가 테두리에 닿는다 */
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    /* 맞음 = 민트, 틀림 = 라벤더. 아이콘 없이 색만으로 구분하므로
+       바탕색을 옅은 톤이 아니라 또렷한 톤으로 채운다 */
+    .result-chip.ok { background: var(--mint-lt); color: var(--mint-ink); border-color: var(--kit-mint); }
+    .result-chip.no { background: var(--lav-lt); color: var(--lav-ink); border-color: var(--kit-lavender); }
+
     .game-btn {
-      padding: 15px 28px;
+      padding: 13px 30px;
       font-size: 21px;
       font-family: var(--font-display);
       font-weight: 900;
       border: none;
-      border-radius: 20px;
+      border-radius: 999px;
       cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.18s, filter 0.18s;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
     }
 
     .game-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+      transform: translateY(-3px);
+      filter: brightness(1.05);
     }
 
-    /* 게임 화면의 분홍 계열(정답 글자 #FF69B4, 진행도 바)과 어울리는 톤.
-       흰 글씨가 또렷하도록 아래쪽을 조금 진하게 잡았다 */
+    .game-btn:active { transform: translateY(3px); }
+
+    /* 키트 원칙 : 노랑 = 강조·보상. Hint 는 이 화면의 유일한 노랑이라 눈에 바로 들어온다 */
     .btn-hint {
-      background: linear-gradient(135deg, #E9699C, #D9528C);
-      color: white;
+      background: linear-gradient(180deg, #FFE28C, var(--kit-sunny));
+      color: var(--sunny-ink);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .6),
+                  0 6px 0 var(--sunny-dk), 0 11px 16px rgba(229, 179, 54, .3);
     }
 
     .btn-help-game {
-      background: linear-gradient(135deg, var(--coral), var(--coral));
-      color: white;
+      background: linear-gradient(180deg, #FFA9B9, var(--kit-strawberry));
+      color: #FFF7F8;
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .5),
+                  0 6px 0 var(--straw-dk), 0 11px 16px rgba(232, 105, 127, .3);
     }
 
     /* ===== 게임 진행도 바 (상단 가운데, 남는 폭을 모두 차지) ===== */
@@ -849,17 +1026,19 @@
       flex-direction: row;
       align-items: center;
       gap: 12px;
-      background: var(--cream-board);
-      border: 3px solid #D9CCBF;
-      border-radius: 18px;
-      padding: 10px 20px;
+      background: linear-gradient(180deg, #FFFDF7, var(--kit-cream));
+      border: 3px solid var(--cream-dk);
+      border-radius: 999px;
+      padding: 10px 22px;
       height: 100%;
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .9),
+                  0 4px 0 var(--cream-dk), 0 7px 12px rgba(201, 160, 110, .16);
     }
 
     .game-progress-label {
       font-family: var(--font-body);
       font-size: 19px;
-      color: var(--wood);
+      color: var(--cream-ink);
       white-space: nowrap;
       flex-shrink: 0;
     }
@@ -868,18 +1047,20 @@
       flex: 1 1 auto;
       min-width: 0;
       height: 22px;
-      background: linear-gradient(135deg, #FFE9F3, #FFF0FA);
-      border: 3px solid #F0C4D8;
-      border-radius: 16px;
+      background: #FFF1F4;
+      border: 3px solid var(--straw-lt);
+      border-radius: 999px;
       overflow: visible;
-      box-shadow: 0 4px 12px rgba(240, 196, 216, 0.2);
+      /* 홈이 파인 것처럼 안쪽 그림자를 넣어 채워지는 막대가 도드라지게 한다 */
+      box-shadow: inset 0 2px 4px rgba(232, 105, 127, .18);
       position: relative;
     }
 
     .game-progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #FFB3D9, #FFC8E1);
-      border-radius: 13px;
+      background: linear-gradient(180deg, #FFA9B9, var(--kit-strawberry));
+      border-radius: 999px;
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .45);
       transition: width 0.5s ease-out;
     }
 
@@ -894,7 +1075,7 @@
       transition: left 0.5s ease-out;
       font-size: 30px;   /* 25.2px 에서 약 20% 키움 */
       z-index: 10;
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+      filter: drop-shadow(0 2px 4px rgba(139, 96, 44, 0.25));
       animation: progress-bounce 0.6s ease-in-out;
     }
 
@@ -906,7 +1087,7 @@
     .game-progress-text {
       font-size: 22px;
       font-weight: normal;
-      color: #D991B8;
+      color: var(--straw-ink);
       font-family: var(--font-display);
       white-space: nowrap;
       flex-shrink: 0;
@@ -919,7 +1100,8 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.5);
+      /* 덮개도 검정 대신 짙은 콘색 — 팝업이 떠도 화면의 따뜻한 분위기가 이어진다 */
+      background: rgba(90, 70, 50, 0.52);
       display: none;
       justify-content: center;
       align-items: center;
@@ -933,18 +1115,23 @@
       to { opacity: 1; }
     }
 
+    /* 키트의 '크림 패널' — 문제 안내용 */
     .modal-content {
-      background: white;
+      background: var(--cream-lt);
       padding: 50px;
-      border-radius: 35px;
+      border-radius: 38px;
+      border: 6px solid var(--kit-cream);
       text-align: center;
       width: 100%;
       max-width: 560px;
       max-height: 648px;
       overflow-y: auto;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .9),
+                  0 16px 40px rgba(90, 70, 50, 0.35);
       animation: modal-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
+
+    .modal-content h2 { color: var(--text-main); }
 
     @keyframes modal-pop {
       from {
@@ -966,19 +1153,19 @@
 
     /* ===== 학습 목표 (How to Play) ===== */
     .learning-goal {
-      background: linear-gradient(135deg, #FFF6FA, #FFE9F3);
-      border: 3px dashed var(--title-pink);
-      border-radius: 22px;
+      background: linear-gradient(180deg, #FFF7F8, #FFEDF0);
+      border: 3px dashed var(--kit-strawberry);
+      border-radius: 24px;
       padding: 18px 22px;
       margin: 0 0 18px;
       text-align: center;
-      box-shadow: 0 6px 16px rgba(242, 123, 168, 0.18);
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .8);
     }
 
     .learning-goal-label {
       font-size: 22px;
       font-weight: normal;
-      color: #D8419F;
+      color: var(--straw-ink);
       font-family: var(--font-display);
       text-align: center;
       margin-bottom: 10px;
@@ -988,21 +1175,22 @@
       font-family: var(--font-body);
       font-size: 21px;
       font-weight: normal;
-      color: #555;
+      color: var(--text-main);
       line-height: 1.6;
       word-break: keep-all;
     }
 
-    .learning-goal-text b { color: #D8419F; }
+    .learning-goal-text b { color: var(--straw-ink); }
 
     /* ===== How to Play 설명 목록 =====
        각 항목이 한 줄에 들어가도록 팝업을 넓게 쓴다(아래 #help-modal 규칙).
        한 줄을 넘길 때도 낱말 단위로만 넘어간다. */
     #help-modal .modal-content {
       max-width: 1080px;
-      /* 여섯 항목 + 학습목표 + 버튼이 스크롤 없이 한 화면에 들어가는 값 */
-      padding: 38px 50px;
-      max-height: 664px;
+      /* 여섯 항목 + 학습목표 + 버튼이 스크롤 없이 한 화면에 들어가는 값.
+         패널에 6px 테두리가 생긴 만큼(위아래 12px) 위아래 여백에서 덜어냈다 */
+      padding: 32px 50px;
+      max-height: 676px;
     }
 
     .howto-list {
@@ -1012,7 +1200,7 @@
       font-family: var(--font-body);
       font-size: 21px;
       line-height: 1.6;
-      color: #555;
+      color: var(--text-main);
     }
 
     .howto-list li {
@@ -1022,47 +1210,47 @@
 
     .howto-list li::marker {
       font-family: var(--font-display);
-      color: var(--title-pink);
+      color: var(--kit-strawberry);
     }
 
-    .howto-list b { color: #D8419F; }
+    .howto-list b { color: var(--straw-ink); }
 
+    /* 정답 = 민트, 오답 = 라벤더. 글자판의 맞은/틀린 글자 색과 같은 신호다 */
     .modal-content.success {
-      border: 6px solid #34d399;
+      border-color: var(--kit-mint);
     }
 
     .modal-content.success h2 {
-      color: #10b981;
+      color: var(--mint-ink);
     }
 
     .modal-content.failure {
-      border: 6px solid var(--alert-red);
+      border-color: var(--kit-lavender);
     }
 
     .modal-content.failure h2 {
-      color: #C9424F;
+      color: var(--lav-ink);
     }
 
-    .modal-emoji {
-      font-size: 140px;
-      /* line-height 를 1 로 고정해야 높이가 글자 크기와 같아져 팝업 세로 계산이 어긋나지 않는다 */
-      line-height: 1;
-      margin: 10px 0;
+    /* 결과 표시는 이모지 대신 키트의 원형 3D 아이콘(민트 체크 / 라벤더 X)을 쓴다.
+       원본 그림에 여백이 들어 있어 실제로 보이는 지름은 이 값의 절반쯤이다 */
+    .modal-icon {
+      width: 240px;
+      height: 240px;
+      display: block;
+      /* 여백을 음수 마진으로 걷어내 예전 이모지(140px)와 차지하는 세로가 비슷하도록 맞춘다.
+         팝업 max-height 계산이 어긋나 스크롤이 생기는 것을 막는다 */
+      margin: -36px auto -32px;
       animation: bounce 0.6s ease-out;
-      display: inline-block;
-    }
-
-    /* 오답 팝업은 아이스크림 대신 우는 표정을 크게 보여준다 (정답 팝업과 확실히 구분되도록) */
-    .modal-content.failure .modal-emoji {
-      font-size: 160px;
     }
 
     /* 오답 팝업은 정답 팝업보다 내용이 많다(정답+뜻 + 철자 입력칸 + 버튼 2개).
        여백을 줄여 스크롤 없이 한 화면에 담는다.
        max-height 는 테두리·안쪽여백까지 포함한 값이다(box-sizing: border-box) */
     #result-modal-content {
-      padding: 26px 44px;
-      max-height: 672px;
+      /* 패널 테두리(위아래 12px)가 생긴 만큼 위아래 여백에서 덜어냈다 */
+      padding: 20px 44px;
+      max-height: 676px;
     }
 
     #result-modal-content h2 {
@@ -1075,16 +1263,16 @@
       font-family: var(--font-display);
       font-weight: normal;
       margin: 10px 0;
-      color: #333;
+      color: var(--text-main);
     }
 
     /* ===== 영어 단어 옆 우리말 뜻: 결과 팝업과 복습 화면에서 똑같은 모양으로 쓴다 =====
        테두리 있는 알약 모양으로 감싸 영어 단어와 한눈에 구분되게 한다 */
     .meaning-chip {
       font-family: var(--font-body);
-      color: #7A6A58;
-      background: rgba(255, 255, 255, 0.75);
-      border: 2px solid #E3D6C6;
+      color: var(--cream-ink);
+      background: #FFFDF7;
+      border: 2px solid var(--cream-dk);
       border-radius: 999px;
       padding: 3px 16px;
       line-height: 1.3;
@@ -1097,9 +1285,9 @@
       width: 46px;
       height: 46px;
       border-radius: 50%;
-      border: 3px solid #D9CCBF;
-      background: #fff;
-      color: var(--wood);
+      border: 3px solid var(--cream-dk);
+      background: #FFFDF7;
+      color: var(--cone-dk);
       font-size: 20px;
       display: flex;
       align-items: center;
@@ -1108,21 +1296,22 @@
       transition: transform 0.15s, background 0.15s;
     }
 
-    .word-audio-btn:hover { background: #FFF6E6; transform: scale(1.08); }
+    .word-audio-btn:hover { background: var(--kit-cream); transform: scale(1.08); }
     .word-audio-btn:active { transform: scale(0.95); }
 
     /* 재생 중 표시 */
     .word-audio-btn.playing {
-      background: var(--awning-yellow);
-      border-color: var(--wood);
+      background: linear-gradient(180deg, #FFE28C, var(--kit-sunny));
+      border-color: var(--sunny-dk);
+      color: var(--sunny-ink);
     }
 
     /* 정답 상자: 영어 단어(+발음 버튼) 아래에 우리말 뜻을 한 덩어리로 보여준다 */
     .answer-box {
       margin: 12px 0;
       padding: 12px 16px;
-      background: var(--cream-board);
-      border-radius: 14px;
+      background: var(--kit-cream);
+      border-radius: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1148,12 +1337,15 @@
       font-size: 24px;
     }
 
-    #word-input {
+    #word-input,
+    #practice-input {
       width: 90%;
       padding: 14px;
       font-size: 22px;
-      border: 3px solid #E5E7EB;
-      border-radius: 12px;
+      border: 3px solid var(--cream-dk);
+      border-radius: 16px;
+      background: #FFFDF7;
+      color: var(--text-main);
       font-family: var(--font-body);
       /* 좌우 auto 로 칸 자체를 가운데에 놓고, 친 글자도 가운데로 (위 정답 표시와 맞춘다) */
       margin: 10px auto;
@@ -1162,14 +1354,53 @@
     }
 
     /* 커서가 들어간 상태가 눈에 띄도록 */
-    #word-input:focus {
+    #word-input:focus,
+    #practice-input:focus {
       outline: none;
-      border-color: var(--title-pink);
-      box-shadow: 0 0 0 4px rgba(242, 123, 168, 0.18);
+      border-color: var(--kit-strawberry);
+      box-shadow: 0 0 0 4px rgba(255, 143, 163, 0.28);
     }
 
-    #word-input.show {
+    #word-input.show,
+    #practice-input.show {
       display: block;
+    }
+
+    /* ===== 복습 화면의 타이핑 연습 팝업 ===== */
+    #practice-modal-content {
+      max-width: 620px;
+      padding: 22px 44px;
+    }
+
+    /* 이 팝업이 쓰는 두 그림(icon_hint · icon_check_sm)은 여백을 잘라낸 것이라
+       그림 크기가 곧 보이는 크기다. 결과 팝업의 .modal-icon(여백 포함 240px, 실제로 보이는 건 절반)
+       과 비슷해 보이도록 118px 로 잡았다 */
+    #practice-icon {
+      width: 118px;
+      height: 118px;
+      margin: 2px auto 6px;
+    }
+
+    /* 맞았을 때는 칭찬(민트), 틀렸을 때는 다시 해보자는 안내(라벤더) */
+    #practice-msg { min-height: 34px; margin: 6px 0 0; }
+    #practice-msg.ok { color: var(--mint-ink); }
+    #practice-msg.no { color: var(--lav-ink); }
+
+    /* 틀렸을 때 입력칸을 좌우로 흔들어 알려 준다 */
+    @keyframes input-shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    #practice-input.shake { animation: input-shake 0.4s; }
+
+    /* 보조 행동이라 민트 */
+    .modal-btn-quit {
+      background: linear-gradient(180deg, #93E3DA, var(--kit-mint));
+      color: var(--mint-ink);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .55),
+                  0 6px 0 var(--mint-dk), 0 11px 16px rgba(79, 186, 173, .3);
     }
 
     .modal-buttons {
@@ -1181,44 +1412,56 @@
     }
 
     .modal-btn {
-      padding: 14px 30px;
+      padding: 14px 32px;
       font-size: 20px;
       font-family: var(--font-display);
       font-weight: 900;
       border: none;
-      border-radius: 18px;
+      border-radius: 999px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: transform 0.18s, filter 0.18s;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
     }
 
-    .modal-btn:hover {
-      transform: translateY(-2px);
-    }
+    .modal-btn:hover { transform: translateY(-3px); filter: brightness(1.05); }
+    .modal-btn:active { transform: translateY(3px); }
 
     .modal-btn-confirm {
-      background: linear-gradient(135deg, var(--coral), var(--coral));
-      color: white;
-      box-shadow: 0 4px 12px rgba(232, 115, 124, 0.3);
+      background: linear-gradient(180deg, #FFA9B9, var(--kit-strawberry));
+      color: #FFF7F8;
+      text-shadow: 0 2px 2px rgba(160, 60, 80, .32);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .5),
+                  0 6px 0 var(--straw-dk), 0 11px 16px rgba(232, 105, 127, .3);
     }
 
     .modal-btn-next {
-      background: #E5E7EB;
-      color: #9CA3AF;
+      background: var(--kit-cream);
+      color: #C4B394;
       cursor: not-allowed;
+      box-shadow: 0 5px 0 var(--cream-dk);
     }
 
+    .modal-btn-next:hover { transform: none; filter: none; }
+
     .modal-btn-next.active {
-      background: linear-gradient(135deg, #34d399, #10b981);
-      color: white;
+      background: linear-gradient(180deg, #93E3DA, var(--kit-mint));
+      color: #FFFDF6;
+      text-shadow: 0 2px 2px rgba(38, 112, 103, .35);
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .5),
+                  0 6px 0 var(--mint-dk), 0 11px 16px rgba(79, 186, 173, .3);
     }
+
+    .modal-btn-next.active:hover { transform: translateY(-3px); filter: brightness(1.05); }
 
     /* ===== 틀린 문제 리뷰 화면 ===== */
     #review-screen {
       display: none;
-      background: linear-gradient(180deg, var(--sky) 0%, var(--sea) 50%, var(--grass) 50.5%, var(--grass) 100%);
+      background: linear-gradient(180deg, var(--scene-top) 0%, var(--scene-mid) 46%, var(--scene-bot) 100%);
       flex-direction: column;
       z-index: 50;
       overflow-y: auto;
@@ -1263,27 +1506,55 @@
       margin-right: auto;
     }
 
+    /* 카드는 눌러서 타이핑 연습 팝업을 여는 버튼이다 (button 요소라 글꼴을 되돌려 준다) */
     .review-item {
       /* 폭을 고정해야 개수가 몇 개든 칸 크기가 같고, 한 줄에 두 칸씩 들어간다 */
       width: 560px;
       max-width: 100%;
       flex: 0 0 auto;
-      background: var(--cream-board);
-      border: 5px solid #D9CCBF;
-      border-radius: 18px;
+      background: linear-gradient(180deg, #FFFDF7, var(--kit-cream));
+      /* 틀린 문제 카드라 라벤더 테두리 — 오답 팝업·틀린 글자와 같은 신호 */
+      border: 5px solid var(--lav-lt);
+      border-radius: 24px;
       padding: 12px 16px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .9),
+                  0 5px 0 var(--lav-lt), 0 9px 14px rgba(154, 103, 204, .14);
       display: flex;
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
       text-align: left;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: transform 0.15s, filter 0.15s;
+    }
+
+    .review-item:hover { transform: translateY(-3px); filter: brightness(1.03); }
+    .review-item:active { transform: translateY(2px); }
+
+    /* 전체 문제 복습일 때는 오답 신호(라벤더) 대신 크림 테두리로 중립적으로 보여준다 */
+    #review-list.mode-all .review-item {
+      border-color: var(--cream-dk);
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, .9),
+                  0 5px 0 var(--cream-dk), 0 9px 14px rgba(201, 160, 110, .16);
+    }
+
+    #review-list.mode-all .review-item-no { color: var(--cone-dk); }
+
+    /* 카드마다 안내를 붙이면 긴 단어일 때 칸이 넘치므로, 화면 위에 한 번만 적어 둔다 */
+    .review-guide {
+      font-family: var(--font-body);
+      font-size: 20px;
+      color: var(--text-sub);
+      text-align: center;
+      margin-bottom: 10px;
+      flex-shrink: 0;
     }
 
     .review-item-no {
       font-family: var(--font-display);
       font-size: 24px;
-      color: #B9A48C;
+      color: var(--lav-dk);
       min-width: 26px;
       flex-shrink: 0;
     }
@@ -1302,22 +1573,11 @@
       margin-left: auto;
     }
 
-    .completion-btn {
-      padding: 16px 32px;
-      font-size: 24px;
-      font-family: var(--font-display);
-      font-weight: 900;
-      border: none;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      color: white;
-      white-space: nowrap;
-    }
+    /* .completion-btn 은 아래 완료 화면 절에서 한 번만 정의한다.
+       여기 있던 같은 이름의 규칙은 아래 것과 겹쳐 회색 그림자를 남기므로 지웠다 */
     #completion-screen {
       display: none;
-      background: linear-gradient(180deg, var(--sky) 0%, var(--sea) 50%, var(--grass) 50.5%, var(--grass) 100%);
+      background: linear-gradient(180deg, var(--scene-top) 0%, var(--scene-mid) 46%, var(--scene-bot) 100%);
       align-items: center;
       /* justify-content:center 로 가운데 정렬하면 내용이 넘칠 때 위아래가 동시에 잘리고
          위쪽은 스크롤로도 볼 수 없다. flex-start + margin:auto 로 두면 여유가 있을 때만
@@ -1329,42 +1589,50 @@
 
     .completion-content {
       text-align: center;
-      background: white;
+      background: var(--cream-lt);
       padding: 36px 44px;
       border-radius: 50px;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .9),
+                  0 10px 0 var(--cream-dk),
+                  0 22px 36px rgba(201, 160, 110, 0.25);
       /* 버튼 두 개와 가장 긴 멘트('아이스크림이 모두 녹아버렸어요!')가
          한 줄에 들어가도록 넓힌다 (좁으면 줄바꿈되며 세로로 길어진다) */
       max-width: 960px;
       width: 100%;
-      border: 8px solid #34d399;
+      border: 8px solid var(--kit-mint);
       margin: auto;
       flex-shrink: 0;
     }
+
+    /* 한 문제도 못 맞힌 경우에는 축하 대신 차분한 라벤더로 (JS 에서 붙인다) */
+    #completion-screen.all-wrong .completion-content { border-color: var(--kit-lavender); }
+    #completion-screen.all-wrong .completion-title { color: var(--lav-ink); }
 
     .completion-title {
       font-family: var(--font-display);
       font-size: 52px;
       font-weight: normal;
-      color: #10b981;
+      color: var(--mint-ink);
       margin: 0 0 12px 0;
     }
 
-    .completion-emoji {
-      font-size: 100px;
-      /* line-height 를 1 로 고정해야 높이가 글자 크기와 같아져 세로 계산이 어긋나지 않는다.
-         위 여백은 통통 튀는 애니메이션(-15px) 이 윗줄에 닿지 않도록 넉넉히 준다 */
-      line-height: 1;
-      margin: 18px 0 14px;
-      animation: bounce 0.6s ease-out infinite;
-      display: inline-block;
+    /* 결과 그림 : 한 문제라도 맞히면 '아이스크림 뱃지', 하나도 못 맞히면 '녹은 아이스크림'.
+       두 파일 모두 가장자리에 투명 여백이 있어 보이는 크기는 이 값보다 조금 작다.
+       그림을 바꾸고 싶으면 같은 이름의 파일을 덮어쓰면 그대로 반영된다 */
+    .completion-badge {
+      height: 168px;
+      width: auto;
+      display: block;
+      margin: 4px auto 2px;
+      animation: bounce 1.4s ease-in-out infinite;
+      filter: drop-shadow(0 8px 12px rgba(139, 96, 44, 0.28));
     }
 
     .completion-score {
       font-family: var(--font-display);
       font-size: 42px;
       font-weight: 900;
-      color: #333;
+      color: var(--text-main);
       margin: 14px 0;
     }
 
@@ -1377,32 +1645,59 @@
     }
 
     .completion-btn {
-      padding: 16px 32px;
+      padding: 15px 34px;
       font-size: 24px;
       font-family: var(--font-display);
       font-weight: 900;
       border: none;
-      border-radius: 25px;
+      border-radius: 999px;
       cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.18s, filter 0.18s;
       color: white;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
 
     .completion-btn:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      filter: brightness(1.05);
     }
 
+    .completion-btn:active { transform: translateY(3px); }
+
     .btn-replay {
-      background: linear-gradient(135deg, var(--coral), var(--coral));
-      box-shadow: 0 6px 0 var(--coral-shadow);
+      background: linear-gradient(180deg, #FFA9B9, var(--kit-strawberry));
+      color: #FFF7F8;
+      text-shadow: 0 2px 2px rgba(160, 60, 80, .32);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .5),
+                  0 6px 0 var(--straw-dk), 0 11px 16px rgba(232, 105, 127, .3);
     }
 
     .btn-home-completion {
-      background: linear-gradient(135deg, var(--mint-btn), var(--mint-btn));
-      box-shadow: 0 6px 0 var(--mint-btn-shadow);
+      background: linear-gradient(180deg, #93E3DA, var(--kit-mint));
+      color: var(--mint-ink);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .55),
+                  0 6px 0 var(--mint-dk), 0 11px 16px rgba(79, 186, 173, .3);
+    }
+
+    /* 전체 문제 복습 : 강조·보상 색인 노랑 */
+    .btn-review-all {
+      background: linear-gradient(180deg, #FFE28C, var(--kit-sunny));
+      color: var(--sunny-ink);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .6),
+                  0 6px 0 var(--sunny-dk), 0 11px 16px rgba(229, 179, 54, .3);
+    }
+
+    /* 틀린 문제 모아보기 : 오답을 뜻하는 라벤더 (복습 카드·오답 팝업과 같은 신호) */
+    .btn-review {
+      background: linear-gradient(180deg, #CBAAEE, var(--kit-lavender));
+      color: #FFFBF4;
+      text-shadow: 0 2px 2px rgba(90, 55, 135, .32);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .45),
+                  0 6px 0 var(--lav-dk), 0 11px 16px rgba(154, 103, 204, .3);
     }
 
     @keyframes bounce {
@@ -1452,7 +1747,7 @@
         <div class="selection-grid" id="category-grid"></div>
       </div>
       <div class="selection-buttons">
-        <button class="nav-btn btn-next" id="category-next-btn" onclick="goToWordSelection()" disabled>다음 →</button>
+        <button class="nav-btn btn-next" id="category-next-btn" onclick="goToWordSelection()" disabled>다음<img class="btn-ico" src="kit/icon_arrow_right.png" alt=""></button>
       </div>
     </div>
   </div>
@@ -1471,7 +1766,7 @@
       </div>
       <div class="selection-status" id="selection-status">0단어 선택됨</div>
       <div class="selection-buttons">
-        <button class="nav-btn btn-next" id="start-play-btn" onclick="generateGameWords()" disabled>Game Start →</button>
+        <button class="nav-btn btn-next" id="start-play-btn" onclick="generateGameWords()" disabled>Game Start<img class="btn-ico" src="kit/icon_arrow_right.png" alt=""></button>
       </div>
     </div>
   </div>
@@ -1496,7 +1791,7 @@
         <div class="game-right">
           <!-- 상단 한 줄: 문제 진행 → 진행도 바 → 점수 (아이스크림 칸 옆으로 몰았다) -->
           <div class="game-top">
-            <div class="stat-badge">🧩 문제 <span id="round-val">1</span> / <span id="total-val">10</span></div>
+            <div class="stat-badge">문제 <span id="round-val">1</span> / <span id="total-val">10</span></div>
             <div class="game-progress-container">
               <span class="game-progress-label">Progress</span>
               <div class="game-progress-bar">
@@ -1505,15 +1800,17 @@
               </div>
               <span class="game-progress-text"><span id="progress-round">0</span> / <span id="progress-total">10</span></span>
             </div>
-            <div class="stat-badge">⭐ 점수: <span id="score-val">0</span></div>
+            <div class="stat-badge"><img class="badge-ico" src="kit/icon_star.png" alt="">점수: <span id="score-val">0</span></div>
           </div>
 
           <div class="game-content">
             <div class="word-display" id="word-display"></div>
             <div class="keyboard" id="keyboard"></div>
             <div class="game-buttons">
-              <button class="game-btn btn-hint" onclick="showHint()">💡 Hint</button>
+              <button class="game-btn btn-hint" onclick="showHint()"><img class="btn-ico" src="kit/icon_hint.png" alt="">Hint</button>
             </div>
+            <!-- 지금까지 푼 단어들이 하나씩 쌓인다 (맞음=민트 / 틀림=라벤더) -->
+            <div class="result-strip" id="result-strip"></div>
           </div>
         </div>
       </div>
@@ -1524,25 +1821,33 @@
 <!-- 틀린 문제 리뷰 화면 -->
 <div id="review-screen" class="screen">
   <div class="header-bar">
-    <span class="header-title">틀린 문제 복습</span>
+    <span class="header-title" id="review-title">틀린 문제 모아보기</span>
   </div>
   <div class="review-content">
+    <div class="review-guide">단어 칸을 누르면 따라 쓰기 연습을 할 수 있어요 ✏️</div>
     <div id="review-list"></div>
   </div>
 </div>
 <div id="completion-screen" class="screen">
   <div class="completion-content">
-    <div class="completion-title" id="completion-title">🎉 아이스크림을 구했어요!</div>
-    <div style="font-size: 26px; color: #FF69B4; margin-bottom: 10px;" id="completion-subtitle">아이스크림을 잘 지켰나요?</div>
-    <div class="completion-emoji">🍦</div>
+    <div class="completion-title" id="completion-title">아이스크림을 구했어요!</div>
+    <div style="font-size: 26px; color: var(--straw-ink); margin-bottom: 10px;" id="completion-subtitle">아이스크림을 잘 지켰나요?</div>
+    <!-- 결과 그림 : JS 가 맞힌 개수에 따라 뱃지/녹은 아이스크림으로 바꿔 끼운다.
+         숨은 화면에 있으므로 loading="lazy" 로 두어 첫 화면이 늦게 뜨지 않게 한다 -->
+    <img class="completion-badge" id="completion-badge" loading="lazy"
+         src="%EC%95%84%EC%9D%B4%EC%8A%A4%ED%81%AC%EB%A6%BC%20%EB%B1%83%EC%A7%80.png" alt="">
     <div class="completion-score" id="final-score">최종 점수</div>
-    <div style="font-size: 26px; color: #666; margin-bottom: 14px;" id="wrong-count">틀린 문제: 0개</div>
+    <div style="font-size: 26px; color: var(--text-sub); margin-bottom: 14px;" id="wrong-count">틀린 문제: 0개</div>
     <div class="completion-buttons">
-      <button class="completion-btn btn-replay" onclick="replayGame()">🎮 다시 플레이하기</button>
-      <button class="completion-btn btn-home-completion" onclick="goHome()">🏠 처음으로</button>
+      <button class="completion-btn btn-replay" onclick="replayGame()"><img class="btn-ico" src="kit/icon_replay.png" alt="">다시 플레이하기</button>
+      <button class="completion-btn btn-home-completion" onclick="goHome()"><img class="btn-ico" src="kit/icon_home.png" alt="">처음으로</button>
     </div>
-    <div id="review-btn-container" style="display: none; width: 100%; margin-top: 14px;">
-      <button class="completion-btn" style="background: linear-gradient(135deg, #FFB347, #FFA500); width: 100%;" onclick="showReviewScreen()">📖 틀린 문제 복습하기</button>
+    <!-- 복습 버튼 두 개를 나란히. 틀린 문제가 없으면 오른쪽 버튼만 빠지고 왼쪽이 가운데로 온다 -->
+    <div class="completion-buttons" style="margin-top: 12px;">
+      <button class="completion-btn btn-review-all" onclick="showReviewScreen('all')">📖 전체 문제 복습</button>
+      <span id="review-btn-container" style="display: none;">
+        <button class="completion-btn btn-review" onclick="showReviewScreen('wrong')">📔 틀린 문제 모아보기</button>
+      </span>
     </div>
   </div>
 </div>
@@ -1573,8 +1878,9 @@
 <!-- 결과 모달 -->
 <div class="modal-overlay" id="result-modal">
   <div class="modal-content" id="result-modal-content">
-    <h2 id="modal-title">정답입니다! 🎉</h2>
-    <div class="modal-emoji" id="modal-emoji">✨</div>
+    <h2 id="modal-title">정답입니다!</h2>
+    <!-- 정답이면 민트 체크, 오답이면 라벤더 X 로 JS 에서 바꿔 끼운다 -->
+    <img class="modal-icon" id="modal-icon" src="kit/icon_check.png" alt="">
     <div class="modal-text" id="modal-text"></div>
     <div class="answer-box">
       <div class="answer-line">
@@ -1585,10 +1891,36 @@
       </div>
       <div class="answer-meaning meaning-chip" id="modal-meaning"></div>
     </div>
-    <input type="text" id="word-input" placeholder="단어 입력" autocapitalize="none" autocorrect="off" autocomplete="off" spellcheck="false" onkeypress="if(event.keyCode==13) checkTypedWord()">
+    <!-- Enter 처리는 아래 스크립트의 공통 처리기가 맡는다 (여기에도 두면 두 번 눌린다) -->
+    <input type="text" id="word-input" placeholder="단어 입력" autocapitalize="none" autocorrect="off" autocomplete="off" spellcheck="false">
     <div class="modal-buttons">
       <button class="modal-btn modal-btn-confirm" id="confirm-btn" onclick="checkTypedWord()">확인</button>
-      <button class="modal-btn modal-btn-next" id="btn-next" onclick="nextRound()" disabled>다음 ▶</button>
+      <button class="modal-btn modal-btn-next" id="btn-next" onclick="nextRound()" disabled>다음</button>
+    </div>
+  </div>
+</div>
+
+<!-- 복습 화면에서 단어 카드를 누르면 열리는 타이핑 연습 팝업 -->
+<div class="modal-overlay" id="practice-modal">
+  <div class="modal-content" id="practice-modal-content">
+    <h2 id="practice-title">단어를 따라 써 볼까요?</h2>
+    <img class="modal-icon" id="practice-icon" src="kit/icon_hint.png" alt="" loading="lazy">
+    <div class="answer-box">
+      <div class="answer-line">
+        <span class="answer-word" id="practice-word"></span>
+        <button type="button" class="word-audio-btn" id="practice-audio-btn" title="발음 듣기">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+      </div>
+      <div class="answer-meaning meaning-chip" id="practice-meaning"></div>
+    </div>
+    <input type="text" id="practice-input" class="show" placeholder="단어 입력"
+           autocapitalize="none" autocorrect="off" autocomplete="off" spellcheck="false">
+    <div class="modal-text" id="practice-msg"></div>
+    <div class="modal-buttons">
+      <button class="modal-btn modal-btn-confirm" id="practice-confirm-btn" onclick="practiceConfirm()">확인</button>
+      <!-- 철자가 끝내 생각나지 않아도 팝업에 갇히지 않도록 언제든 빠져나갈 길을 둔다 -->
+      <button class="modal-btn modal-btn-quit" id="practice-quit-btn" onclick="closePractice()">그만하기</button>
     </div>
   </div>
 </div>
@@ -2034,6 +2366,8 @@
   let isAnswerPhase = false;
   let score = 0;
   let wrongWords = [];
+  // 게임 화면 아래 진행 결과 띠에 쌓이는 기록 [{word, ok}]
+  let roundResults = [];
 
   // ========== 전체화면 ==========
   // iOS Safari는 일반 요소의 전체화면 API 자체를 지원하지 않아 아래 폴백으로도 해결되지 않음.
@@ -2067,12 +2401,18 @@
     const dropCount = 25;  // 25개의 물방울
     
     for (let i = 0; i < dropCount; i++) {
+      // 파란 💧 이모지 대신 녹아내리는 크림빛 방울 (키트 팔레트 안에 머문다).
+      // drop-fall 은 translateY 만 하므로 회전 없이 모양만으로 물방울처럼 보이게 한다
       const drop = document.createElement('div');
-      drop.textContent = '💧';
+      const w = Math.random() * 12 + 12;
+      drop.style.width = w + 'px';
+      drop.style.height = (w * 1.35) + 'px';
+      drop.style.background = 'linear-gradient(180deg, #FFFDF7, #FFE6EB)';
+      drop.style.borderRadius = '50% 50% 50% 50% / 62% 62% 38% 38%';
+      drop.style.boxShadow = 'inset 0 2px 0 rgba(255, 255, 255, 0.9), 0 2px 5px rgba(232, 105, 127, 0.25)';
       drop.style.position = 'absolute';   // 무대 기준 (배율에 같이 따라감)
       drop.style.left = Math.random() * 100 + '%';  // 화면 전체 너비에서 랜덤
       drop.style.top = '-10px';  // 화면 위쪽에서 시작
-      drop.style.fontSize = (Math.random() * 24 + 20) + 'px';  // 20-44px
       drop.style.zIndex = '10001';
       drop.style.pointerEvents = 'none';
       drop.style.animation = `drop-fall ${Math.random() * 2 + 2}s linear forwards`;  // 2-4초
@@ -2086,16 +2426,21 @@
 
   // ========== 컨페티 효과 ==========
   function createConfetti() {
-    const confettiEmojis = ['🎉', '🎊', '✨', '🌟', '⭐', '💫', '🎈', '🍦'];
+    // 키트 팔레트 6색의 클레이 조각이 떨어진다 (예전에는 이모지 8종을 섞어 썼다)
+    const kitColors = ['#FF8FA3', '#7AD8CD', '#FFD35F', '#B98BE6', '#FFF0D5', '#E9A34A'];
     const container = document.getElementById('stage');   // 무대 안에서 뿌린다
-    
+
     for (let i = 0; i < 30; i++) {
       const confetti = document.createElement('div');
-      confetti.textContent = confettiEmojis[Math.floor(Math.random() * confettiEmojis.length)];
+      const w = Math.random() * 10 + 12;
+      confetti.style.width = w + 'px';
+      confetti.style.height = (w * (0.55 + Math.random() * 0.75)) + 'px';
+      confetti.style.background = kitColors[i % kitColors.length];
+      confetti.style.borderRadius = '999px';
+      confetti.style.boxShadow = 'inset 0 2px 0 rgba(255, 255, 255, 0.55)';
       confetti.style.position = 'absolute';
       confetti.style.left = Math.random() * 100 + '%';
       confetti.style.top = '-10px';
-      confetti.style.fontSize = (Math.random() * 20 + 20) + 'px';
       confetti.style.zIndex = '10000';
       confetti.style.pointerEvents = 'none';
       confetti.style.animation = `confetti-fall ${Math.random() * 2 + 2}s linear forwards`;
@@ -2625,6 +2970,8 @@
     wordsList = tempWords.slice(0, MAX_QUESTIONS);
     score = 0;
     wrongWords = [];
+    roundResults = [];
+    document.getElementById('result-strip').innerHTML = '';
 
     // navTo 로 들어가야 게임 화면에서 '뒤로'를 눌렀을 때 주제 선택으로 되돌아간다
     navTo('game-screen');
@@ -2633,15 +2980,23 @@
     startGame(0);
   }
 
-  function showReviewScreen() {
+  // mode: 'wrong' = 틀린 문제만 (기본), 'all' = 이번 판에 나온 문제 전부
+  function showReviewScreen(mode) {
+    const isAll = mode === 'all';
+    const list = isAll ? wordsList : wrongWords;
     const reviewList = document.getElementById('review-list');
     reviewList.innerHTML = '';
-    
-    wrongWords.forEach((wordObj, index) => {
-      const itemDiv = document.createElement('div');
-      itemDiv.className = 'review-item';
-      // 번호는 틀린 순서일 뿐 실제 문제 번호가 아니므로 '문제' 라는 말 없이 숫자만 붙인다
-      itemDiv.innerHTML = `
+    reviewList.classList.toggle('mode-all', isAll);
+    document.getElementById('review-title').innerText =
+      isAll ? '전체 문제 복습' : '틀린 문제 모아보기';   // 상단 띠 제목은 다른 화면처럼 글자만
+
+    list.forEach((wordObj, index) => {
+      // 카드 전체가 타이핑 연습 팝업을 여는 버튼이다
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'review-item';
+      // 번호는 목록 순서일 뿐 실제 문제 번호가 아니므로 '문제' 라는 말 없이 숫자만 붙인다
+      item.innerHTML = `
         <div class="review-item-no">${index + 1}</div>
         <div class="review-item-word">${wordObj.word}</div>
         <div class="review-item-meaning meaning-chip">${wordObj.meaning}</div>
@@ -2649,15 +3004,135 @@
           <i class="fa-solid fa-volume-high"></i>
         </button>
       `;
-      // 단어에 띄어쓰기가 있어 onclick 속성에 직접 넣지 않고 여기서 연결한다
-      const audioBtn = itemDiv.querySelector('.word-audio-btn');
-      audioBtn.onclick = () => playWordAudio(wordObj.word, audioBtn);
-      reviewList.appendChild(itemDiv);
+      item.onclick = () => openPractice(wordObj);
+      // 단어에 띄어쓰기가 있어 onclick 속성에 직접 넣지 않고 여기서 연결한다.
+      // 발음 버튼은 카드 안에 있으므로 눌렀을 때 연습 팝업까지 열리지 않도록 막는다
+      const audioBtn = item.querySelector('.word-audio-btn');
+      audioBtn.onclick = (e) => { e.stopPropagation(); playWordAudio(wordObj.word, audioBtn); };
+      reviewList.appendChild(item);
     });
 
     // navTo 로 들어가야 복습 화면에서 '뒤로'를 눌렀을 때 결과 화면으로 되돌아간다
     navTo('review-screen');
   }
+
+  /* ========== 복습 화면의 타이핑 연습 팝업 ==========
+     단어 카드를 누르면 열린다. 철자를 맞게 치면 칭찬을 보여주고,
+     확인을 한 번 더 누르면 닫힌다. 다른 단어를 눌러 몇 번이든 다시 연습할 수 있다. */
+  let practiceWordObj = null;
+  let practiceSolved = false;
+
+  const PRAISE = ['참 잘했어요!', '완벽해요!', '멋져요!', '정확해요!', '아주 잘했어요!'];
+
+  function openPractice(wordObj) {
+    practiceWordObj = wordObj;
+    practiceSolved = false;
+
+    document.getElementById('practice-title').innerText = '단어를 따라 써 볼까요?';
+    document.getElementById('practice-icon').src = 'kit/icon_hint.png';
+    document.getElementById('practice-word').innerText = wordObj.word;
+    document.getElementById('practice-meaning').innerText = wordObj.meaning;
+
+    const msg = document.getElementById('practice-msg');
+    msg.innerText = '';
+    msg.className = 'modal-text';
+
+    const input = document.getElementById('practice-input');
+    input.value = '';
+    input.classList.add('show');
+
+    document.getElementById('practice-confirm-btn').innerText = '확인';
+    document.getElementById('practice-quit-btn').style.display = '';
+
+    // 문제마다 단어가 바뀌므로 열 때마다 발음 버튼을 다시 연결한다
+    const audioBtn = document.getElementById('practice-audio-btn');
+    audioBtn.classList.remove('playing');
+    audioBtn.onclick = () => playWordAudio(wordObj.word, audioBtn);
+
+    document.getElementById('practice-modal').style.display = 'flex';
+    // 커서 넣기는 팝업을 띄운 '다음에' 해야 한다 (display:none 인 동안에는 먹히지 않는다)
+    input.focus();
+  }
+
+  function practiceConfirm() {
+    // 이미 맞힌 뒤라면 이 버튼은 '닫기' 역할을 한다
+    if (practiceSolved) { closePractice(); return; }
+
+    const input = document.getElementById('practice-input');
+    const msg = document.getElementById('practice-msg');
+    const typed = input.value.trim().toLowerCase();
+    const answer = (practiceWordObj ? practiceWordObj.word : '').trim().toLowerCase();
+
+    if (typed === answer) {
+      practiceSolved = true;
+      playRoundSound(true);   // 성공.mp3
+      // 여백을 잘라낸 작은 판 (원본 icon_check.png 는 여백이 있어 이 자리에서는 작게 보인다)
+      document.getElementById('practice-icon').src = 'kit/icon_check_sm.png';
+      document.getElementById('practice-title').innerText = '맞았어요!';
+      msg.innerText = PRAISE[Math.floor(Math.random() * PRAISE.length)];
+      msg.className = 'modal-text ok';
+      input.classList.remove('show');
+      // 맞힌 뒤에는 '확인' 하나만 남고, 그걸 누르면 팝업이 닫힌다
+      document.getElementById('practice-confirm-btn').innerText = '확인';
+      document.getElementById('practice-quit-btn').style.display = 'none';
+    } else {
+      playWrongSound();
+      msg.innerText = '철자를 다시 확인해보세요!';
+      msg.className = 'modal-text no';
+      input.classList.remove('shake');
+      // 애니메이션을 다시 태우려면 클래스를 뗀 뒤 한 프레임 쉬어야 한다
+      void input.offsetWidth;
+      input.classList.add('shake');
+      input.select();
+      input.focus();
+    }
+  }
+
+  function closePractice() {
+    document.getElementById('practice-modal').style.display = 'none';
+    practiceWordObj = null;
+    practiceSolved = false;
+  }
+
+  // Esc 로도 연습 팝업을 닫을 수 있게 한다
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (document.getElementById('practice-modal').style.display === 'flex') closePractice();
+  });
+
+  /* ========== Enter 로 팝업의 확인 버튼 누르기 ==========
+     지금 열려 있는 팝업에서 '지금 눌러야 할 버튼' 하나를 찾아 준다.
+     팝업마다 누를 버튼이 하나뿐이라 Enter 가 무엇을 누를지 헷갈릴 일이 없다. */
+  function primaryModalButton() {
+    const open = (id) => document.getElementById(id).style.display === 'flex';
+
+    // 연습 팝업 : 확인 (맞힌 뒤에는 같은 버튼이 닫기 역할을 한다)
+    if (open('practice-modal')) return document.getElementById('practice-confirm-btn');
+
+    if (open('result-modal')) {
+      // 오답이라 철자를 쳐 보는 중이면 '확인', 그 밖에는 '다음'
+      const confirmBtn = document.getElementById('confirm-btn');
+      if (confirmBtn.style.display !== 'none') return confirmBtn;
+      return document.getElementById('btn-next');
+    }
+
+    if (open('help-modal')) return document.getElementById('help-close-btn');
+    return null;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    // 한글 입력기가 글자를 조합하는 중이면 그 Enter 는 조합을 끝내는 것이다
+    if (e.isComposing || e.keyCode === 229) return;
+    // 이미 버튼에 초점이 가 있으면 브라우저가 알아서 눌러 준다 (여기서 또 누르면 두 번 눌린다)
+    const el = document.activeElement;
+    if (el && (el.tagName === 'BUTTON' || el.tagName === 'A')) return;
+
+    const btn = primaryModalButton();
+    if (!btn || btn.disabled) return;
+    e.preventDefault();
+    btn.click();
+  });
 
   function replayGame() {
     generateGameWords();
@@ -2857,11 +3332,24 @@
     }
   }
 
+  /* ========== 진행 결과 띠 ==========
+     Hint 버튼 아래에 지금까지 푼 단어를 한 칸씩 쌓는다.
+     맞으면 민트, 틀리면 라벤더 — 아이콘 없이 색깔로만 구분해서
+     그만큼 단어 글자를 크게 쓴다 (자판·팝업과 같은 색 신호다). */
+  function addResultChip(word, ok) {
+    roundResults.push({ word: word, ok: ok });
+    const chip = document.createElement('span');
+    chip.className = 'result-chip ' + (ok ? 'ok' : 'no');
+    // 단어는 텍스트로 넣어야 따옴표·마침표가 든 단어도 그대로 나온다
+    chip.textContent = word;
+    document.getElementById('result-strip').appendChild(chip);
+  }
+
   // ========== 결과 모달 ==========
   function showResultModal(isWin) {
     const resultDiv = document.getElementById('result-modal-content');
     const titleEl = document.getElementById('modal-title');
-    const emojiEl = document.getElementById('modal-emoji');
+    const iconEl = document.getElementById('modal-icon');
     const textEl = document.getElementById('modal-text');
     const answerEl = document.getElementById('modal-answer');
     const inputEl = document.getElementById('word-input');
@@ -2876,11 +3364,14 @@
     audioBtn.classList.remove('playing');
     audioBtn.onclick = () => playWordAudio(currentWordObj.word, audioBtn);
 
+    // 이 문제 결과를 게임 화면 아래 띠에 한 칸 추가한다 (문제마다 딱 한 번 열린다)
+    addResultChip(currentWordObj.word, isWin);
+
     if (isWin) {
       resultDiv.classList.remove('failure');
       resultDiv.classList.add('success');
-      titleEl.innerText = '정답입니다! 🎉';
-      emojiEl.innerText = '🍦';
+      titleEl.innerText = '정답입니다!';
+      iconEl.src = 'kit/icon_check.png';   // 키트의 민트 체크
       textEl.innerText = '완벽해요!';
       answerEl.innerText = currentWordObj.word;   // 원래 표기 그대로 (Korea, P.E. ...)
       inputEl.classList.remove('show');
@@ -2897,17 +3388,17 @@
       if (currentRound < wordsList.length - 1) {
         nextBtn.disabled = false;
         nextBtn.classList.add('active');
-        nextBtn.innerText = `다음 (${currentRound + 2}/${wordsList.length}) ▶`;
+        nextBtn.innerText = `다음 (${currentRound + 2}/${wordsList.length})`;
       } else {
         nextBtn.disabled = false;
         nextBtn.classList.add('active');
-        nextBtn.innerText = '🎉 게임 완료!';
+        nextBtn.innerText = '게임 완료!';
       }
     } else {
       resultDiv.classList.remove('success');
       resultDiv.classList.add('failure');
-      titleEl.innerText = '아이스크림이 녹았어요!';   // 우는 표정은 아래에 크게 나오므로 제목에서는 뺀다
-      emojiEl.innerText = '😢';
+      titleEl.innerText = '아이스크림이 녹았어요!';
+      iconEl.src = 'kit/icon_close.png';   // 키트의 라벤더 X
       textEl.innerText = '다시 도전해볼까요?';
       answerEl.innerText = currentWordObj.word;   // 원래 표기 그대로 (Korea, P.E. ...)
       inputEl.classList.add('show');
@@ -2949,9 +3440,9 @@
       inputEl.classList.remove('show');
       
       if (currentRound < wordsList.length - 1) {
-        nextBtn.innerText = `다음 (${currentRound + 2}/${wordsList.length}) ▶`;
+        nextBtn.innerText = `다음 (${currentRound + 2}/${wordsList.length})`;
       } else {
-        nextBtn.innerText = '🎉 게임 완료!';
+        nextBtn.innerText = '게임 완료!';
       }
     } else {
       // 틀렸을 때
@@ -2995,9 +3486,14 @@
     // (문제 수가 10개보다 적게 나온 경우에도 '전부 틀림' 이면 똑같이 적용된다)
     const allWrong = wordsList.length > 0 && wrongWords.length === wordsList.length;
     document.getElementById('completion-title').innerText =
-      allWrong ? '💧 아이스크림이 모두 녹아버렸어요!' : '🎉 아이스크림을 구했어요!';
+      allWrong ? '아이스크림이 모두 녹아버렸어요!' : '아이스크림을 구했어요!';
     document.getElementById('completion-subtitle').innerText =
       allWrong ? '다시 구하러갈까요?' : '아이스크림을 잘 지켰나요?';
+    // 한 문제라도 맞히면 '아이스크림 뱃지', 하나도 못 맞히면 '녹은 아이스크림'.
+    // 파일 이름에 띄어쓰기와 한글이 들어 있어 주소로 쓸 수 있게 encodeURIComponent 로 바꾼다
+    document.getElementById('completion-screen').classList.toggle('all-wrong', allWrong);
+    document.getElementById('completion-badge').src =
+      encodeURIComponent(allWrong ? '녹은 아이스크림.png' : '아이스크림 뱃지.png');
 
     if (wrongWords.length > 0) {
       document.getElementById('review-btn-container').style.display = 'block';
