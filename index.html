@@ -2613,6 +2613,8 @@
   // ========== 상태 ==========
   let selectedCategory = "";
   let selectedSubcategories = [];
+  // 지금 소분류 화면에 그려져 있는 대분류. selectedCategory 와 어긋나면 다시 그린다
+  let subScreenFor = null;
   let wordsList = [];
   let currentRound = 0;
   let currentWordObj = null;
@@ -3051,6 +3053,10 @@
     clearGameTimers();   // 이전 화면에서 예약된 팝업·힌트 지우기 등을 취소한다
     clearEffects();      // 이전 화면에 흩날리던 콘페티·물방울을 남기지 않는다
     stopSpokenAudio();   // 나가는 화면에서 나던 단어 발음·결과음을 끊는다
+    /* '뒤로'로 대분류를 바꾼 뒤 '앞으로'로 돌아오면 이전 대분류의 소분류 화면이 골라 둔
+       상태 그대로 남아 있었다. 그 상태로 Game Start 를 누르면 지금 대분류에 없는 소분류를
+       찾다가 단어가 0개인 채로 시작해 곧장 완료 화면이 떴다 */
+    if (id === 'word-screen' && subScreenFor !== selectedCategory) renderSubcategoryScreen();
     hideAllScreens();
     document.getElementById(id).style.display = 'flex';
     currentScreenId = id;
@@ -3095,11 +3101,17 @@
     focusIntoModal();
   }
 
+  /* 나가기를 확정하고 게임 화면을 버리는 중인지. '지금 나가면 풀던 문제가 사라져요' 라고
+     안내해 놓고도 '앞으로' 를 누르면 점수·진행도까지 그대로 되살아났다 */
+  let leavingGame = false;
+
   function confirmLeave() {
     document.getElementById('leave-modal').style.display = 'none';
     const go = pendingLeave;
     pendingLeave = null;
+    leavingGame = true;
     if (go) go();
+    leavingGame = false;
   }
 
   function cancelLeave() {
@@ -3111,7 +3123,9 @@
     if (!histBack.length) return;
     askLeaveGame(() => {
       stopVoice();   // 화면을 옮길 때 재생 중이던 단어 음성은 끊는다
-      histFwd.push(currentScreenId);
+      // 버리고 나온 게임 화면은 '앞으로' 에 남기지 않는다
+      if (leavingGame) histFwd = [];
+      else histFwd.push(currentScreenId);
       rawShowScreen(histBack.pop());
     });
   }
@@ -3170,7 +3184,8 @@
     const subGrid = document.getElementById('subcategory-grid');
     subGrid.innerHTML = '';
     selectedSubcategories = [];
-    
+    subScreenFor = selectedCategory;
+
     const subList = Object.keys(vocabularyData[selectedCategory] || {});
 
     // 주제 개수만큼만 칸을 만든다. 2개인 주제(취미·직업 / 자연과 날씨)에서
@@ -3300,10 +3315,14 @@
     }
 
     wordsList = tempWords.slice(0, MAX_QUESTIONS);
+    // 고른 주제에 단어가 하나도 없으면 시작하지 않는다 (0문제로 완료 화면이 뜨는 것을 막는다)
+    if (!wordsList.length) { updateSelectionStatus(); return; }
     score = 0;
     wrongWords = [];
     roundResults = [];
     document.getElementById('result-strip').innerHTML = '';
+    // 점수 표시도 같이 0으로 되돌린다 — 안 하면 새 판 1번 문제에 이전 판 점수가 남아 있었다
+    document.getElementById('score-val').innerText = score;
 
     preloadResultImages();   // 결과 그림을 미리 받아 둔다 (아래 설명)
 
