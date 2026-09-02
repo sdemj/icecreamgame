@@ -3,7 +3,10 @@
 <head>
   <base target="_top">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <!-- 손가락으로 넓혔다 좁혔다 할 수 있게 열어 둔다. user-scalable=no 로 막아 두면
+       아이폰은 어차피 무시하고, 안드로이드는 '확대 강제 허용' 을 켠 기기에서만 늘어나는데
+       그때 눌린 자리가 어긋나 터치가 헛나갔다. 막지 않는 편이 오히려 정확하다 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
   <!-- 이 태그가 없으면 브라우저가 예전 파일을 계속 들고 있어서, 새 버전을 올려도
        아이들 기기에는 옛 화면이 그대로 보인다. anagram 게임과 같은 설정 -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -81,6 +84,52 @@
 
     /* 화면의 글자는 읽을 거리가 아니라 놀잇감이라, 끌었을 때 파랗게 잡히지 않게 한다.
        (마침표·빈칸 같은 글자가 텍스트로 선택돼 파란 블록으로 보이는 것을 막는다) */
+    /* 상단 버튼은 무대와 함께 줄어들지 않아서, 화면이 작을수록 상대적으로 커졌다.
+       휴대폰 가로에서는 그 때문에 점수 배지와 진행 막대를 덮어 버렸다.
+       무대 배율을 따라 줄이되, 손가락으로 누를 수 있는 크기 아래로는 내려가지 않게 한다.
+       모서리에서 떨어진 거리도 같은 비율로 줄여야 원래 자리 그대로 보인다.
+       (자리·크기는 인라인 style 로 박혀 있어 !important 로 덮어쓴다) */
+    #top-nav-bar > div {
+      top: var(--nav-inset, 18px) !important;
+      transform: scale(var(--nav-scale, 1));
+    }
+    #top-nav-bar > div:nth-of-type(1) { left: var(--nav-inset, 18px) !important; transform-origin: top left; }
+    #top-nav-bar > div:nth-of-type(2) { right: var(--nav-inset, 18px) !important; transform-origin: top right; }
+
+    /* 세로로 든 휴대폰에서는 무대가 너무 작아져 글자·버튼을 누르기 어렵다.
+       가로로 돌리면 훨씬 편하다고 알려 준다 (돌리면 저절로 사라진다) */
+    #rotate-hint {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 28px;
+      text-align: center;
+      background: var(--kit-cream, #FFF0D5);
+      color: var(--text-main, #6B4E2E);
+    }
+    #rotate-hint.show { display: flex; }
+    #rotate-hint .rh-box {
+      width: 132px;
+      height: 78px;
+      border: 6px solid var(--kit-strawberry, #FF8FA3);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .9), 0 6px 0 rgba(233, 163, 74, .45);
+    }
+    #rotate-hint .rh-title { font-family: var(--font-display); font-size: 27px; color: var(--straw-ink, #C2496A); }
+    #rotate-hint .rh-sub { font-family: var(--font-body); font-size: 19px; line-height: 1.5; }
+    #rotate-hint button {
+      font-family: var(--font-display); font-size: 19px; padding: 12px 26px;
+      border-radius: 999px; border: none; cursor: pointer;
+      background: var(--kit-mint, #7AD8CD); color: #17544D;
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, .55), 0 5px 0 rgba(58, 150, 140, .6);
+    }
+
     #stage { user-select: none; -webkit-user-select: none; }
     /* 단, 철자를 치는 칸은 선택·복사가 되어야 한다 */
     #stage input { user-select: text; -webkit-user-select: text; }
@@ -91,6 +140,9 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
+      /* 두 번 톡톡 쳐서 확대되는 동작만 끈다. 손가락 두 개로 넓히는 확대는 그대로 된다.
+         이걸 꺼 두지 않으면 빨리 두 번 누를 때 두 번째가 확대로 먹혀 버튼이 안 눌린다 */
+      touch-action: manipulation;
     }
 
     body {
@@ -2095,6 +2147,14 @@
   <source src="실패.mp3" type="audio/mpeg">
 </audio>
 
+<!-- 세로로 든 휴대폰 안내. fitStage 가 화면 모양을 보고 켜고 끈다 -->
+<div id="rotate-hint" role="dialog" aria-live="polite">
+  <div class="rh-box"></div>
+  <div class="rh-title">화면을 가로로 돌려 주세요</div>
+  <div class="rh-sub">가로로 놓으면 글자와 버튼이 커져서<br>훨씬 편하게 할 수 있어요.</div>
+  <button type="button" id="rotate-hint-skip">이대로 할래요</button>
+</div>
+
 <!-- [상단 네비게이션 - 전체 게임 공통, 위치 고정] 왼쪽: 홈/뒤로/앞으로, 오른쪽: How to Play/효과음/배경음/전체화면.
      이어진 하나의 바가 아니라 아이콘마다 따로 떠 있는 원형 버튼. title 속성으로 마우스오버 시 텍스트가 뜨도록 함 -->
 <div id="top-nav-bar" style="display:contents;">
@@ -2131,19 +2191,65 @@
   // 1280x720 무대를 화면에 들어가는 최대 배율로 통짜 확대/축소한다.
   // 요소마다 따로 늘어나지 않으므로 어떤 기기에서도 배치·비율·아이콘 위치가 같다.
   const STAGE_W = 1280, STAGE_H = 720;
-  function fitStage() {
-    /* 글자를 입력하는 중이면 건너뛴다.
-       휴대폰은 자판이 올라오면 창 높이가 확 줄어드는데, 그때 배율을 다시 잡으면
-       무대가 갑자기 쪼그라들었다가 자판을 내리면 되돌아온다 */
+  /* 손가락으로 확대해도 window.innerWidth 는 그대로라 배율은 건드리지 않는다.
+     사용자가 키운 만큼 그대로 두는 것이 맞다. 여기서 다시 맞추는 것은
+     창 크기가 실제로 바뀌었을 때(기기를 돌리거나 자판이 오르내릴 때)뿐이다 */
+  let lastFitW = window.innerWidth;
+  let fitPending = false;
+  function fitStage(force) {
+    const w = window.innerWidth, h = window.innerHeight;
+    /* 휴대폰은 자판이 올라오면 '높이만' 확 줄어드는데, 그때 다시 맞추면
+       무대가 쪼그라들었다가 자판을 내리면 되돌아온다. 그래서 글자를 치는 중에
+       높이만 바뀐 경우는 미뤄 두었다가 자판을 내릴 때 맞춘다.
+       가로가 바뀐 것은 기기를 돌린 것이므로 치는 중이라도 바로 맞춘다
+       (예전에는 무조건 건너뛰어서, 치다가 돌리면 무대가 어긋난 채 남았다) */
     const el = document.activeElement;
-    if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) return;
+    const typing = el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA');
+    if (!force && typing && w === lastFitW) { fitPending = true; return; }
+    lastFitW = w;
+    fitPending = false;
     const stage = document.getElementById('stage');
-    const scale = Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H);
+    const scale = Math.min(w / STAGE_W, h / STAGE_H);
     stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+    /* 상단 버튼도 같은 비율로. 다만 0.77 (약 40px) 아래로는 줄이지 않는다 —
+       그보다 작으면 손가락으로 누르기 어렵다 */
+    const navScale = Math.max(0.77, Math.min(1.4, scale));
+    const root = document.documentElement.style;
+    root.setProperty('--nav-scale', navScale.toFixed(3));
+    root.setProperty('--nav-inset', (18 * navScale).toFixed(1) + 'px');
+    updateRotateHint(w, h, scale);
   }
-  window.addEventListener('resize', fitStage);
-  /* 가로·세로를 돌리면 창 크기가 바로 반영되지 않는 기기가 있어 한 박자 뒤에 한 번 더 맞춘다 */
-  window.addEventListener('orientationchange', () => { fitStage(); setTimeout(fitStage, 300); });
+
+  /* 세로로 든 휴대폰은 무대가 너무 작아져(가로 390px 이면 배율 0.3) 글자와 버튼을
+     손가락으로 누르기 어렵다. 태블릿 세로처럼 충분히 큰 경우는 그냥 둔다 */
+  let rotateHintSkipped = false;
+  function updateRotateHint(w, h, scale) {
+    const el = document.getElementById('rotate-hint');
+    if (!el) return;
+    const tooSmall = h > w && scale < 0.5 && !rotateHintSkipped;
+    el.classList.toggle('show', tooSmall);
+  }
+  window.addEventListener('resize', () => fitStage());
+  /* 가로·세로를 돌리면 창 크기가 바로 반영되지 않는 기기가 있어 한 박자 뒤에 한 번 더 맞춘다.
+     orientationchange 를 아예 보내지 않는 기기도 있어 screen.orientation 도 함께 듣는다 */
+  const refit = () => { fitStage(true); setTimeout(() => fitStage(true), 300); };
+  window.addEventListener('orientationchange', refit);
+  if (screen.orientation && screen.orientation.addEventListener) {
+    screen.orientation.addEventListener('change', refit);
+  }
+  // 자판이 오르내릴 때는 창 크기가 아니라 이것만 바뀌는 기기가 있다
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', () => fitStage());
+  // 입력칸에서 빠져나오면(자판을 내리면) 미뤄 둔 배율을 그때 맞춘다
+  document.addEventListener('focusout', () => {
+    setTimeout(() => { if (fitPending) fitStage(true); }, 60);
+  });
+  /* '이대로 할래요' 는 이번 판만 넘긴다. 한 번 가로로 돌렸다가 다시 세로로 들면
+     그때는 스스로 판단해서 다시 알려 준다 */
+  document.getElementById('rotate-hint-skip').addEventListener('click', () => {
+    rotateHintSkipped = true;
+    document.getElementById('rotate-hint').classList.remove('show');
+  });
+  window.addEventListener('orientationchange', () => { rotateHintSkipped = false; });
   fitStage();
 
   // ========== 데이터 ==========
@@ -3361,9 +3467,18 @@
     if (x) x.style.display = dismissAction('result-modal') ? 'flex' : 'none';
   }
 
-  // 팝업 바깥(어두운 배경)을 누르면 닫는다. 팝업 안을 누른 것은 그대로 둔다
-  document.querySelectorAll('.modal-overlay').forEach(m => {
-    m.addEventListener('click', (e) => { if (e.target === m) dismissTopModal(); });
+  /* 팝업 바깥을 누르면 닫는다. 팝업 안을 누른 것은 그대로 둔다.
+     덮개는 무대(1280x720) 안에만 깔려 있어서, 예전에는 무대 밖 여백을 눌러도
+     아무 일이 없었다. 태블릿·휴대폰은 화면 비율이 제각각이라 그 여백이 넓다.
+     그래서 문서 전체에서 듣고, '팝업 안' 과 '무언가를 누른 것' 만 빼고 닫는다.
+     (click 으로 듣는 이유 : pointerdown 으로 닫으면 팝업이 사라진 자리에 있던
+      아래쪽 버튼이 곧바로 눌려 버린다) */
+  document.addEventListener('click', (e) => {
+    if (!openModalEls().length) return;
+    const t = e.target;
+    if (t.closest && (t.closest('.modal-content') ||
+        t.closest('button, a, input, select, textarea, label'))) return;
+    dismissTopModal();
   });
 
   document.addEventListener('keydown', (e) => {
@@ -3381,13 +3496,20 @@
   ['word-input', 'practice-input'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
-    el.addEventListener('input', () => {
+    const toLower = () => {
       const low = el.value.toLowerCase();
       if (el.value === low) return;
       const at = el.selectionStart;
       el.value = low;
       el.setSelectionRange(at, at);   // 커서가 맨 뒤로 튀지 않게 제자리에 둔다
-    });
+    };
+    /* 한글 자판처럼 글자를 조합해 가며 넣는 중에 value 를 고쳐 쓰면 조합이 깨져
+       글자가 빠지거나 겹쳐 들어간다 (크롬북에 자판을 붙여 칠 때 나던 오류).
+       조합이 끝난 뒤에만 손댄다 */
+    let composing = false;
+    el.addEventListener('compositionstart', () => { composing = true; });
+    el.addEventListener('compositionend', () => { composing = false; toLower(); });
+    el.addEventListener('input', () => { if (!composing) toLower(); });
   });
 
   /* 팝업이 뜨면 곧바로 칠 수 있도록 커서를 철자 칸에 넣어 준다.
@@ -3396,7 +3518,15 @@
   function focusSpellInput(id) {
     const el = document.getElementById(id);
     if (!el) return;
-    const go = () => { if (el.offsetParent !== null) { el.focus(); el.select(); } };
+    /* 글자를 통째로 고르는 것(select)은 처음 커서가 들어갈 때 한 번만 한다.
+       두 번째 호출에서 또 고르면, 그 사이에 이미 치기 시작한 글자를 덮어써 버린다
+       (자판이 달린 기기에서 첫 글자가 사라지던 원인) */
+    const go = () => {
+      if (el.offsetParent === null) return;
+      const first = document.activeElement !== el;
+      el.focus();
+      if (first) el.select();
+    };
     go();                // 대개 이것으로 바로 들어간다
     setTimeout(go, 0);   // 팝업이 아직 그려지지 않은 브라우저를 위해 한 번 더
   }
