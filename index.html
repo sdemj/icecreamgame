@@ -2239,8 +2239,11 @@
   }
   // 자판이 오르내릴 때는 창 크기가 아니라 이것만 바뀌는 기기가 있다
   if (window.visualViewport) window.visualViewport.addEventListener('resize', () => fitStage());
-  // 입력칸에서 빠져나오면(자판을 내리면) 미뤄 둔 배율을 그때 맞춘다
+  /* 입력칸에서 빠져나오면(자판을 내리면) 미뤄 둔 배율을 그때 맞춘다.
+     미뤄 둔 것이 없으면 타이머를 아예 걸지 않는다 — 버튼을 눌러 화면을 넘길 때도
+     focusout 이 나는데, 그때마다 아무 일도 안 하는 타이머가 화면을 넘어가 실행됐다 */
   document.addEventListener('focusout', () => {
+    if (!fitPending) return;
     setTimeout(() => { if (fitPending) fitStage(true); }, 60);
   });
   /* '이대로 할래요' 는 이번 판만 넘긴다. 한 번 가로로 돌렸다가 다시 세로로 들면
