@@ -2034,7 +2034,7 @@
     <img class="leave-icon" src="kit/melted_icecream.png" alt="" loading="lazy">
     <div class="modal-text">지금 나가면 풀던 문제가 사라져요.</div>
     <div class="modal-buttons">
-      <button class="modal-btn modal-btn-confirm" id="leave-ok-btn" onclick="confirmLeave()">확인</button>
+      <button class="modal-btn modal-btn-confirm" id="leave-ok-btn" onclick="confirmLeave()">나가기</button>
       <button class="modal-btn modal-btn-quit" id="leave-cancel-btn" onclick="cancelLeave()">계속하기</button>
     </div>
   </div>
@@ -3501,7 +3501,7 @@
   function primaryModalButton() {
     const open = (id) => document.getElementById(id).style.display === 'flex';
 
-    // 게임 종료 확인 : 확인
+    // 게임 종료 확인 : 나가기
     if (open('leave-modal')) return document.getElementById('leave-ok-btn');
 
     // 연습 팝업 : 확인 (맞힌 뒤에는 같은 버튼이 닫기 역할을 한다)
