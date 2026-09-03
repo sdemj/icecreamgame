@@ -120,6 +120,12 @@
       border-radius: 14px;
       background: #fff;
       box-shadow: inset 0 3px 0 rgba(255, 255, 255, .9), 0 6px 0 rgba(233, 163, 74, .45);
+      animation: rotateHintIC 2.6s ease-in-out infinite;
+    }
+    @keyframes rotateHintIC {
+      0%, 15% { transform: rotate(0deg); }
+      45%, 60% { transform: rotate(-90deg); }
+      90%, 100% { transform: rotate(0deg); }
     }
     #rotate-hint .rh-title { font-family: var(--font-display); font-size: 27px; color: var(--straw-ink, #C2496A); }
     #rotate-hint .rh-sub { font-family: var(--font-body); font-size: 19px; line-height: 1.5; }
