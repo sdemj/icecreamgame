@@ -2146,6 +2146,11 @@
 <audio id="round-fail-sound" preload="none">
   <source src="실패.mp3" type="audio/mpeg">
 </audio>
+<!-- Hint 버튼을 눌렀을 때 나오는 알림 (anagram game 과 같은 소리).
+     62KB 라 미리 받아 둬야 누르는 즉시 소리가 난다 -->
+<audio id="hint-sound" preload="auto">
+  <source src="힌트 알림.mp3" type="audio/mpeg">
+</audio>
 
 <!-- 세로로 든 휴대폰 안내. fitStage 가 화면 모양을 보고 켜고 끈다 -->
 <div id="rotate-hint" role="dialog" aria-live="polite">
@@ -2765,6 +2770,24 @@
     const audio = document.getElementById('wrong-sound');
     audio.currentTime = 0;
     audio.play().catch(e => console.log("재생 불가"));
+  }
+
+  /* ── 힌트 알림 소리 (anagram game 과 같은 소리·같은 방식) ──
+     '힌트 알림.mp3' 는 앞 0.94초가 거의 들리지 않는 암소음이라,
+     그대로 재생하면 버튼을 눌러도 한참 뒤에 소리가 나는 것처럼 느껴진다.
+     그래서 그 부분을 건너뛰고 소리가 시작되는 지점부터 재생한다.
+     ▼ 소리 앞이 잘리면 이 값을 줄이고, 아직 늦게 들리면 늘리면 된다 (초 단위) */
+  const HINT_SOUND_START = 0.90;
+
+  function playHintSound() {
+    if (sfxMuted) return;
+    const audio = document.getElementById('hint-sound');
+    const go = () => {
+      try { audio.currentTime = HINT_SOUND_START; } catch (_) { }   // 아직 길이를 모르면 처음부터라도 재생
+      audio.play().catch(e => console.log("재생 불가"));
+    };
+    if (audio.readyState >= 1) go();                                  // 이미 준비됨 → 즉시
+    else audio.addEventListener('loadedmetadata', go, { once: true }); // 아니면 준비되는 대로
   }
 
   /* 한 문제를 끝냈을 때 나오는 소리 (성공.mp3 / 실패.mp3).
@@ -4040,6 +4063,7 @@
       // 4초 뒤 지울 때 '지금 띄운 그 뜻' 이 아직 그대로일 때만 지운다.
       // (currentWordObj 를 그때 다시 읽으면 이미 다음 문제로 바뀌어 있을 수 있다)
       const shown = currentWordObj.meaning;
+      playHintSound();   // 힌트 알림 소리 (효과음 끄기 버튼을 따른다)
       hintDisplay.innerText = shown;
       laterInGame(() => {
         if (hintDisplay.innerText === shown) hintDisplay.innerText = '';
