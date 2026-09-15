@@ -3810,7 +3810,16 @@
   function scoopsLeft() {
     if (maxAllowed <= 0) return 0;
     const remaining = Math.max(0, maxAllowed - mistakes);
-    return Math.round(MAX_SCOOPS * remaining / maxAllowed);
+    const scoops = Math.round(MAX_SCOOPS * remaining / maxAllowed);
+
+    /* 아직 기회가 남아 있으면 스쿱도 최소 한 개는 남긴다.
+       비율을 반올림하다 보니 14글자가 넘는 단어에서는 기회가 한 번 남았는데도
+       7 · 1 / 15 = 0.47 이 0으로 떨어져, 아직 지지 않았는데 콘만 남은 그림이 뜨고
+       맞혀도 0점이 되어 버린다. 콘만 남은 그림은 '졌다'는 뜻으로만 쓰여야 한다.
+       (지금 가장 긴 단어가 photographer(12글자)라 당장 달라지는 문제는 없고,
+        나중에 더 긴 단어를 넣어도 괜찮도록 미리 막아 두는 것이다.) */
+    if (scoops === 0 && remaining > 0) return 1;
+    return scoops;
   }
 
   function updateIceCream() {
