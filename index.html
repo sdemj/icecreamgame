@@ -2053,7 +2053,7 @@
       <li>제시된 빈칸에 알맞은 단어를 추측해서 알파벳 글자를 골라요.</li>
       <li><b>Hint</b> 버튼을 누르면 우리말 뜻을 확인할 수 있어요. (점수가 깎이지 않아요.)</li>
       <li>틀릴 때마다 아이스크림이 조금씩 녹아요. 아이스크림이 녹기 전에 정답을 완성해요.</li>
-      <li>남아 있는 아이스크림에 따라 점수를 많이 얻을 수 있어요.</li>
+      <li>남아 있는 아이스크림 한 덩어리가 1점이에요. 한 문제에 최대 7점을 얻을 수 있어요.</li>
       <li>정답을 맞추지 못하면 철자를 입력하고 다음 문제로 넘어갈 수 있어요.</li>
     </ol>
     <!-- 인트로에서 열면 아래 두 버튼, 게임 중에 ❓ 로 열면 오른쪽 위 ✕ 만 보인다 (openHelp 참고) -->
@@ -2281,37 +2281,37 @@
   const vocabularyData = {
     "숫자·색깔·시간": {
       "Number": [
-        { word: "one", meaning: "하나" },
-        { word: "two", meaning: "둘" },
-        { word: "three", meaning: "셋" },
-        { word: "four", meaning: "넷" },
-        { word: "five", meaning: "다섯" },
-        { word: "six", meaning: "여섯" },
-        { word: "seven", meaning: "일곱" },
-        { word: "eight", meaning: "여덟" },
-        { word: "nine", meaning: "아홉" },
-        { word: "ten", meaning: "열" },
-        { word: "eleven", meaning: "열하나" }
+        { word: "one", meaning: "숫자 1" },
+        { word: "two", meaning: "숫자 2" },
+        { word: "three", meaning: "숫자 3" },
+        { word: "four", meaning: "숫자 4" },
+        { word: "five", meaning: "숫자 5" },
+        { word: "six", meaning: "숫자 6" },
+        { word: "seven", meaning: "숫자 7" },
+        { word: "eight", meaning: "숫자 8" },
+        { word: "nine", meaning: "숫자 9" },
+        { word: "ten", meaning: "숫자 10" },
+        { word: "eleven", meaning: "숫자 11" }
       ],
       "Color": [
         { word: "white", meaning: "흰색" },
-        { word: "black", meaning: "검정" },
-        { word: "red", meaning: "빨강" },
-        { word: "orange", meaning: "주황" },
-        { word: "yellow", meaning: "노랑" },
-        { word: "green", meaning: "초록" },
-        { word: "blue", meaning: "파랑" },
-        { word: "purple", meaning: "보라" },
+        { word: "black", meaning: "검은색" },
+        { word: "red", meaning: "빨간색" },
+        { word: "orange", meaning: "주황색" },
+        { word: "yellow", meaning: "노란색" },
+        { word: "green", meaning: "초록색" },
+        { word: "blue", meaning: "파란색" },
+        { word: "purple", meaning: "보라색" },
         { word: "brown", meaning: "갈색" },
         { word: "gray", meaning: "회색" },
-        { word: "pink", meaning: "분홍" }
+        { word: "pink", meaning: "분홍색" }
       ],
       "Time&Date": [
-        { word: "day", meaning: "날" },
-        { word: "week", meaning: "주" },
-        { word: "month", meaning: "월" },
-        { word: "year", meaning: "년" },
-        { word: "morning", meaning: "아침" },
+        { word: "day", meaning: "하루, 일" },
+        { word: "week", meaning: "주, 일주일" },
+        { word: "month", meaning: "달, 월" },
+        { word: "year", meaning: "해, 년" },
+        { word: "morning", meaning: "아침(오전)" },
         { word: "afternoon", meaning: "오후" },
         { word: "evening", meaning: "저녁" },
         { word: "night", meaning: "밤" },
@@ -2326,7 +2326,7 @@
         { word: "nose", meaning: "코" },
         { word: "ear", meaning: "귀" },
         { word: "mouth", meaning: "입" },
-        { word: "tooth", meaning: "이" },
+        { word: "tooth", meaning: "치아" },
         { word: "face", meaning: "얼굴" },
         { word: "neck", meaning: "목" },
         { word: "head", meaning: "머리" },
@@ -2339,10 +2339,10 @@
         { word: "dad", meaning: "아빠" },
         { word: "grandma", meaning: "할머니" },
         { word: "grandpa", meaning: "할아버지" },
-        { word: "sister", meaning: "언니·누나" },
-        { word: "brother", meaning: "형·오빠" },
+        { word: "sister", meaning: "누나, 언니, 여동생" },
+        { word: "brother", meaning: "형, 오빠, 남동생" },
         { word: "uncle", meaning: "삼촌" },
-        { word: "aunt", meaning: "이모·고모" },
+        { word: "aunt", meaning: "이모, 고모" },
         { word: "cousin", meaning: "사촌" },
         { word: "baby", meaning: "아기" },
         { word: "parents", meaning: "부모님" }
@@ -2385,7 +2385,7 @@
         { word: "teacher", meaning: "선생님" },
         { word: "actor", meaning: "배우" },
         { word: "scientist", meaning: "과학자" },
-        { word: "photographer", meaning: "사진사" },
+        { word: "photographer", meaning: "사진가" },
         { word: "firefighter", meaning: "소방관" }
       ]
     },
@@ -2399,16 +2399,16 @@
         { word: "watermelon", meaning: "수박" },
         { word: "strawberry", meaning: "딸기" },
         { word: "peach", meaning: "복숭아" },
-        { word: "pear", meaning: "배(과일)" },
+        { word: "pear", meaning: "배" },
         { word: "melon", meaning: "멜론" },
         { word: "potato", meaning: "감자" }
       ],
       "Meal&Snack": [
         { word: "bread", meaning: "빵" },
-        { word: "rice", meaning: "밥" },
+        { word: "rice", meaning: "쌀, 밥" },
         { word: "cake", meaning: "케이크" },
         { word: "cheese", meaning: "치즈" },
-        { word: "chicken", meaning: "치킨" },
+        { word: "chicken", meaning: "닭고기" },
         { word: "chocolate", meaning: "초콜릿" },
         { word: "cookie", meaning: "쿠키" },
         { word: "hamburger", meaning: "햄버거" },
@@ -2423,11 +2423,11 @@
         { word: "tea", meaning: "차" },
         { word: "coffee", meaning: "커피" },
         { word: "lemonade", meaning: "레모네이드" },
-        { word: "sweet", meaning: "단" },
-        { word: "salty", meaning: "짠" },
-        { word: "sour", meaning: "신" },
-        { word: "spicy", meaning: "매운" },
-        { word: "bitter", meaning: "쓴" }
+        { word: "sweet", meaning: "단, 달콤한" },
+        { word: "salty", meaning: "짠, 짭짤한" },
+        { word: "sour", meaning: "신, 시큼한" },
+        { word: "spicy", meaning: "매운, 매콤한" },
+        { word: "bitter", meaning: "쓴, 씁쓸한" }
       ]
     },
     "자연과 날씨": {
@@ -2448,10 +2448,10 @@
         { word: "weather", meaning: "날씨" },
         { word: "cloud", meaning: "구름" },
         { word: "cloudy", meaning: "흐린" },
-        { word: "sunny", meaning: "맑은" },
-        { word: "raining", meaning: "비 오는" },
-        { word: "snowing", meaning: "눈 오는" },
-        { word: "windy", meaning: "바람 부는" },
+        { word: "sunny", meaning: "화창한" },
+        { word: "raining", meaning: "비가 오는" },
+        { word: "snowing", meaning: "눈이 오는" },
+        { word: "windy", meaning: "바람이 부는" },
         { word: "foggy", meaning: "안개 낀" },
         { word: "lightning", meaning: "번개" },
         { word: "storm", meaning: "폭풍" },
@@ -2480,21 +2480,21 @@
         { word: "train", meaning: "기차" },
         { word: "subway", meaning: "지하철" },
         { word: "airplane", meaning: "비행기" },
-        { word: "flight", meaning: "항공편" },
-        { word: "ship", meaning: "배(탈것)" },
+        { word: "flight", meaning: "비행, 항공편" },
+        { word: "ship", meaning: "배" },
         { word: "truck", meaning: "트럭" },
         { word: "police car", meaning: "경찰차" }
       ],
       "Direction&Position": [
-        { word: "down", meaning: "아래로" },
+        { word: "down", meaning: "아래" },
         { word: "left", meaning: "왼쪽" },
         { word: "right", meaning: "오른쪽" },
-        { word: "straight", meaning: "곧게" },
+        { word: "straight", meaning: "곧게, 직진" },
         { word: "front", meaning: "앞" },
         { word: "back", meaning: "뒤" },
         { word: "behind", meaning: "뒤에" },
         { word: "under", meaning: "아래에" },
-        { word: "over", meaning: "위로" },
+        { word: "over", meaning: "위에" },
         { word: "top", meaning: "맨 위" },
         { word: "bottom", meaning: "맨 아래" }
       ]
@@ -2510,7 +2510,7 @@
         { word: "eraser", meaning: "지우개" },
         { word: "scissors", meaning: "가위" },
         { word: "crayon", meaning: "크레용" },
-        { word: "glue stick", meaning: "딱풀" },
+        { word: "glue stick", meaning: "풀" },
         { word: "board", meaning: "칠판" }
       ],
       "Household": [
@@ -2519,19 +2519,19 @@
         { word: "bed", meaning: "침대" },
         { word: "chair", meaning: "의자" },
         { word: "desk", meaning: "책상" },
-        { word: "table", meaning: "식탁" },
+        { word: "table", meaning: "탁자" },
         { word: "sofa", meaning: "소파" },
         { word: "clock", meaning: "시계" },
-        { word: "lamp", meaning: "램프" },
+        { word: "lamp", meaning: "전등, 램프" },
         { word: "mirror", meaning: "거울" },
         { word: "fan", meaning: "선풍기" }
       ],
       "Clothing": [
-        { word: "cap", meaning: "야구모자" },
+        { word: "cap", meaning: "모자" },
         { word: "hat", meaning: "모자" },
         { word: "jacket", meaning: "재킷" },
         { word: "coat", meaning: "코트" },
-        { word: "dress", meaning: "원피스" },
+        { word: "dress", meaning: "드레스" },
         { word: "skirt", meaning: "치마" },
         { word: "shirt", meaning: "셔츠" },
         { word: "gloves", meaning: "장갑" },
@@ -2573,9 +2573,9 @@
         { word: "tell", meaning: "알려주다" },
         { word: "ask", meaning: "묻다" },
         { word: "answer", meaning: "대답하다" },
-        { word: "call", meaning: "부르다" },
+        { word: "call", meaning: "부르다, 전화하다" },
         { word: "listen", meaning: "듣다" },
-        { word: "sing", meaning: "노래하다" },
+        { word: "sing", meaning: "노래 부르다" },
         { word: "meet", meaning: "만나다" },
         { word: "give", meaning: "주다" },
         { word: "visit", meaning: "방문하다" }
@@ -2586,19 +2586,19 @@
         { word: "big", meaning: "큰" },
         { word: "small", meaning: "작은" },
         { word: "large", meaning: "커다란" },
-        { word: "short", meaning: "짧은·키가 작은" },
+        { word: "short", meaning: "짧은" },
         { word: "long", meaning: "긴" },
         { word: "tall", meaning: "키가 큰" },
         { word: "slim", meaning: "날씬한" },
         { word: "fat", meaning: "뚱뚱한" },
-        { word: "thin", meaning: "얇은" },
+        { word: "thin", meaning: "얇은, 마른" },
         { word: "heavy", meaning: "무거운" },
         { word: "light", meaning: "가벼운" }
       ],
       "Character": [
-        { word: "good", meaning: "착한" },
+        { word: "good", meaning: "좋은" },
         { word: "bad", meaning: "나쁜" },
-        { word: "nice", meaning: "좋은" },
+        { word: "nice", meaning: "좋은, 멋진" },
         { word: "kind", meaning: "친절한" },
         { word: "brave", meaning: "용감한" },
         { word: "smart", meaning: "똑똑한" },
@@ -3802,11 +3802,21 @@
      그림 파일은 1.png(콘만) ~ 8.png(7스쿱 가득) 이므로 그림 번호 = 스쿱 수 + 1 */
   const MAX_SCOOPS = 7;
 
-  function updateIceCream() {
+  /* 지금 남아 있는 스쿱 수. 그림과 점수가 따로 놀지 않도록 두 곳 모두 이 함수 하나만 본다.
+     예전에는 점수를 '글자 수 + 1 - 틀린 횟수' 로 따로 계산해서, 다 맞혀도 짧은 단어면
+     점수가 낮고 세 번 틀린 긴 단어와 점수가 같아지는 일이 있었다.
+     스쿱 = 점수로 묶으면 단어 길이와 상관없이 한 문제 0~7점이 되고,
+     학생이 아이스크림만 봐도 몇 점인지 알 수 있다. */
+  function scoopsLeft() {
+    if (maxAllowed <= 0) return 0;
     const remaining = Math.max(0, maxAllowed - mistakes);
+    return Math.round(MAX_SCOOPS * remaining / maxAllowed);
+  }
+
+  function updateIceCream() {
     const iceCreamImg = document.getElementById('ice-cream-image');
 
-    const scoops = maxAllowed > 0 ? Math.round(MAX_SCOOPS * remaining / maxAllowed) : 0;
+    const scoops = scoopsLeft();
     iceCreamImg.src = (scoops + 1) + '.png';
 
     // 남은 스쿱이 2개 이하로 줄면 흔들려서 위험을 알린다.
@@ -3984,8 +3994,8 @@
       createConfetti();
       playRoundSound(true);   // 성공.mp3
 
-      const remaining = maxAllowed - mistakes;
-      score += remaining;
+      // 남은 아이스크림 스쿱 수가 곧 점수다 (한 문제 0~7점)
+      score += scoopsLeft();
       document.getElementById('score-val').innerText = score;
 
       if (currentRound < wordsList.length - 1) {
@@ -4089,7 +4099,9 @@
     document.getElementById('result-modal').style.display = 'none';
     document.getElementById('game-screen').style.display = 'none';
     
-    document.getElementById('final-score').innerText = `최종 점수: ${score}점`;
+    // 만점(문제 수 × 7)을 같이 보여줘야 주제가 달라도 점수를 견줘볼 수 있다
+    const perfect = wordsList.length * MAX_SCOOPS;
+    document.getElementById('final-score').innerText = `최종 점수: ${score} / ${perfect}점`;
     document.getElementById('wrong-count').innerText = `틀린 문제: ${wrongWords.length}개`;
 
     // 한 문제도 못 맞힌 경우에는 축하 멘트 대신 다시 해보자는 멘트를 보여준다
