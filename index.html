@@ -84,17 +84,7 @@
 
     /* 화면의 글자는 읽을 거리가 아니라 놀잇감이라, 끌었을 때 파랗게 잡히지 않게 한다.
        (마침표·빈칸 같은 글자가 텍스트로 선택돼 파란 블록으로 보이는 것을 막는다) */
-    /* 상단 버튼은 무대와 함께 줄어들지 않아서, 화면이 작을수록 상대적으로 커졌다.
-       휴대폰 가로에서는 그 때문에 점수 배지와 진행 막대를 덮어 버렸다.
-       무대 배율을 따라 줄이되, 손가락으로 누를 수 있는 크기 아래로는 내려가지 않게 한다.
-       모서리에서 떨어진 거리도 같은 비율로 줄여야 원래 자리 그대로 보인다.
-       (자리·크기는 인라인 style 로 박혀 있어 !important 로 덮어쓴다) */
-    #top-nav-bar > div {
-      top: var(--nav-inset, 18px) !important;
-      transform: scale(var(--nav-scale, 1));
-    }
-    #top-nav-bar > div:nth-of-type(1) { left: var(--nav-inset, 18px) !important; transform-origin: top left; }
-    #top-nav-bar > div:nth-of-type(2) { right: var(--nav-inset, 18px) !important; transform-origin: top right; }
+    /* 상단바는 공통 부품(topnav.css / topnav.js)이 그린다. 무대는 fitStage()에서 띠 아래에 맞춘다 */
 
     /* 세로로 든 휴대폰에서는 무대가 너무 작아져 글자·버튼을 누르기 어렵다.
        가로로 돌리면 훨씬 편하다고 알려 준다 (돌리면 저절로 사라진다) */
@@ -212,9 +202,6 @@
       box-shadow: 0 4px 14px rgba(100, 120, 180, 0.15);
     }
 
-    /* 팝업이 열려 있는 동안에는 상단바를 감춘다.
-       상단바는 #stage 바깥에 떠 있어서 팝업 덮개보다 위에 그려지기 때문 */
-    body.modal-open #top-nav-bar > div { display: none !important; }
 
     /* 키보드로 이동할 때 어디가 선택됐는지 보이도록. all:unset 등으로 기본 아웃라인이
        지워진 버튼에도 적용되도록 !important로 강제한다 */
@@ -1914,6 +1901,7 @@
     /* 화면 폭에 따른 @media 분기는 더 이상 쓰지 않는다.
        무대(1280x720)를 통째로 확대/축소하므로 모든 기기에서 배치가 동일하다. */
   </style>
+  <link rel="stylesheet" href="topnav.css">
 </head>
 <body>
 <div id="stage">
@@ -2211,6 +2199,7 @@
     </button>
   </div>
 </div>
+<script src="topnav.js" data-backdrop="0.jpg"></script>
 
 <script>
   // ========== 무대 배율 (PC·모바일 공통) ==========
@@ -2235,14 +2224,8 @@
     lastFitW = w;
     fitPending = false;
     const stage = document.getElementById('stage');
-    const scale = Math.min(w / STAGE_W, h / STAGE_H);
-    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
-    /* 상단 버튼도 같은 비율로. 다만 0.77 (약 40px) 아래로는 줄이지 않는다 —
-       그보다 작으면 손가락으로 누르기 어렵다 */
-    const navScale = Math.max(0.77, Math.min(1.4, scale));
-    const root = document.documentElement.style;
-    root.setProperty('--nav-scale', navScale.toFixed(3));
-    root.setProperty('--nav-inset', (18 * navScale).toFixed(1) + 'px');
+    /* 공통 상단바가 [상단바 + 게임 카드]를 창 가운데 여백을 두고 맞춘다 */
+    const scale = TopNav.fit(stage, STAGE_W, STAGE_H);
     updateRotateHint(w, h, scale);
   }
 
