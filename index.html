@@ -2227,6 +2227,7 @@
   </div>
 </div>
 <script src="topnav.js" data-backdrop="0.jpg"></script>
+<script src="sfx.js"></script>
 
 <script>
   // ========== 무대 배율 (PC·모바일 공통) ==========
@@ -2823,18 +2824,22 @@
     if (icon) icon.className = sfxMuted ? 'fa-solid fa-bell-slash' : 'fa-solid fa-bell';
   }
 
+  // 효과음은 sfx.js 가 튼다 (아이패드에서 소리가 났다 안 났다 하던 문제 — sfx.js 첫머리 참고).
+  // 이름은 <audio> 의 id 를 그대로 쓴다
+  GameSfx.add('correct-sound', 'correct-sound');
+  GameSfx.add('wrong-sound', 'wrong-sound');
+  GameSfx.add('round-success-sound', 'round-success-sound');
+  GameSfx.add('round-fail-sound', 'round-fail-sound');
+  GameSfx.add('hint-sound', 'hint-sound');
+
   function playCorrectSound() {
     if (sfxMuted) return;
-    const audio = document.getElementById('correct-sound');
-    audio.currentTime = 0;
-    audio.play().catch(e => console.log("재생 불가"));
+    GameSfx.play('correct-sound');
   }
 
   function playWrongSound() {
     if (sfxMuted) return;
-    const audio = document.getElementById('wrong-sound');
-    audio.currentTime = 0;
-    audio.play().catch(e => console.log("재생 불가"));
+    GameSfx.play('wrong-sound');
   }
 
   /* ── 힌트 알림 소리 (anagram game 과 같은 소리·같은 방식) ──
@@ -2846,33 +2851,22 @@
 
   function playHintSound() {
     if (sfxMuted) return;
-    const audio = document.getElementById('hint-sound');
-    const go = () => {
-      try { audio.currentTime = HINT_SOUND_START; } catch (_) { }   // 아직 길이를 모르면 처음부터라도 재생
-      audio.play().catch(e => console.log("재생 불가"));
-    };
-    if (audio.readyState >= 1) go();                                  // 이미 준비됨 → 즉시
-    else audio.addEventListener('loadedmetadata', go, { once: true }); // 아니면 준비되는 대로
+    GameSfx.play('hint-sound', { offset: HINT_SOUND_START });
   }
 
   /* 한 문제를 끝냈을 때 나오는 소리 (성공.mp3 / 실패.mp3).
      자판 글자를 맞히거나 틀렸을 때 나는 correct/wrong 과는 다른 소리다.
      둘이 겹쳐 들리지 않도록, 결과 소리를 낼 때는 자판 소리를 먼저 멈춘다.
 
-     ※ 예전에 Web Audio 로 음량을 키웠다가 걷어냈다.
-        createMediaElementSource 는 같은 출처의 소리만 통과시켜서,
-        파일을 더블클릭해 여는 경우(file://) 소리가 아예 안 났다.
+     ※ 예전에 Web Audio(createMediaElementSource)로 음량을 키웠다가 걷어냈다.
+        파일을 더블클릭해 여는 경우(file://) 소리가 아예 안 났기 때문이다.
+        지금 sfx.js 는 file:// 에서는 Web Audio 를 쓰지 않고 <audio> 로 틀어서 그 문제가 없다.
         음량은 음원 파일 자체로 맞추는 것이 안전하다.
-        (줄이는 것만 필요하면 audio.volume = 0.7 처럼 쓸 수 있다. 1 을 넘기지는 못한다) */
+        (줄이는 것만 필요하면 GameSfx.add(..., { volume: 0.7 }) 처럼 쓸 수 있다. 1 을 넘기지는 않는다) */
   function playRoundSound(isWin) {
     if (sfxMuted) return;
-    ['correct-sound', 'wrong-sound'].forEach(id => {
-      const a = document.getElementById(id);
-      if (a && !a.paused) { a.pause(); a.currentTime = 0; }
-    });
-    const audio = document.getElementById(isWin ? 'round-success-sound' : 'round-fail-sound');
-    audio.currentTime = 0;
-    audio.play().catch(e => console.log("재생 불가"));
+    GameSfx.stop(['correct-sound', 'wrong-sound']);
+    GameSfx.play(isWin ? 'round-success-sound' : 'round-fail-sound');
   }
 
   // ========== 배경음악 on/off ==========
@@ -3026,10 +3020,7 @@
      (배경음악은 stopVoice 가 원래 설정대로 되돌려 준다) */
   function stopSpokenAudio() {
     stopVoice();
-    ['round-success-sound', 'round-fail-sound', 'correct-sound', 'wrong-sound'].forEach(id => {
-      const a = document.getElementById(id);
-      if (a && !a.paused) { a.pause(); a.currentTime = 0; }
-    });
+    GameSfx.stop(['round-success-sound', 'round-fail-sound', 'correct-sound', 'wrong-sound']);
   }
 
   /* ========== 화면을 가렸을 때 소리 멈추기 ==========
