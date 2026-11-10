@@ -2167,7 +2167,7 @@
      주소로 바꿔 주고, 이 파일의 다른 소리들(background music.mp3 · 성공.mp3)도 같은 방식이다.
      %-표기로 적으면 점검 도구가 실제 파일과 대조하지 못한다 -->
 <audio id="intro-music" loop preload="none">
-  <source src="인트로 음악.mp3" type="audio/mpeg">
+  <source src="intro_music.mp3" type="audio/mpeg">
 </audio>
 <audio id="correct-sound">
   <source src="correct.mp3" type="audio/mpeg">
@@ -2177,15 +2177,15 @@
 </audio>
 <!-- 한 문제를 끝냈을 때 나오는 소리. 자판을 누를 때 나는 correct/wrong 과 구분된다 -->
 <audio id="round-success-sound" preload="none">
-  <source src="성공.mp3" type="audio/mpeg">
+  <source src="success.mp3" type="audio/mpeg">
 </audio>
 <audio id="round-fail-sound" preload="none">
-  <source src="실패.mp3" type="audio/mpeg">
+  <source src="fail.mp3" type="audio/mpeg">
 </audio>
 <!-- Hint 버튼을 눌렀을 때 나오는 알림 (anagram game 과 같은 소리).
      62KB 라 미리 받아 둬야 누르는 즉시 소리가 난다 -->
 <audio id="hint-sound" preload="auto">
-  <source src="힌트 알림.mp3" type="audio/mpeg">
+  <source src="hint_alert.mp3" type="audio/mpeg">
 </audio>
 
 <!-- 세로로 든 휴대폰 안내. fitStage 가 화면 모양을 보고 켜고 끈다 -->
@@ -3065,9 +3065,10 @@
   };
 
   // 폴더 이름(한글)과 단어(띄어쓰기 포함)를 주소로 쓸 수 있게 인코딩한다
+  const TOPIC_DIR={'국가와 자연':'country_nature','동작':'action','물건':'things','사람과 동물':'people_animals','숫자·색깔·시간':'number_color_time','음식과 음료':'food_drink','장소·교통·방향':'place_transport_direction','취미·과목·직업':'hobby_subject_job','특징과 감정':'feature_feeling'};   // CMS가 한글 경로를 못 읽어 녹음 폴더 이름을 영문으로 바꿨다 (미래엔 이름 대조표)
   function voiceSrc(word, category) {
     const folder = AUDIO_FOLDER[category || selectedCategory] || (category || selectedCategory);
-    return encodeURIComponent(folder) + '/' + encodeURIComponent(word) + '.mp3';
+    return (TOPIC_DIR[folder] || encodeURIComponent(folder)) + '/' + encodeURIComponent(word) + '.mp3';
   }
 
   // 발음 듣기 버튼: 재생 중에는 버튼에 표시를 남기고, 끝나면 원래대로 되돌린다
